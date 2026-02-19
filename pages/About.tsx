@@ -16,6 +16,8 @@ const About: React.FC = () => {
     }
   };
 
+  const currentYear = new Date().getFullYear();
+
   return (
     <div className="min-h-screen bg-white ">
       <SEO
@@ -69,16 +71,17 @@ const About: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-3xl font-bold text-slate-900 mb-6">About Vance Graphix &amp; Print (VGP)</h2>
+              <h2 className="text-3xl font-bold text-slate-900 mb-2">VGP 1999–{currentYear}</h2>
+              <p className="text-sm font-semibold text-blue-600 mb-4">Vance Graphix &amp; Print (VGP)</p>
               <div className="space-y-4 text-gray-600 leading-relaxed">
                 <p>
                   Vance Graphix &amp; Print (VGP) offers total graphics solutions, printing solutions, web development in Australia, and social media marketing.
                 </p>
                 <p>
-                  From business cards and signage through to websites and email marketing, we help businesses present a consistent, professional brand across print and digital.
+                  From a modest beginning, Vance Graphix has grown into a progressive medium-sized printing service provider with a full range to cover all aspects of print production.
                 </p>
                 <p>
-                  Our goal is simple: make your brand look good everywhere it appears and support your growth with practical, results-focused design and development.
+                  The scope of work VGP produces includes annual reports, business cards, flyers, brochures, magazines, office stationery, restaurant menus, banners, A-frames, shopfronts, invitation cards, letterheads, envelopes, carbonless books, promotional items, posters and presentation folders.
                 </p>
               </div>
 
@@ -188,6 +191,55 @@ const About: React.FC = () => {
               <p className="text-gray-500">
                 We stay ahead of the curve, constantly learning new technologies to give you the edge.
               </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white py-24">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-slate-900 mb-4">Awards &amp; Recognition</h2>
+            <p className="text-gray-500 max-w-2xl mx-auto">
+              Vance Graphix &amp; Print (VGP) has been recognised as a finalist in multiple Local Business Awards for our ongoing commitment to quality and service.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="border border-gray-100 rounded-2xl overflow-hidden shadow-sm bg-white flex flex-col">
+              <div className="bg-slate-50 px-4 py-3 text-center">
+                <p className="text-sm font-semibold text-slate-900">Local Business Awards</p>
+                <p className="text-xs text-gray-500">Finalist 2022</p>
+              </div>
+              <img
+                src="https://vancegraphix.com.au/wp-content/uploads/2022/09/2022_MDSM_LBA-403x500.png"
+                alt="Local Business Awards Finalist 2022 Blacktown City"
+                className="w-full h-auto object-contain bg-white"
+              />
+            </div>
+
+            <div className="border border-gray-100 rounded-2xl overflow-hidden shadow-sm bg-white flex flex-col">
+              <div className="bg-slate-50 px-4 py-3 text-center">
+                <p className="text-sm font-semibold text-slate-900">Local Business Awards</p>
+                <p className="text-xs text-gray-500">Finalist 2024</p>
+              </div>
+              <img
+                src="https://vancegraphix.com.au/wp-content/uploads/2024/04/2024-2-358x500.jpeg"
+                alt="Local Business Awards Finalist 2024"
+                className="w-full h-auto object-contain bg-white"
+              />
+            </div>
+
+            <div className="border border-gray-100 rounded-2xl overflow-hidden shadow-sm bg-white flex flex-col">
+              <div className="bg-slate-50 px-4 py-3 text-center">
+                <p className="text-sm font-semibold text-slate-900">Local Business Awards</p>
+                <p className="text-xs text-gray-500">Finalist Certificate</p>
+              </div>
+              <img
+                src="https://vancegraphix.com.au/wp-content/uploads/2022/10/Local-Business_2022-Finalist3.jpg"
+                alt="Local Business Awards finalist certificate for Vance Graphix &amp; Print"
+                className="w-full h-auto object-contain bg-white"
+              />
             </div>
           </div>
         </div>

@@ -125,29 +125,62 @@ const Contact: React.FC = () => {
           {/* Contact Info */}
           <div className="space-y-8">
             <div className="bg-slate-50 p-8 rounded-2xl border border-gray-100">
-              <h3 className="text-xl font-bold text-slate-900 mb-6">Contact Information</h3>
+              <h3 className="text-xl font-bold text-slate-900 mb-6">Australia Office</h3>
 
-              <div className="space-y-6">
-                <div className="flex items-start">
-                  <Mail className="text-blue-600 mt-1 mr-4" />
-                  <div>
-                    <p className="font-medium text-slate-900">Email Us</p>
-                    <p className="text-gray-500">ahmed@vancegraphix.com.au</p>
+              <div className="space-y-8">
+                <div>
+                  <p className="font-semibold text-slate-900 mb-2">Sydney Office</p>
+                  <div className="space-y-3">
+                    <div className="flex items-start">
+                      <Phone className="text-blue-600 mt-1 mr-4" />
+                      <p className="text-gray-500">+61 470 642 633</p>
+                    </div>
+                    <div className="flex items-start">
+                      <Mail className="text-blue-600 mt-1 mr-4" />
+                      <p className="text-gray-500">ahmed@vancegraphix.com.au</p>
+                    </div>
+                    <div className="flex items-start">
+                      <MapPin className="text-blue-600 mt-1 mr-4" />
+                      <p className="text-gray-500">44 Flushcombe Rd, Blacktown</p>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-start">
-                  <Phone className="text-blue-600 mt-1 mr-4" />
-                  <div>
-                    <p className="font-medium text-slate-900">Call Us</p>
-                    <p className="text-gray-500">+61 470 642 633</p>
+
+                <div>
+                  <p className="font-semibold text-slate-900 mb-2">Brisbane Office</p>
+                  <div className="space-y-3">
+                    <div className="flex items-start">
+                      <Phone className="text-blue-600 mt-1 mr-4" />
+                      <p className="text-gray-500">+61 404 777 738</p>
+                    </div>
+                    <div className="flex items-start">
+                      <Mail className="text-blue-600 mt-1 mr-4" />
+                      <p className="text-gray-500">info@vancegraphix.com.au</p>
+                    </div>
+                    <div className="flex items-start">
+                      <MapPin className="text-blue-600 mt-1 mr-4" />
+                      <p className="text-gray-500">280 Yarrabilba Dr., Yarrabilba, QLD, 4207</p>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-start">
-                  <MapPin className="text-blue-600 mt-1 mr-4" />
-                  <div>
-                    <p className="font-medium text-slate-900">Sydney Office</p>
-                    <p className="text-gray-500">44 Flushcombe Rd, Blacktown, NSW</p>
-                  </div>
+              </div>
+            </div>
+
+            <div className="bg-slate-50 p-8 rounded-2xl border border-gray-100">
+              <h3 className="text-xl font-bold text-slate-900 mb-4">Payment Details</h3>
+              <div className="space-y-4 text-gray-500">
+                <div>
+                  <p className="font-semibold text-slate-900 mb-1">EFT</p>
+                  <p>Bank: ANZ</p>
+                  <p>Account Name: Vance Graphix &amp; Print</p>
+                  <p>BSB: 012 408</p>
+                  <p>Account: 192580993</p>
+                </div>
+                <div>
+                  <p className="font-semibold text-slate-900 mb-1">Check Post To</p>
+                  <p>Vance Graphix &amp; Print</p>
+                  <p>82 Tallwoods Circuit,</p>
+                  <p>Yarrabilba, QLD 4207</p>
                 </div>
               </div>
             </div>

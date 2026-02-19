@@ -18,12 +18,14 @@ const Navbar: React.FC = () => {
         { name: 'Custom Web Dev', path: '/web-dev' },
         { name: 'WordPress Development', path: '/wordpress' },
         { name: 'Graphics & Branding', path: '/graphics' },
+        { name: 'Printing Solutions', path: '/printing' },
+        { name: 'Design Process', path: '/design-process' },
+        { name: 'Tools & Resources', path: '/tools' },
         { name: 'All Services', path: '/services' }
       ]
     },
     { name: 'Blog', path: '/blog', dropdown: false },
     { name: 'Portfolio', path: '/portfolio', dropdown: false },
-    { name: 'Tools', path: '/tools', dropdown: false },
     { name: 'Fast Track', path: '/websites-for-sale', dropdown: false },
     { name: 'About', path: '/about', dropdown: false },
     { name: 'Contact', path: '/contact', dropdown: false },
