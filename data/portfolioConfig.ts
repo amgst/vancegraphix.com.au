@@ -6,11 +6,10 @@
 // Enter your Google Drive details here to sync the portfolio.
 // ==============================================================================
 
+const apiKey = import.meta.env.VITE_GOOGLE_DRIVE_API_KEY || "";
+
 export const PORTFOLIO_CONFIG = {
-  // 1. Google Cloud API Key
-  // Must have "Google Drive API" enabled.
-  // IMPORTANT: Do not commit real API keys to version control.
-  apiKey: "",
+  apiKey,
 
   // 2. Google Drive Folder IDs
   // Paste the ID of the folder for each category.
