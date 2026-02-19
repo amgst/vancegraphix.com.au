@@ -16,12 +16,12 @@ const Home: React.FC = () => {
   const websiteStructuredData = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'wbify Creative Studio',
-    url: 'https://www.wbify.com',
-    description: 'Professional web development, design, and digital marketing services',
+    name: 'Vance Graphix & Print (VGP)',
+    url: 'https://vancegraphix.com.au',
+    description: 'Graphic design, web development, printing, e-commerce, and email marketing in Australia',
     potentialAction: {
       '@type': 'SearchAction',
-      target: 'https://www.wbify.com/search?q={search_term_string}',
+      target: 'https://vancegraphix.com.au/search?q={search_term_string}',
       'query-input': 'required name=search_term_string'
     }
   };
@@ -29,8 +29,8 @@ const Home: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <SEO
-        title="wbify - Expert Shopify Development & Custom Web Solutions"
-        description="Elevate your business with wbify. We specialize in high-converting Shopify stores, fast custom websites, and premium brand identity design. Start growing today."
+        title="Vance Graphix & Print (VGP) - Graphics, Web, Print & Digital"
+        description="Vance Graphix & Print (VGP) provides professional graphic design, web development, printing, e-commerce and email marketing solutions throughout Australia."
         canonical="/"
         structuredData={websiteStructuredData}
       />
@@ -47,7 +47,7 @@ const Home: React.FC = () => {
             {/* Text Content */}
             <div className="flex-1 text-center lg:text-left space-y-8 animate-fade-in-up">
               <span className="inline-block py-1 px-3 rounded-full bg-blue-50 text-blue-600 text-sm font-semibold tracking-wide">
-                wbify Creative Studio
+                Vance Graphix &amp; Print (VGP)
               </span>
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-slate-900 tracking-tight leading-tight">
                 Expert Shopify & <br /><span className="text-blue-600">Custom Web Services</span>
@@ -185,7 +185,7 @@ const Home: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">Why businesses trust wbify.</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">Why businesses trust Vance Graphix &amp; Print.</h2>
               <p className="text-gray-500 text-lg mb-8 leading-relaxed">
                 We combine the extensive variety of a freelance marketplace with the reliability, quality, and support of a professional agency.
               </p>

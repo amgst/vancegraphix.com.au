@@ -51,7 +51,7 @@ Service: ${data.service}
 Message:
 ${data.message}
 
-View details: https://www.wbify.com/admin/dashboard
+View details: https://vancegraphix.com.au/admin/dashboard
         `;
     } else if (type === 'inquiry') {
         subject = `New Project Inquiry: ${data.serviceType} from ${data.name}`;
@@ -67,7 +67,7 @@ Timeline: ${data.timeline}
 Additional Info:
 ${data.additionalInfo}
 
-View details: https://www.wbify.com/admin/inquiries
+View details: https://vancegraphix.com.au/admin/inquiries
         `;
     } else if (type === 'application') {
         subject = `New Job Application: ${data.role} from ${data.fullName}`;
@@ -85,7 +85,7 @@ LinkedIn: ${data.linkedinUrl || 'N/A'}
 Cover Letter:
 ${data.coverLetter}
 
-View details: https://www.wbify.com/admin/dashboard
+View details: https://vancegraphix.com.au/admin/dashboard
         `;
     } else {
         console.warn('Invalid submission type received:', type);

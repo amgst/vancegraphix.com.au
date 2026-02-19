@@ -267,7 +267,7 @@ Remember: A perfect store that never launches is worth less than an imperfect st
 
 *Need help with your Shopify store? Check out our [Shopify Solutions](/shopify) or [get in touch](/contact) for a custom quote.*`,
         date: new Date().toISOString().split('T')[0],
-        author: 'wbify Team',
+        author: 'VGP Team',
         tags: ['Shopify', 'E-commerce', 'Online Store', 'Business', 'Tutorial'],
         image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
         imageAlt: 'Shopify store setup on laptop',
@@ -534,7 +534,7 @@ Whether you're building a simple business site or a complex web application, mod
 
 *Looking for a custom website? Check out our [Web Development Services](/services) or [get started](/inquiry) with a project inquiry.*`,
         date: new Date().toISOString().split('T')[0],
-        author: 'wbify Team',
+        author: 'VGP Team',
         tags: ['Web Development', 'React', 'Next.js', 'Programming', 'Technology'],
         image: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
         imageAlt: 'Code on computer screen',
@@ -812,7 +812,7 @@ Whether you're starting fresh or refreshing an existing brand, investing in prof
 
 *Need help with your brand identity? Check out our [Branding Services](/graphics) or [get in touch](/contact) for a custom quote.*`,
         date: new Date().toISOString().split('T')[0],
-        author: 'wbify Team',
+        author: 'VGP Team',
         tags: ['Branding', 'Design', 'Logo', 'Marketing', 'Business'],
         image: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
         imageAlt: 'Brand identity design elements',

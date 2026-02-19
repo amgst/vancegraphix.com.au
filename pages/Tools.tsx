@@ -29,13 +29,13 @@ const Tools: React.FC = () => {
         '@type': 'CollectionPage',
         name: 'Tools & Resources',
         description: 'A collection of handy tools and resources for developers and designers',
-        url: 'https://www.wbify.com/tools'
+        url: 'https://vancegraphix.com.au/tools'
     };
 
     return (
         <div className="min-h-screen bg-white">
             <SEO
-                title="Free Web Design & Development Tools | wbify Resources"
+                title="Free Web Design & Development Tools | VGP Resources"
                 description="A curated list of essential free tools for developers and designers. Boost your productivity with our hand-picked digital resources, calculators, and utilities."
                 canonical="/tools"
                 structuredData={toolsStructuredData}

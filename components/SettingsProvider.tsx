@@ -7,8 +7,9 @@ interface SettingsContextType {
 }
 
 const defaultSettings: SiteSettings = {
-    siteName: 'wbify',
-    adminEmail: 'admin@wbify.com'
+    siteName: 'Vance Graphix & Print (VGP)',
+    adminEmail: 'ahmed@vancegraphix.com.au',
+    logoUrl: 'https://vancegraphix.com.au/wp-content/uploads/2021/02/logo-vgp.png'
 };
 
 const SettingsContext = createContext<SettingsContextType>({

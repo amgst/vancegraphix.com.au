@@ -124,9 +124,9 @@ const Portfolio: React.FC = () => {
   return (
     <div className="min-h-screen bg-white py-20">
       <Helmet>
-        <title>Our Portfolio | wbify Creative Studio</title>
+        <title>Our Portfolio | Vance Graphix &amp; Print (VGP)</title>
         <meta name="description" content="Explore our portfolio of graphic design, web development, and video projects. See how we help brands stand out." />
-        <link rel="canonical" href="https://www.wbify.com/portfolio" />
+        <link rel="canonical" href="https://vancegraphix.com.au/portfolio" />
       </Helmet>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 

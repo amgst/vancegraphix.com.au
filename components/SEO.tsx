@@ -19,7 +19,7 @@ const SEO: React.FC<SEOProps> = ({
     title,
     description,
     canonical,
-    image = 'https://www.wbify.com/og-image.jpg', // Default OG image
+    image = 'https://vancegraphix.com.au/wp-content/uploads/2021/02/logo-vgp.png',
     type = 'website',
     publishedTime,
     modifiedTime,
@@ -28,8 +28,8 @@ const SEO: React.FC<SEOProps> = ({
     noindex = false,
     structuredData
 }) => {
-    const fullTitle = title.includes('wbify') ? title : `${title} | wbify Creative Studio`;
-    const siteUrl = 'https://www.wbify.com';
+    const fullTitle = title.includes('Vance Graphix & Print') ? title : `${title} | Vance Graphix & Print (VGP)`;
+    const siteUrl = 'https://vancegraphix.com.au';
     const fullCanonical = canonical ? `${siteUrl}${canonical}` : siteUrl;
     const fullImage = image.startsWith('http') ? image : `${siteUrl}${image}`;
 
@@ -37,17 +37,17 @@ const SEO: React.FC<SEOProps> = ({
     const defaultStructuredData = {
         '@context': 'https://schema.org',
         '@type': 'Organization',
-        name: 'wbify Creative Studio',
+        name: 'Vance Graphix & Print (VGP)',
         url: siteUrl,
-        logo: `${siteUrl}/logo.png`,
-        description: 'Professional web development, design, and digital marketing services',
+        logo: 'https://vancegraphix.com.au/wp-content/uploads/2021/02/logo-vgp.png',
+        description: 'Graphic design, web development, printing, e-commerce, and email marketing in Australia',
         sameAs: [
             // Add social media links here when available
         ],
         contactPoint: {
             '@type': 'ContactPoint',
             contactType: 'Customer Service',
-            email: 'info@wbify.com'
+            email: 'ahmed@vancegraphix.com.au'
         }
     };
 
@@ -68,7 +68,7 @@ const SEO: React.FC<SEOProps> = ({
             <meta property="og:title" content={fullTitle} />
             <meta property="og:description" content={description} />
             <meta property="og:image" content={fullImage} />
-            <meta property="og:site_name" content="wbify Creative Studio" />
+            <meta property="og:site_name" content="Vance Graphix &amp; Print (VGP)" />
 
             {/* Twitter Card */}
             <meta name="twitter:card" content="summary_large_image" />

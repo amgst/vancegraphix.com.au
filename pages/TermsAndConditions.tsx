@@ -27,7 +27,7 @@ const TermsAndConditions: React.FC = () => {
               2. Intellectual Property
             </h2>
             <p className="text-slate-600 mb-4">
-              The service and its original content, features, and functionality are and will remain the exclusive property of wbify and its licensors. Our trademarks and trade dress may not be used in connection with any product or service without the prior written consent of wbify.
+              The service and its original content, features, and functionality are and will remain the exclusive property of Vance Graphix &amp; Print (VGP) and its licensors. Our trademarks and trade dress may not be used in connection with any product or service without the prior written consent of Vance Graphix &amp; Print (VGP).
             </p>
           </div>
 
@@ -37,7 +37,7 @@ const TermsAndConditions: React.FC = () => {
               3. Limitation of Liability
             </h2>
             <p className="text-slate-600 mb-4">
-              In no event shall wbify, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your access to or use of or inability to access or use the service.
+              In no event shall Vance Graphix &amp; Print (VGP), nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your access to or use of or inability to access or use the service.
             </p>
           </div>
 
@@ -46,8 +46,8 @@ const TermsAndConditions: React.FC = () => {
             <p className="text-slate-600">
               Please send any questions or comments regarding these Terms to:
               <br />
-              <a href="mailto:wbify.com@gmail.com" className="text-blue-600 hover:text-blue-700 font-medium">
-                wbify.com@gmail.com
+              <a href="mailto:ahmed@vancegraphix.com.au" className="text-blue-600 hover:text-blue-700 font-medium">
+                ahmed@vancegraphix.com.au
               </a>
             </p>
           </div>

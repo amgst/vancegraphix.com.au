@@ -10,7 +10,7 @@ const GraphicsLanding: React.FC = () => {
         serviceType: 'Graphics Design and Branding',
         provider: {
             '@type': 'Organization',
-            name: 'wbify Creative Studio'
+            name: 'Vance Graphix & Print (VGP)'
         },
         areaServed: 'Worldwide',
         description: 'Professional graphics design and branding services including logos, brand identities, and social media graphics'

@@ -15,7 +15,7 @@ const Footer: React.FC = () => {
               {settings.logoUrl ? (
                 <img src={settings.logoUrl} alt={settings.siteName} className="h-8 w-auto object-contain" />
               ) : (
-                <>wb<span className="text-blue-600">ify</span></>
+                <>Vance<span className="text-blue-600">Graphix</span></>
               )}
             </span>
             <p className="mt-4 text-gray-500 text-sm leading-relaxed">
@@ -67,13 +67,13 @@ const Footer: React.FC = () => {
               )}
             </div>
             <div className="mt-6">
-              <p className="text-sm text-gray-500">wbify.com@gmail.com</p>
+              <p className="text-sm text-gray-500">ahmed@vancegraphix.com.au</p>
             </div>
           </div>
         </div>
 
         <div className="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-sm text-gray-400">© {new Date().getFullYear()} wbify Creative Studio. All rights reserved.</p>
+          <p className="text-sm text-gray-400">© {new Date().getFullYear()} Vance Graphix &amp; Print (VGP). All rights reserved.</p>
           <div className="flex flex-col md:flex-row items-center gap-6 mt-4 md:mt-0">
             <div className="flex space-x-6">
               <Link to="/privacy-policy" className="text-sm text-gray-400 hover:text-gray-600 cursor-pointer">Privacy Policy</Link>

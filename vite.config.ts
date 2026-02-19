@@ -18,9 +18,9 @@ export default defineConfig(({ mode }) => {
           registerType: 'autoUpdate',
           includeAssets: ['favicon.ico', 'robots.txt', 'shopify.png'],
           manifest: {
-            name: 'wbify Admin',
-            short_name: 'wbify',
-            description: 'wbify Creative Studio Admin Dashboard',
+            name: 'VGP Admin',
+            short_name: 'VGP',
+            description: 'Vance Graphix & Print (VGP) Admin Dashboard',
             theme_color: '#0f172a',
             background_color: '#ffffff',
             display: 'standalone',

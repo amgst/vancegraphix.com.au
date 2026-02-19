@@ -98,8 +98,8 @@ const Careers: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <SEO
-        title="Careers at wbify"
-        description="Join wbify and help build fast, beautiful digital experiences. Explore open roles and apply."
+        title="Careers at Vance Graphix & Print (VGP)"
+        description="Join Vance Graphix & Print (VGP) and help deliver high quality design, web and print solutions. Explore open roles and apply."
         canonical="/careers"
       />
 
@@ -113,7 +113,7 @@ const Careers: React.FC = () => {
               <span>We’re Hiring</span>
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 tracking-tight">
-              Build the future with wbify
+              Build the future with VGP
             </h1>
             <p className="text-lg md:text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed">
               Join a team focused on speed, craft, and delightful user experiences.

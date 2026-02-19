@@ -26,8 +26,8 @@ export const getSiteSettings = async (): Promise<SiteSettings> => {
     } else {
         // Return default settings if not found
         return {
-            siteName: 'wbify',
-            adminEmail: 'admin@wbify.com'
+            siteName: 'Vance Graphix & Print (VGP)',
+            adminEmail: 'ahmed@vancegraphix.com.au'
         };
     }
 };
@@ -43,8 +43,8 @@ export const updateSiteSettings = async (settings: Partial<SiteSettings>): Promi
     } else {
         // Create if doesn't exist (merging with defaults)
         await setDoc(docRef, {
-            siteName: 'wbify',
-            adminEmail: 'admin@wbify.com',
+            siteName: 'Vance Graphix & Print (VGP)',
+            adminEmail: 'ahmed@vancegraphix.com.au',
             ...settings
         });
     }
@@ -57,8 +57,8 @@ export const subscribeToSiteSettings = (callback: (settings: SiteSettings) => vo
             callback(doc.data() as SiteSettings);
         } else {
             callback({
-                siteName: 'wbify',
-                adminEmail: 'admin@wbify.com'
+                siteName: 'Vance Graphix & Print (VGP)',
+                adminEmail: 'ahmed@vancegraphix.com.au'
             });
         }
     });

@@ -4,29 +4,29 @@ import { Star, Quote } from 'lucide-react';
 const testimonials = [
     {
         id: 1,
-        name: "Sarah Jenkins",
-        role: "Founder",
-        company: "EcoStyle Boutique",
-        image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=128&q=80",
-        content: "wbify transformed our Shopify store. Sales increased by 40% in the first month after the redesign. The team was professional, fast, and understood our brand perfectly.",
+        name: "Australian Sikh Association ASA",
+        role: "Community Organisation",
+        company: "Sydney",
+        image: "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=128&q=80",
+        content: "I would like to commend Vance Graphix & Print for their exceptional competence and reliability. They produced excellent quality printing, social media service and web development.",
         rating: 5
     },
     {
         id: 2,
-        name: "Michael Chen",
-        role: "CTO",
-        company: "TechFlow Solutions",
-        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=128&q=80",
-        content: "We needed a complex custom web app for our internal operations. wbify delivered a robust, scalable solution that exceeded our expectations. Highly recommended for custom dev work.",
+        name: "Anytime Body Beyond",
+        role: "Business Owner",
+        company: "Australia",
+        image: "https://images.unsplash.com/photo-1544723795-432537cae302?auto=format&fit=crop&w=128&q=80",
+        content: "I was very happy with my print and web project, the team did this job very well. They were professional and focused to make sure everything was as per brief.",
         rating: 5
     },
     {
         id: 3,
-        name: "Emily Rodriguez",
-        role: "Marketing Director",
-        company: "Fresh Eats",
-        image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&auto=format&fit=crop&w=128&q=80",
-        content: "The branding package we received was incredible. They captured our vision perfectly and gave us a visual identity that stands out in a crowded market.",
+        name: "Aircon & Carpentry",
+        role: "Business Owner",
+        company: "Australia",
+        image: "https://images.unsplash.com/photo-1544723795-3fb0b90c07c7?auto=format&fit=crop&w=128&q=80",
+        content: "Really friendly, great team and excellent service. I highly recommend Vance Graphix & Print printing solutions and website development.",
         rating: 5
     }
 ];
@@ -36,9 +36,9 @@ const Testimonials: React.FC = () => {
         <section className="py-24 bg-slate-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-16">
-                    <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Trusted by Founders & CTOs</h2>
-                    <p className="text-xl text-gray-500 max-w-2xl mx-auto">
-                        Don't just take our word for it. Here's what our partners have to say about working with wbify.
+                    <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Trusted by Australian Businesses</h2>
+                        <p className="text-xl text-gray-500 max-w-2xl mx-auto">
+                        Don't just take our word for it. Here's what our clients say about working with Vance Graphix &amp; Print (VGP).
                     </p>
                 </div>
 

@@ -25,12 +25,12 @@ const Blog: React.FC = () => {
     const blogStructuredData = {
         '@context': 'https://schema.org',
         '@type': 'Blog',
-        name: 'wbify Creative Studio Blog',
+        name: 'Vance Graphix & Print (VGP) Blog',
         description: 'Insights, trends, and tips from the world of web design and development',
-        url: 'https://www.wbify.com/blog',
+        url: 'https://vancegraphix.com.au/blog',
         publisher: {
             '@type': 'Organization',
-            name: 'wbify Creative Studio'
+            name: 'Vance Graphix & Print (VGP)'
         }
     };
 

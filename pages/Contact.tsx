@@ -95,20 +95,21 @@ const Contact: React.FC = () => {
   const contactStructuredData = {
     '@context': 'https://schema.org',
     '@type': 'ContactPage',
-    name: 'Contact wbify Creative Studio',
-    description: 'Get in touch with wbify Creative Studio for web development, design, and digital marketing services',
+    name: 'Contact Vance Graphix & Print (VGP)',
+    description: 'Get in touch with Vance Graphix & Print (VGP) for graphic design, web development, printing, e-commerce, and email marketing services.',
     mainEntity: {
       '@type': 'Organization',
-      name: 'wbify Creative Studio',
-      email: 'wbify.com@gmail.com'
+      name: 'Vance Graphix & Print (VGP)',
+      email: 'ahmed@vancegraphix.com.au',
+      telephone: '+61 470 642 633'
     }
   };
 
   return (
     <div className="min-h-screen bg-white py-20">
       <SEO
-        title="Contact wbify | Start Your Creative Project Today"
-        description="Ready to upgrade your digital presence? Get in touch with our team for a free consultation. We're here to answer your questions and kickstart your project."
+        title="Contact Vance Graphix & Print (VGP) | Start Your Project Today"
+        description="Ready to upgrade your brand, web presence or printing? Contact Vance Graphix & Print (VGP) for a free consultation and quote."
         canonical="/contact"
         structuredData={contactStructuredData}
       />
@@ -131,7 +132,21 @@ const Contact: React.FC = () => {
                   <Mail className="text-blue-600 mt-1 mr-4" />
                   <div>
                     <p className="font-medium text-slate-900">Email Us</p>
-                    <p className="text-gray-500">wbify.com@gmail.com</p>
+                    <p className="text-gray-500">ahmed@vancegraphix.com.au</p>
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <Phone className="text-blue-600 mt-1 mr-4" />
+                  <div>
+                    <p className="font-medium text-slate-900">Call Us</p>
+                    <p className="text-gray-500">+61 470 642 633</p>
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <MapPin className="text-blue-600 mt-1 mr-4" />
+                  <div>
+                    <p className="font-medium text-slate-900">Sydney Office</p>
+                    <p className="text-gray-500">44 Flushcombe Rd, Blacktown, NSW</p>
                   </div>
                 </div>
               </div>

@@ -10,7 +10,7 @@ const WebDevLanding: React.FC = () => {
         serviceType: 'Custom Web Development',
         provider: {
             '@type': 'Organization',
-            name: 'wbify Creative Studio'
+            name: 'Vance Graphix & Print (VGP)'
         },
         areaServed: 'Worldwide',
         description: 'Custom web development services using modern technologies like React and Next.js'

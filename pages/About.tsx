@@ -10,18 +10,17 @@ const About: React.FC = () => {
     '@type': 'AboutPage',
     mainEntity: {
       '@type': 'Organization',
-      name: 'wbify Creative Studio',
-      description: 'A digital creative studio dedicated to transforming businesses through exceptional design and technology',
-      foundingDate: '2020',
-      url: 'https://www.wbify.com'
+      name: 'Vance Graphix & Print (VGP)',
+      description: 'Graphics design, printing, web development and digital marketing services for businesses across Australia.',
+      url: 'https://vancegraphix.com.au'
     }
   };
 
   return (
     <div className="min-h-screen bg-white ">
       <SEO
-        title="About wbify | Your Partners in Digital Transformation"
-        description="We are a creative studio dedicated to your success. Learn about our journey from PixelPro to wbify, our core values, and our commitment to excellence."
+        title="About Vance Graphix & Print (VGP) | Your Branding & Web Partner"
+        description="Learn about Vance Graphix & Print (VGP) and how we help Australian businesses with professional printing, graphic design, web development and digital marketing."
         canonical="/about"
         structuredData={aboutStructuredData}
       />
@@ -32,7 +31,7 @@ const About: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-3xl mx-auto">
             <h1 className="text-4xl md:text-6xl font-bold text-slate-900 mb-6 tracking-tight">
-              We Are <span className="text-blue-600">wbify Creative Studio</span>
+              We Are <span className="text-blue-600">Vance Graphix &amp; Print (VGP)</span>
             </h1>
             <p className="text-xl text-gray-500 leading-relaxed">
               A digital creative studio dedicated to transforming businesses through exceptional design, cutting-edge technology, and strategic thinking.
@@ -70,16 +69,16 @@ const About: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-3xl font-bold text-slate-900 mb-6">From PixelPro to wbify</h2>
+              <h2 className="text-3xl font-bold text-slate-900 mb-6">About Vance Graphix &amp; Print (VGP)</h2>
               <div className="space-y-4 text-gray-600 leading-relaxed">
                 <p>
-                  The world was moving online, and our clients needed more than just paper—they needed a digital presence.
+                  Vance Graphix &amp; Print (VGP) offers total graphics solutions, printing solutions, web development in Australia, and social media marketing.
                 </p>
                 <p>
-                  We evolved. We sharpened our skills in web development, mastered the Shopify ecosystem, and refined our digital branding expertise.
+                  From business cards and signage through to websites and email marketing, we help businesses present a consistent, professional brand across print and digital.
                 </p>
                 <p>
-                  Today, we are <strong>wbify</strong>. Our name reflects our mission: to "web-ify" your business. We bridge the gap between traditional business values and modern digital solutions, helping you scale, automate, and look good doing it.
+                  Our goal is simple: make your brand look good everywhere it appears and support your growth with practical, results-focused design and development.
                 </p>
               </div>
 
@@ -110,10 +109,10 @@ const About: React.FC = () => {
                   "We believe that every business, no matter how small, deserves a world-class digital presence. Technology shouldn't be a barrier; it should be a bridge to your customers."
                 </p>
                 <div className="flex items-center">
-                  <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center font-bold text-xl">W</div>
+                  <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center font-bold text-xl">V</div>
                   <div className="ml-4">
-                    <div className="font-bold">The wbify Team</div>
-                    <div className="text-sm text-blue-400">Creative Studio</div>
+                    <div className="font-bold">The VGP Team</div>
+                    <div className="text-sm text-blue-400">Vance Graphix &amp; Print</div>
                   </div>
                 </div>
               </div>

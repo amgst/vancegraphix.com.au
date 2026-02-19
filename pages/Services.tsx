@@ -58,7 +58,7 @@ const Services: React.FC = () => {
     serviceType: 'Web Development and Design Services',
     provider: {
       '@type': 'Organization',
-      name: 'wbify Creative Studio'
+      name: 'Vance Graphix & Print (VGP)'
     },
     areaServed: 'Worldwide',
     description: 'Professional web development, design, and digital marketing services'

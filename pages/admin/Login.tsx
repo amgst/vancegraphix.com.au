@@ -12,10 +12,10 @@ const AdminLogin: React.FC = () => {
         e.preventDefault();
 
         // Mock authentication
-        if (email === 'admin@wbify.com' && password === 'admin123') {
+        if (email === 'ahmed@vancegraphix.com.au' && password === 'admin123') {
             navigate('/admin/dashboard');
         } else {
-            setError('Invalid credentials. Try admin@wbify.com / admin123');
+            setError('Invalid credentials. Try ahmed@vancegraphix.com.au / admin123');
         }
     };
 
@@ -38,7 +38,7 @@ const AdminLogin: React.FC = () => {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all"
-                                    placeholder="admin@wbify.com"
+                                    placeholder="ahmed@vancegraphix.com.au"
                                     required
                                 />
                             </div>

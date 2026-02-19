@@ -7,7 +7,7 @@ const NotFound: React.FC = () => {
     return (
         <div className="min-h-[70vh] flex items-center justify-center bg-slate-50 px-4 sm:px-6 lg:px-8">
             <Helmet>
-                <title>404 - Page Not Found | wbify</title>
+                <title>404 - Page Not Found | Vance Graphix &amp; Print (VGP)</title>
                 <meta name="robots" content="noindex, nofollow" />
             </Helmet>
 

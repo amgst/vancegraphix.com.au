@@ -40,7 +40,7 @@ const Navbar: React.FC = () => {
               {settings.logoUrl ? (
                 <img src={settings.logoUrl} alt={settings.siteName} className="h-8 w-auto object-contain" />
               ) : (
-                <>wb<span className="text-blue-600">ify</span></>
+                <>Vance<span className="text-blue-600">Graphix</span></>
               )}
             </Link>
           </div>
