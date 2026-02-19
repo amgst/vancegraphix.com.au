@@ -27,7 +27,14 @@ const Navbar: React.FC = () => {
       ]
     },
     { name: 'Blog', path: '/blog', dropdown: false },
-    { name: 'Portfolio', path: '/portfolio', dropdown: false },
+    {
+      name: 'Portfolio',
+      path: '/portfolio',
+      dropdown: [
+        { name: 'Web Portfolio', path: '/portfolio' },
+        { name: 'Print Portfolio', path: '/print-portfolio' }
+      ]
+    },
     { name: 'Store', path: '/store', dropdown: false },
     { name: 'Fast Track', path: '/websites-for-sale', dropdown: false },
     { name: 'About', path: '/about', dropdown: false },

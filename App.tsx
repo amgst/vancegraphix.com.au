@@ -19,6 +19,7 @@ import WordPressLanding from './pages/WordPressLanding';
 import ProjectInquiry from './pages/ProjectInquiry';
 import Pricing from './pages/Pricing';
 import Portfolio from './pages/Portfolio';
+import PrintPortfolio from './pages/PrintPortfolio';
 import WebsitesForSale from './pages/WebsitesForSale';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
@@ -30,6 +31,7 @@ import AdminLogin from './pages/admin/Login';
 import AdminDashboard from './pages/admin/Dashboard';
 import AdminTools from './pages/admin/Tools';
 import AdminPortfolio from './pages/admin/Portfolio';
+import AdminPrintPortfolio from './pages/admin/PrintPortfolio';
 import AdminServices from './pages/admin/Services';
 import AdminBlog from './pages/admin/Blog';
 import AdminReadySites from './pages/admin/ReadySites';
@@ -77,6 +79,7 @@ const AppContent: React.FC = () => {
             <Route path="/inquiry" element={<ProjectInquiry />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/portfolio" element={<Portfolio />} />
+            <Route path="/print-portfolio" element={<PrintPortfolio />} />
             <Route path="/websites-for-sale" element={<WebsitesForSale />} />
             <Route path="/store" element={<Store />} />
             <Route path="/store/:id" element={<ProductDetail />} />
@@ -98,6 +101,7 @@ const AppContent: React.FC = () => {
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="tools" element={<AdminTools />} />
               <Route path="portfolio" element={<AdminPortfolio />} />
+              <Route path="print-portfolio" element={<AdminPrintPortfolio />} />
               <Route path="services" element={<AdminServices />} />
               <Route path="blog" element={<AdminBlog />} />
               <Route path="ready-sites" element={<AdminReadySites />} />
