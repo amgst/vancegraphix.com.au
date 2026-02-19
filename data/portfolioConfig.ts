@@ -9,7 +9,8 @@
 export const PORTFOLIO_CONFIG = {
   // 1. Google Cloud API Key
   // Must have "Google Drive API" enabled.
-  apiKey: "AIzaSyAR2OJEg72JYnrk488De536TS_5wyFTYMA",
+  // IMPORTANT: Do not commit real API keys to version control.
+  apiKey: "",
 
   // 2. Google Drive Folder IDs
   // Paste the ID of the folder for each category.
