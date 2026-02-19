@@ -50,11 +50,9 @@ const Portfolio: React.FC = () => {
       try {
         const fetchedItems = await getPortfolios();
 
-        // Sort by order if available
         const sortedItems = [...fetchedItems].sort((a, b) => (a.order || 0) - (b.order || 0));
 
-        // Filter based on active tab or specific params
-        let filteredItems = sortedItems;
+        let filteredItems = sortedItems.filter(item => item.isPublic !== false);
 
         if (activeTab !== 'All') {
           filteredItems = filteredItems.filter(item => item.category === activeTab);

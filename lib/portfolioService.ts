@@ -17,6 +17,7 @@ export interface PortfolioItem {
     bestPracticesScore?: number;
     lastChecked?: string;
     isConcept?: boolean;
+    isPublic?: boolean;
 }
 
 const PORTFOLIO_COLLECTION = 'portfolios';

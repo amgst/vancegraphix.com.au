@@ -19,6 +19,8 @@ const Navbar: React.FC = () => {
         { name: 'WordPress Development', path: '/wordpress' },
         { name: 'Graphics & Branding', path: '/graphics' },
         { name: 'Printing Solutions', path: '/printing' },
+        { name: 'Video & Animation', path: '/video-animation' },
+        { name: 'AI Services', path: '/ai-services' },
         { name: 'Design Process', path: '/design-process' },
         { name: 'Tools & Resources', path: '/tools' },
         { name: 'All Services', path: '/services' }
@@ -26,6 +28,7 @@ const Navbar: React.FC = () => {
     },
     { name: 'Blog', path: '/blog', dropdown: false },
     { name: 'Portfolio', path: '/portfolio', dropdown: false },
+    { name: 'Store', path: '/store', dropdown: false },
     { name: 'Fast Track', path: '/websites-for-sale', dropdown: false },
     { name: 'About', path: '/about', dropdown: false },
     { name: 'Contact', path: '/contact', dropdown: false },

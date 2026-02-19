@@ -213,6 +213,7 @@ const AdminPortfolio: React.FC = () => {
             technologies: [],
             isFeatured: false,
             isConcept: false,
+            isPublic: true,
             order: 0
         });
         setIsEditing(true);
@@ -452,7 +453,7 @@ const AdminPortfolio: React.FC = () => {
                                     ))}
                                 </div>
                             </div>
-                            <div className="flex items-center gap-6">
+                            <div className="flex flex-wrap items-center gap-6">
                                 <label className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="checkbox"
@@ -461,6 +462,15 @@ const AdminPortfolio: React.FC = () => {
                                         className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
                                     />
                                     <span className="text-sm font-medium text-gray-700">Featured Project</span>
+                                </label>
+                                <label className="flex items-center gap-2 cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        checked={currentItem.isPublic !== false}
+                                        onChange={e => setCurrentItem({ ...currentItem, isPublic: e.target.checked })}
+                                        className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                                    />
+                                    <span className="text-sm font-medium text-gray-700">Public on website</span>
                                 </label>
                                 <label className="flex items-center gap-2 cursor-pointer">
                                     <input
@@ -555,6 +565,11 @@ const AdminPortfolio: React.FC = () => {
                                             Concept
                                         </span>
                                     )}
+                                    {item.isPublic === false && (
+                                        <span className="px-2 py-0.5 bg-yellow-500/80 text-black text-[10px] font-bold rounded backdrop-blur-sm uppercase">
+                                            Hidden
+                                        </span>
+                                    )}
                                 </div>
                             </div>
                             <div className="p-4 flex-1 flex flex-col">
@@ -638,6 +653,7 @@ const AdminPortfolio: React.FC = () => {
                                 <th className="px-6 py-4 font-semibold text-gray-700">Title</th>
                                 <th className="px-6 py-4 font-semibold text-gray-700">Category</th>
                                 <th className="px-6 py-4 font-semibold text-gray-700">Performance</th>
+                                <th className="px-6 py-4 font-semibold text-gray-700">Visibility</th>
                                 <th className="px-6 py-4 font-semibold text-gray-700 text-right">Actions</th>
                             </tr>
                         </thead>
@@ -680,6 +696,19 @@ const AdminPortfolio: React.FC = () => {
                                             >
                                                 {isCheckingPerformance === item.id ? 'Auditing...' : 'Run Audit'}
                                             </button>
+                                        )}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {item.isPublic === false ? (
+                                            <span className="px-2 py-1 bg-yellow-50 text-yellow-700 text-xs font-medium rounded-full flex items-center gap-1">
+                                                <CheckCircle size={10} className="text-yellow-500" />
+                                                Hidden
+                                            </span>
+                                        ) : (
+                                            <span className="px-2 py-1 bg-green-50 text-green-700 text-xs font-medium rounded-full flex items-center gap-1">
+                                                <CheckCircle size={10} className="text-green-500" />
+                                                Public
+                                            </span>
                                         )}
                                     </td>
                                     <td className="px-6 py-4 text-right">

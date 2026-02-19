@@ -13,6 +13,8 @@ import Printing from './pages/Printing';
 import ShopifyLanding from './pages/ShopifyLanding';
 import WebDevLanding from './pages/WebDevLanding';
 import GraphicsLanding from './pages/GraphicsLanding';
+import VideoAnimation from './pages/VideoAnimation';
+import AiServices from './pages/AiServices';
 import WordPressLanding from './pages/WordPressLanding';
 import ProjectInquiry from './pages/ProjectInquiry';
 import Pricing from './pages/Pricing';
@@ -22,6 +24,8 @@ import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import Tools from './pages/Tools';
 import Careers from './pages/Careers';
+import Store from './pages/Store';
+import ProductDetail from './pages/ProductDetail';
 import AdminLogin from './pages/admin/Login';
 import AdminDashboard from './pages/admin/Dashboard';
 import AdminTools from './pages/admin/Tools';
@@ -29,6 +33,8 @@ import AdminPortfolio from './pages/admin/Portfolio';
 import AdminServices from './pages/admin/Services';
 import AdminBlog from './pages/admin/Blog';
 import AdminReadySites from './pages/admin/ReadySites';
+import AdminStore from './pages/admin/Store';
+import AdminOrders from './pages/admin/Orders';
 import AdminSettings from './pages/admin/Settings';
 import AdminMessages from './pages/admin/Messages';
 import PrivacyPolicy from './pages/PrivacyPolicy';
@@ -65,11 +71,15 @@ const AppContent: React.FC = () => {
             <Route path="/shopify" element={<ShopifyLanding />} />
             <Route path="/web-dev" element={<WebDevLanding />} />
             <Route path="/graphics" element={<GraphicsLanding />} />
+            <Route path="/video-animation" element={<VideoAnimation />} />
+            <Route path="/ai-services" element={<AiServices />} />
             <Route path="/wordpress" element={<WordPressLanding />} />
             <Route path="/inquiry" element={<ProjectInquiry />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/portfolio" element={<Portfolio />} />
             <Route path="/websites-for-sale" element={<WebsitesForSale />} />
+            <Route path="/store" element={<Store />} />
+            <Route path="/store/:id" element={<ProductDetail />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/tools" element={<Tools />} />
@@ -91,6 +101,8 @@ const AppContent: React.FC = () => {
               <Route path="services" element={<AdminServices />} />
               <Route path="blog" element={<AdminBlog />} />
               <Route path="ready-sites" element={<AdminReadySites />} />
+              <Route path="store" element={<AdminStore />} />
+              <Route path="orders" element={<AdminOrders />} />
               <Route path="messages" element={<AdminMessages />} />
               <Route path="settings" element={<AdminSettings />} />
             </Route>
