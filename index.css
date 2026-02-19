@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+@theme {
+  --animate-fade-in: fade-in 0.3s ease-in-out;
+  --animate-fade-in-up: fade-in-up 0.5s ease-out;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Enhanced Blog Post Styling */
+.prose code {
+  background-color: rgb(239 246 255);
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.prose pre {
+  background-color: rgb(15 23 42);
+  color: rgb(241 245 249);
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  overflow-x: auto;
+  margin: 2rem 0;
+}
+
+.prose pre code {
+  background-color: transparent;
+  color: inherit;
+  padding: 0;
+  font-size: 0.875rem;
+}
+
+.prose blockquote {
+  border-left: 4px solid rgb(59 130 246);
+  background-color: rgb(239 246 255);
+  padding: 1rem 1.5rem;
+  margin: 2rem 0;
+  border-radius: 0 0.5rem 0.5rem 0;
+  font-style: italic;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2rem 0;
+}
+
+.prose th {
+  background-color: rgb(249 250 251);
+  border: 1px solid rgb(209 213 219);
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 600;
+}
+
+.prose td {
+  border: 1px solid rgb(209 213 219);
+  padding: 0.75rem 1rem;
+}
+
+.prose img {
+  border-radius: 1rem;
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+  margin: 2rem 0;
+}

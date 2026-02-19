@@ -1,0 +1,34 @@
+[
+    {
+        "id": "1",
+        "title": "The Future of Web Design: Trends to Watch in 2025",
+        "slug": "future-web-design-trends-2025",
+        "excerpt": "Explore the cutting-edge trends shaping the digital landscape, from AI-driven layouts to immersive 3D experiences.",
+        "content": "## The Future is Now\n\nAs we move further into 2025, web design is evolving at a breakneck pace. The integration of Artificial Intelligence is no longer a novelty but a necessity. Designers are leveraging AI to create hyper-personalized user experiences that adapt in real-time. But beyond AI, several other trends are reshaping how we interact with the digital world.\n\n### Immersive 3D Experiences\n\nGone are the days of flat, static pages. The new standard is immersive, interactive 3D elements that engage users from the moment they land on the site. WebGL and Three.js are becoming staple tools in a designer's arsenal. We're seeing full-screen 3D environments that respond to scroll and mouse movements, creating a sense of depth and exploration previously reserved for video games.\n\n### Sustainable Web Design\n\nWith a growing focus on environmental impact, sustainable web design is gaining traction. This involves optimizing code and assets to reduce energy consumption without sacrificing performance or aesthetics. Techniques include using darker colors to save battery on OLED screens, lazy loading assets, and choosing green hosting providers. It's about designing for the planet as much as for the user.\n\n### Micro-interactions with Macro Impact\n\nMicro-interactions are the subtle animations that occur when a user interacts with an element—like a button changing color on hover or a 'like' icon pulsating. In 2025, these are becoming more sophisticated and meaningful. They provide immediate feedback, guide the user through the interface, and add a layer of delight that makes the product feel alive.\n\n### The Return of Maximalism\n\nAfter years of minimalism, we're seeing a swing back towards maximalism. Bold typography, vibrant color clashes, and organized chaos are making a comeback. This trend is about breaking the grid and expressing brand personality in a loud, confident way. It's a reaction against the 'blanding' of the web, where every SaaS site started to look the same.\n\n### Dark Mode as Default\n\nDark mode is no longer an optional toggle; for many sites, it's becoming the default aesthetic. It reduces eye strain, saves battery life, and often looks sleeker and more modern. Designers are now creating color palettes specifically for dark interfaces, ensuring contrast and readability remain high.",
+        "date": "2025-11-28",
+        "author": "PixelPro AI",
+        "tags": [
+            "Web Design",
+            "Trends",
+            "AI"
+        ],
+        "image": "/images/blog/future-web-design.png",
+        "imageAlt": "Futuristic web design concept with neon lines and 3D elements"
+    },
+    {
+        "id": "2",
+        "title": "Mastering React 19: What You Need to Know",
+        "slug": "mastering-react-19",
+        "excerpt": "A deep dive into the new features of React 19 and how they can streamline your development workflow.",
+        "content": "## React 19 Has Arrived\n\nReact 19 brings a host of new features designed to make development smoother and more efficient. The introduction of the new compiler is a game-changer, automatically optimizing your code for better performance. But that's just the tip of the iceberg. Let's dive deep into what makes this release so special.\n\n### The React Compiler\n\nFor years, developers have manually optimized their React apps using `useMemo`, `useCallback`, and `memo`. React 19 introduces an automatic compiler that handles these optimizations for you. It understands your code at a deep level and memoizes values and components automatically, ensuring that your app is always performant by default. This means less boilerplate and more focus on business logic.\n\n### Server Components by Default\n\nOne of the biggest shifts is the move towards Server Components as the default. This allows for faster initial page loads and better SEO out of the box. By rendering components on the server, we reduce the amount of JavaScript sent to the client, leading to faster TTI (Time to Interactive). It also simplifies data fetching, allowing you to access your database directly from your components.\n\n```jsx\n// Server Component Example\nasync function ProductPage({ id }) {\n  const product = await db.product.findUnique({ where: { id } });\n  return <div>{product.name}</div>;\n}\n```\n\n### Actions: Simplified Data Mutation\n\nReact 19 introduces 'Actions', a new way to handle data mutations. Instead of manually managing loading states, errors, and optimistic updates, Actions provide a first-class API for these common patterns. They integrate seamlessly with `<form>` elements and can be triggered programmatically.\n\n### Enhanced Hooks\n\nNew hooks provide more granular control over state and side effects. `useOptimistic` allows you to show the result of an action before it completes, making your app feel instant. `useFormStatus` gives you access to the pending state of a form without passing props down. These additions significantly reduce the boilerplate code needed for complex applications.",
+        "date": "2025-11-29",
+        "author": "PixelPro AI",
+        "tags": [
+            "React",
+            "Development",
+            "JavaScript"
+        ],
+        "image": "/images/blog/react-19.png",
+        "imageAlt": "React 19 concept illustration with atom logo"
+    }
+]
