@@ -68,8 +68,9 @@ const ServiceDetail: React.FC = () => {
         const result = await res.json();
 
         if (result.files) {
-          // Use lh3.googleusercontent.com/d/ for more reliable image hosting than /thumbnail
-          const images = result.files.map((f: any) => `https://lh3.googleusercontent.com/d/${f.id}`);
+          const images = result.files.map(
+            (f: any) => `https://drive.google.com/uc?export=view&id=${f.id}`
+          );
           setGalleryImages(images);
         }
       } catch (e) {
