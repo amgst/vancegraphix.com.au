@@ -6,7 +6,8 @@ import {
     updateDoc,
     query,
     orderBy,
-    serverTimestamp
+    serverTimestamp,
+    deleteDoc
 } from 'firebase/firestore';
 import { db } from './firebase';
 
@@ -57,3 +58,8 @@ export const updateInquiryStatus = async (id: string, status: InquiryData['statu
     const docRef = doc(db, INQUIRIES_COLLECTION, id);
     await updateDoc(docRef, { status });
 };
+
+export const deleteInquiry = async (id: string): Promise<void> => {
+    const docRef = doc(db, INQUIRIES_COLLECTION, id);
+    await deleteDoc(docRef);
+}

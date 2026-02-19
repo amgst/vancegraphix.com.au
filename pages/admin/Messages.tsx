@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
-import { getInquiries, updateInquiryStatus, InquiryData } from '../../lib/inquiryService';
-import { getContactMessages, updateContactMessageStatus, ContactMessageData } from '../../lib/contactService';
-import { Mail, Phone, Calendar, CheckCircle, XCircle, Clock, ExternalLink, ChevronDown, ChevronUp, MessageSquare, Briefcase } from 'lucide-react';
+import { getInquiries, updateInquiryStatus, deleteInquiry, InquiryData } from '../../lib/inquiryService';
+import { getContactMessages, updateContactMessageStatus, deleteContactMessage, ContactMessageData } from '../../lib/contactService';
+import { Mail, Phone, Calendar, CheckCircle, XCircle, Clock, ExternalLink, ChevronDown, ChevronUp, MessageSquare, Briefcase, Trash2 } from 'lucide-react';
 
 const AdminMessages: React.FC = () => {
     const [activeTab, setActiveTab] = useState<'inquiries' | 'contact'>('inquiries');
@@ -28,6 +28,34 @@ const AdminMessages: React.FC = () => {
             console.error('Error fetching data:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleInquiryDelete = async (id: string) => {
+        if (!window.confirm('Are you sure you want to delete this inquiry?')) return;
+        try {
+            await deleteInquiry(id);
+            setInquiries(prev => prev.filter(inq => inq.id !== id));
+            if (expandedId === id) {
+                setExpandedId(null);
+            }
+        } catch (error) {
+            console.error('Error deleting inquiry:', error);
+            alert('Failed to delete inquiry');
+        }
+    };
+
+    const handleContactDelete = async (id: string) => {
+        if (!window.confirm('Are you sure you want to delete this message?')) return;
+        try {
+            await deleteContactMessage(id);
+            setContactMessages(prev => prev.filter(msg => msg.id !== id));
+            if (expandedId === id) {
+                setExpandedId(null);
+            }
+        } catch (error) {
+            console.error('Error deleting message:', error);
+            alert('Failed to delete message');
         }
     };
 
@@ -212,10 +240,19 @@ const AdminMessages: React.FC = () => {
                                                             </button>
                                                         </div>
                                                         
-                                                        <div className="mt-6 pt-6 border-t border-slate-100">
+                                                        <div className="mt-6 pt-6 border-t border-slate-100 flex flex-col gap-3">
                                                             <a href={`mailto:${inquiry.email}`} className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium">
                                                                 <Mail size={16} /> Reply via Email
                                                             </a>
+                                                            {inquiry.id && (
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={(e) => { e.stopPropagation(); handleInquiryDelete(inquiry.id!); }}
+                                                                    className="inline-flex items-center gap-2 text-xs text-red-600 hover:text-red-700 font-medium"
+                                                                >
+                                                                    <Trash2 size={14} /> Delete inquiry
+                                                                </button>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -305,10 +342,19 @@ const AdminMessages: React.FC = () => {
                                                             </button>
                                                         </div>
                                                         
-                                                        <div className="mt-6 pt-6 border-t border-slate-100">
+                                                        <div className="mt-6 pt-6 border-t border-slate-100 flex flex-col gap-3">
                                                             <a href={`mailto:${msg.email}`} className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium">
                                                                 <Mail size={16} /> Reply via Email
                                                             </a>
+                                                            {msg.id && (
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={(e) => { e.stopPropagation(); handleContactDelete(msg.id!); }}
+                                                                    className="inline-flex items-center gap-2 text-xs text-red-600 hover:text-red-700 font-medium"
+                                                                >
+                                                                    <Trash2 size={14} /> Delete message
+                                                                </button>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 </div>

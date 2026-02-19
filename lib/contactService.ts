@@ -6,7 +6,8 @@ import {
     orderBy,
     serverTimestamp,
     doc,
-    updateDoc
+    updateDoc,
+    deleteDoc
 } from 'firebase/firestore';
 import { db } from './firebase';
 
@@ -47,3 +48,8 @@ export const updateContactMessageStatus = async (id: string, status: ContactMess
     const docRef = doc(db, CONTACT_MESSAGES_COLLECTION, id);
     await updateDoc(docRef, { status });
 };
+
+export const deleteContactMessage = async (id: string): Promise<void> => {
+    const docRef = doc(db, CONTACT_MESSAGES_COLLECTION, id);
+    await deleteDoc(docRef);
+}
