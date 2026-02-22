@@ -56,8 +56,7 @@ const ServiceDetail: React.FC = () => {
       setLoadingImages(true);
       try {
         const query = `'${service.galleryFolderId}' in parents and trashed = false and mimeType contains 'image/'`;
-        // Limit to 6 images for the preview
-        const url = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(query)}&fields=files(id)&key=${PORTFOLIO_CONFIG.apiKey}&pageSize=6`;
+        const url = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(query)}&fields=files(id,mimeType)&key=${PORTFOLIO_CONFIG.apiKey}&pageSize=6`;
 
         const res = await fetch(url);
 
@@ -69,7 +68,8 @@ const ServiceDetail: React.FC = () => {
 
         if (result.files) {
           const images = result.files.map(
-            (f: any) => `https://drive.google.com/uc?export=view&id=${f.id}`
+            (f: any) =>
+              `https://www.googleapis.com/drive/v3/files/${f.id}?alt=media&key=${PORTFOLIO_CONFIG.apiKey}`
           );
           setGalleryImages(images);
         }

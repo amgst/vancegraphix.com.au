@@ -100,7 +100,7 @@ const PrintPortfolio: React.FC = () => {
 
             try {
                 const query = `'${category.folderId}' in parents and trashed = false and mimeType contains 'image/'`;
-                const url = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(query)}&fields=files(id,name)&key=${PORTFOLIO_CONFIG.apiKey}&pageSize=80`;
+                const url = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(query)}&fields=files(id,name,mimeType)&key=${PORTFOLIO_CONFIG.apiKey}&pageSize=80`;
                 console.log('PrintPortfolio: requesting Google Drive API', url);
 
                 const res = await fetch(url);
@@ -113,7 +113,8 @@ const PrintPortfolio: React.FC = () => {
                 console.log('PrintPortfolio: API result', result);
                 if (result.files) {
                     const images = result.files.map(
-                        (f: any) => `https://drive.google.com/uc?export=view&id=${f.id}`
+                        (f: any) =>
+                            `https://www.googleapis.com/drive/v3/files/${f.id}?alt=media&key=${PORTFOLIO_CONFIG.apiKey}`
                     );
                     console.log('PrintPortfolio: mapped image URLs', images);
                     setImagesByCategory(prev => ({ ...prev, [activeCategoryId]: images }));
