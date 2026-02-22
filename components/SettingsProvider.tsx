@@ -25,20 +25,23 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     useEffect(() => {
         const unsubscribe = subscribeToSiteSettings((newSettings) => {
-            setSettings(newSettings);
-            setLoading(false);
-            
-            // Update favicon dynamically
-            if (newSettings.faviconUrl) {
-                const link = document.querySelector("link[rel*='icon']") as HTMLLinkElement || document.createElement('link');
-                link.type = 'image/x-icon';
-                link.rel = 'shortcut icon';
-                link.href = newSettings.faviconUrl;
-                document.getElementsByTagName('head')[0].appendChild(link);
-            }
+            const mergedSettings: SiteSettings = {
+                ...defaultSettings,
+                ...newSettings
+            };
 
-            // Update document title if site name changes (optional, but good UX)
-            // document.title = newSettings.siteName; // Might conflict with page-specific titles
+            setSettings(mergedSettings);
+            setLoading(false);
+
+            if (mergedSettings.faviconUrl) {
+                const existing =
+                    (document.querySelector("link[rel*='icon']") as HTMLLinkElement) ||
+                    document.createElement('link');
+                existing.type = 'image/x-icon';
+                existing.rel = 'shortcut icon';
+                existing.href = mergedSettings.faviconUrl;
+                document.getElementsByTagName('head')[0].appendChild(existing);
+            }
         });
 
         return () => unsubscribe();
