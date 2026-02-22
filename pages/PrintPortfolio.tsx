@@ -302,8 +302,6 @@ const PrintPortfolio: React.FC = () => {
                                                 src={coverImage}
                                                 alt={`${activeCategory.title} cover`}
                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                                loading="lazy"
-                                                decoding="async"
                                             />
                                             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors" />
                                         </button>
@@ -379,8 +377,6 @@ const PrintPortfolio: React.FC = () => {
                                                         src={src}
                                                         alt={`${activeCategory.title} sample ${indexOfFirst + index + 1}`}
                                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                                        loading="lazy"
-                                                        decoding="async"
                                                     />
                                                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors" />
                                                 </button>
