@@ -23,7 +23,7 @@ const About: React.FC = () => {
       <SEO
         title="About Vance Graphix & Print (VGP) | Your Branding & Web Partner"
         description="Learn about Vance Graphix & Print (VGP) and how we help Australian businesses with professional printing, graphic design, web development and digital marketing."
-        canonical="/about"
+        canonical="/about-us"
         structuredData={aboutStructuredData}
       />
 

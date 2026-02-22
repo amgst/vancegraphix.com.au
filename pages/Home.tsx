@@ -157,7 +157,7 @@ const Home: React.FC = () => {
                     Browse All Services <ArrowRight size={18} />
                   </button>
                 </Link>
-                <Link to="/contact">
+                <Link to="/contact-us">
                   <button className="w-full sm:w-auto px-8 py-4 bg-white text-slate-900 border border-gray-200 rounded-full font-medium hover:border-slate-300 hover:bg-gray-50 transition-all">
                     Get a Quote
                   </button>

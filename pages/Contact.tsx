@@ -110,7 +110,7 @@ const Contact: React.FC = () => {
       <SEO
         title="Contact Vance Graphix & Print (VGP) | Start Your Project Today"
         description="Ready to upgrade your brand, web presence or printing? Contact Vance Graphix & Print (VGP) for a free consultation and quote."
-        canonical="/contact"
+        canonical="/contact-us"
         structuredData={contactStructuredData}
       />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

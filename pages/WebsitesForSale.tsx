@@ -226,7 +226,7 @@ const WebsitesForSale: React.FC = () => {
                     </div>
 
                     <div className="mt-16 text-center">
-                        <Link to="/contact">
+                        <Link to="/contact-us">
                             <button className="px-8 py-4 bg-slate-900 text-white rounded-full font-bold hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1">
                                 Start Your Project Now
                             </button>
@@ -306,7 +306,7 @@ const WebsitesForSale: React.FC = () => {
                     ) : templates.length === 0 ? (
                         <div className="text-center py-20">
                             <p className="text-gray-500 text-lg mb-4">No templates available at the moment.</p>
-                            <Link to="/contact">
+                            <Link to="/contact-us">
                                 <button className="px-6 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors">
                                     Contact Us
                                 </button>
@@ -359,7 +359,7 @@ const WebsitesForSale: React.FC = () => {
                                         </div>
 
                                         <div className="flex items-center gap-4">
-                                            <Link to="/contact" className="flex-1">
+                                            <Link to="/contact-us" className="flex-1">
                                                 <button className="w-full py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-colors flex items-center justify-center gap-2">
                                                     Request Launch <ShoppingCart size={18} />
                                                 </button>
@@ -427,7 +427,7 @@ const WebsitesForSale: React.FC = () => {
                     <p className="text-xl text-gray-300 mb-10">
                         We also offer fully custom web design and development services tailored to your specific requirements.
                     </p>
-                    <Link to="/contact">
+                    <Link to="/contact-us">
                         <button className="px-10 py-5 bg-white text-slate-900 rounded-full font-bold text-lg hover:bg-gray-100 transition-all">
                             Get a Custom Quote
                         </button>

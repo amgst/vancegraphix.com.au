@@ -140,7 +140,7 @@ const ShopifyLanding: React.FC = () => {
                                     </li>
                                 ))}
                             </ul>
-                            <Link to="/contact">
+                            <Link to="/contact-us">
                                 <button className="w-full py-3 border-2 border-slate-900 text-slate-900 rounded-xl font-bold hover:bg-slate-900 hover:text-white transition-all">
                                     Choose Basic
                                 </button>
@@ -210,7 +210,7 @@ const ShopifyLanding: React.FC = () => {
                 <div className="max-w-4xl mx-auto px-4 text-center">
                     <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-6">Ready to dominate your niche?</h2>
                     <p className="text-xl text-gray-500 mb-10">Let's build a store that not only looks amazing but converts visitors into loyal customers.</p>
-                    <Link to="/contact">
+                    <Link to="/contact-us">
                         <button className="px-10 py-5 bg-slate-900 text-white rounded-full font-bold text-lg hover:bg-slate-800 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1">
                             Get Your Free Consultation
                         </button>
