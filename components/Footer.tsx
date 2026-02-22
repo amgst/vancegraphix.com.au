@@ -84,33 +84,33 @@ const Footer: React.FC = () => {
             <h3 className="text-lg font-semibold text-yellow-400 mb-4">Web Services</h3>
             <ul className="space-y-2 text-sm">
               <li>
+                <Link to="/shopify" className="flex items-center gap-2 text-gray-200 hover:text-white">
+                  <ChevronRight size={14} /> Shopify Solutions
+                </Link>
+              </li>
+              <li>
                 <Link to="/web-dev" className="flex items-center gap-2 text-gray-200 hover:text-white">
-                  <ChevronRight size={14} /> Web Development
+                  <ChevronRight size={14} /> Custom Web Development
                 </Link>
               </li>
               <li>
-                <Link to="/services" className="flex items-center gap-2 text-gray-200 hover:text-white">
-                  <ChevronRight size={14} /> Website Maintenance
+                <Link to="/wordpress" className="flex items-center gap-2 text-gray-200 hover:text-white">
+                  <ChevronRight size={14} /> WordPress Development
                 </Link>
               </li>
               <li>
-                <Link to="/services" className="flex items-center gap-2 text-gray-200 hover:text-white">
-                  <ChevronRight size={14} /> Social Media Marketing
+                <Link to="/graphics" className="flex items-center gap-2 text-gray-200 hover:text-white">
+                  <ChevronRight size={14} /> Graphics &amp; Branding
                 </Link>
               </li>
               <li>
-                <Link to="/services" className="flex items-center gap-2 text-gray-200 hover:text-white">
-                  <ChevronRight size={14} /> Email Marketing
+                <Link to="/printing" className="flex items-center gap-2 text-gray-200 hover:text-white">
+                  <ChevronRight size={14} /> Printing Solutions
                 </Link>
               </li>
               <li>
-                <Link to="/services" className="flex items-center gap-2 text-gray-200 hover:text-white">
-                  <ChevronRight size={14} /> Web Hosting
-                </Link>
-              </li>
-              <li>
-                <Link to="/services" className="flex items-center gap-2 text-gray-200 hover:text-white">
-                  <ChevronRight size={14} /> Domain Name
+                <Link to="/ai-services" className="flex items-center gap-2 text-gray-200 hover:text-white">
+                  <ChevronRight size={14} /> AI Services
                 </Link>
               </li>
             </ul>
@@ -142,14 +142,35 @@ const Footer: React.FC = () => {
             </ul>
             <h3 className="text-lg font-semibold text-yellow-400 mb-3">Our Partner</h3>
             <ul className="space-y-2 text-sm">
-              <li className="flex items-center gap-2 text-gray-200">
-                <ChevronRight size={14} /> VGP Paper Cups
+              <li>
+                <a
+                  href="https://vgppapercups.com.au/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-gray-200 hover:text-white"
+                >
+                  <ChevronRight size={14} /> VGP Paper Cups
+                </a>
               </li>
-              <li className="flex items-center gap-2 text-gray-200">
-                <ChevronRight size={14} /> VGP Host
+              <li>
+                <a
+                  href="https://www.vgphost.com.au/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-gray-200 hover:text-white"
+                >
+                  <ChevronRight size={14} /> VGP Host
+                </a>
               </li>
-              <li className="flex items-center gap-2 text-gray-200">
-                <ChevronRight size={14} /> Vgpstore
+              <li>
+                <a
+                  href="https://vgpstore.com.au/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-gray-200 hover:text-white"
+                >
+                  <ChevronRight size={14} /> Vgpstore
+                </a>
               </li>
             </ul>
           </div>
