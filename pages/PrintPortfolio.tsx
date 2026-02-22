@@ -114,7 +114,7 @@ const PrintPortfolio: React.FC = () => {
                 if (result.files) {
                     const images = result.files.map(
                         (f: any) =>
-                            `https://www.googleapis.com/drive/v3/files/${f.id}?alt=media&key=${PORTFOLIO_CONFIG.apiKey}`
+                            `https://drive.google.com/thumbnail?id=${f.id}&sz=w2000`
                     );
                     console.log('PrintPortfolio: mapped image URLs', images);
                     setImagesByCategory(prev => ({ ...prev, [activeCategoryId]: images }));
