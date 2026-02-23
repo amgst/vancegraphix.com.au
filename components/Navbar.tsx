@@ -50,7 +50,7 @@ const Navbar: React.FC = () => {
           <div className="flex-shrink-0 flex items-center">
             <Link to="/" className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
               {settings.logoUrl ? (
-                <img src={settings.logoUrl} alt={settings.siteName} className="h-8 w-auto object-contain" />
+                <img src={settings.logoUrl} alt={settings.siteName} className="h-11 w-auto object-contain" />
               ) : (
                 <>Vance<span className="text-blue-600">Graphix</span></>
               )}

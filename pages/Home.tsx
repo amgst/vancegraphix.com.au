@@ -178,7 +178,7 @@ const Home: React.FC = () => {
             <div className="flex-1 w-full max-w-xl lg:max-w-none relative animate-fade-in-up delay-100">
               <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-100">
                 <img
-                  src="https://drive.google.com/thumbnail?id=1q-IfZhsPt2s80xiQeyiClynSf3CdSFwr&sz=w2000"
+                  src="https://drive.google.com/thumbnail?id=1LwxFOakQ6_g_ns19lIln2GAlc2sO8FDm&sz=w2000"
                   alt="Vance Graphix & Print large format print and signage"
                   className="w-full h-auto object-cover transform hover:scale-105 transition-transform duration-700"
                 />

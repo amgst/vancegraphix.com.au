@@ -14,7 +14,7 @@ const Footer: React.FC = () => {
           <div className="space-y-6">
             <div className="text-2xl font-bold tracking-tight flex items-center gap-2 text-white">
               {settings.logoUrl ? (
-                <img src={settings.logoUrl} alt={settings.siteName} className="h-9 w-auto object-contain" />
+                <img src={settings.logoUrl} alt={settings.siteName} className="h-11 w-auto object-contain" />
               ) : (
                 <>
                   Vance<span className="text-yellow-400">Graphix</span>
