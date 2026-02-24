@@ -18,13 +18,17 @@ export interface PortfolioItem {
     lastChecked?: string;
     isConcept?: boolean;
     isPublic?: boolean;
+    // Internal Registry Fields
+    hostingProvider?: string;
+    domainRegistrar?: string;
+    domainExpiry?: string;
+    internalNotes?: string;
 }
 
 const PORTFOLIO_COLLECTION = 'portfolios';
 
 export const getPortfolios = async (): Promise<PortfolioItem[]> => {
     const colRef = collection(db, PORTFOLIO_COLLECTION);
-    // You might want to order by something, e.g., creation date if you add it
     const q = query(colRef);
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as PortfolioItem));

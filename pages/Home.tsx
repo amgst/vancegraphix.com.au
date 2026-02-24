@@ -43,9 +43,13 @@ const Home: React.FC = () => {
         setPortfolioError(null);
         const items = await getPortfolios();
         const publicItems = items.filter((item) => item.isPublic !== false);
-        const featured = publicItems.filter((item) => item.isFeatured);
-        const sortedSource = featured.length > 0 ? featured : publicItems;
-        const sorted = [...sortedSource].sort((a, b) => (a.order || 0) - (b.order || 0));
+        const sorted = [...publicItems].sort((a, b) => {
+          // Sort by featured status first (featured items first)
+          if (a.isFeatured && !b.isFeatured) return -1;
+          if (!a.isFeatured && b.isFeatured) return 1;
+          // Then sort by order field if provided (lower order first)
+          return (a.order || 0) - (b.order || 0);
+        });
         setPortfolioItems(sorted.slice(0, 3));
       } catch (err) {
         console.error('Error loading portfolio for home', err);
