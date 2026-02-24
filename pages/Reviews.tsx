@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Star, Quote, ExternalLink, ThumbsUp, MapPin, ChevronDown, ChevronUp, AlertCircle, RefreshCw } from 'lucide-react';
+import { Star, Quote, ExternalLink, ThumbsUp, MapPin, ChevronDown, ChevronUp, AlertCircle, RefreshCw, MessageSquare } from 'lucide-react';
 import SEO from '../components/SEO';
+import { getTestimonials, Testimonial } from '../lib/testimonialsService';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -129,15 +130,23 @@ const ReviewCard: React.FC<{ review: GoogleReview; colorClass: string }> = ({ re
 
 const Reviews: React.FC = () => {
     const [reviews, setReviews] = useState<GoogleReview[]>([]);
+    const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
     const [overallRating, setOverallRating] = useState<number>(4.8);
     const [totalReviews, setTotalReviews] = useState<number>(45);
     const [isLoading, setIsLoading] = useState(true);
+    const [isTestimonialsLoading, setIsTestimonialsLoading] = useState(true);
     const [isLive, setIsLive] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [placeId, setPlaceId] = useState(DEFAULT_PLACE_ID);
     const writeReviewUrl = WRITE_REVIEW_MAPS_URL;
 
     useEffect(() => {
+        // Fetch custom testimonials from Firebase
+        getTestimonials()
+            .then(data => setTestimonials(data))
+            .catch(err => console.error('Failed to load testimonials:', err))
+            .finally(() => setIsTestimonialsLoading(false));
+
         // Always call our serverless proxy — Google Places API blocks direct browser calls (CORS).
         // The proxy runs server-side on Vercel and makes the Google API call there.
         fetch('/api/google-reviews')
@@ -256,8 +265,57 @@ const Reviews: React.FC = () => {
                 </div>
             </div>
 
+            {/* ── Custom Testimonials ── */}
+            {(!isTestimonialsLoading && testimonials.length > 0) && (
+                <div className="bg-white py-20">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="text-center mb-14">
+                            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Direct Client Feedback</h2>
+                            <p className="text-gray-500 max-w-2xl mx-auto text-lg">
+                                Detailed testimonials from our long-term partners and project clients.
+                            </p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {testimonials.map((testimonial) => (
+                                <div key={testimonial.id} className="bg-slate-50 p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all relative group">
+                                    <MessageSquare className="absolute top-8 right-8 text-blue-100" size={40} />
+                                    <div className="flex items-center gap-1 mb-6">
+                                        {[...Array(5)].map((_, i) => (
+                                            <Star
+                                                key={i}
+                                                size={16}
+                                                className={i < testimonial.rating ? 'fill-amber-400 text-amber-400' : 'text-gray-200 fill-gray-200'}
+                                            />
+                                        ))}
+                                    </div>
+                                    <p className="text-gray-600 mb-8 leading-relaxed relative z-10 italic">
+                                        "{testimonial.content}"
+                                    </p>
+                                    <div className="flex items-center gap-3 pt-6 border-t border-gray-200">
+                                        {testimonial.image ? (
+                                            <img src={testimonial.image} alt={testimonial.name} className="w-10 h-10 rounded-full object-cover" />
+                                        ) : (
+                                            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-sm">
+                                                {testimonial.name.charAt(0)}
+                                            </div>
+                                        )}
+                                        <div>
+                                            <div className="font-bold text-slate-900 text-sm">{testimonial.name}</div>
+                                            <div className="text-xs text-gray-500">
+                                                {testimonial.role}{testimonial.company ? `, ${testimonial.company}` : ''}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* ── Reviews Grid ── */}
-            <div className="py-20">
+            <div className="py-20 bg-slate-50 border-t border-gray-100">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-14">
                         <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Trusted by Australian Businesses</h2>
@@ -269,9 +327,6 @@ const Reviews: React.FC = () => {
                                 <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                                 Live from Google Maps
                             </div>
-                        )}
-                        {isLive && (
-                            <p className="text-xs text-gray-400 mt-2">Showing latest public Google reviews (Google API limit applies).</p>
                         )}
                     </div>
  
@@ -321,7 +376,7 @@ const Reviews: React.FC = () => {
             </div>
 
             {/* ── CTA ── */}
-            <div className="py-20 bg-slate-50">
+            <div className="py-20 bg-white">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="bg-slate-900 rounded-3xl p-12 text-center text-white relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600 rounded-full blur-3xl opacity-20 -translate-y-1/2 translate-x-1/2 pointer-events-none" />
