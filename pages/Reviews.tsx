@@ -31,6 +31,7 @@ interface ApiResponse {
 // Find yours at: https://developers.google.com/maps/documentation/places/web-service/place-id
 const DEFAULT_PLACE_ID = 'ChIJmUOqMVeamWsRX0ZjXdptY18';
 const GOOGLE_MAPS_URL = 'https://www.google.com/maps/place/Vance+Graphix+%26+Print/@-27.6190712,153.121597,17z/data=!3m1!4b1!4m6!3m5!1s0x6b129a5731aa4399:0x58cd6dda5d63465f!8m2!3d-27.6190712!4d153.121597!16s%2Fg%2F11b5pkq516';
+const WRITE_REVIEW_MAPS_URL = 'https://www.google.com/maps/place/Vance+Graphix+%26+Print/@-27.6190712,153.121597,17z/data=!4m8!3m7!1s0x6b129a5731aa4399:0x58cd6dda5d63465f!8m2!3d-27.6190712!4d153.121597!9m1!1b1!16s%2Fg%2F11b5pkq516?entry=ttu&g_ep=EgoyMDI2MDIxOC4wIKXMDSoASAFQAw%3D%3D';
 
 // ── Fallback data (shown while loading or if API key is not configured) ───────
 
@@ -134,9 +135,7 @@ const Reviews: React.FC = () => {
     const [isLive, setIsLive] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [placeId, setPlaceId] = useState(DEFAULT_PLACE_ID);
-    const writeReviewUrl = isLive
-        ? `https://search.google.com/local/writereview?placeid=${encodeURIComponent(placeId)}`
-        : GOOGLE_MAPS_URL;
+    const writeReviewUrl = WRITE_REVIEW_MAPS_URL;
 
     useEffect(() => {
         // Always call our serverless proxy — Google Places API blocks direct browser calls (CORS).
