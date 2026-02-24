@@ -40,6 +40,7 @@ import AdminStore from './pages/admin/Store';
 import AdminOrders from './pages/admin/Orders';
 import AdminSettings from './pages/admin/Settings';
 import AdminMessages from './pages/admin/Messages';
+import AdminTestimonials from './pages/admin/Testimonials';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsAndConditions from './pages/TermsAndConditions';
 import NotFound from './pages/NotFound';
@@ -113,6 +114,7 @@ const AppContent: React.FC = () => {
               <Route path="store" element={<AdminStore />} />
               <Route path="orders" element={<AdminOrders />} />
               <Route path="messages" element={<AdminMessages />} />
+              <Route path="testimonials" element={<AdminTestimonials />} />
               <Route path="settings" element={<AdminSettings />} />
             </Route>
 

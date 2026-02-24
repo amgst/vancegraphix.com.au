@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, FolderOpen, Settings, LogOut, Globe, Store, Inbox, X, Bell } from 'lucide-react';
+import { LayoutDashboard, FolderOpen, Settings, LogOut, Globe, Store, Inbox, X, Bell, MessageSquare } from 'lucide-react';
 import { NotificationContext } from './NotificationProvider';
 
 interface AdminSidebarProps {
@@ -29,6 +29,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ isOpen = false, onClose }) 
         { name: 'Print Portfolio', path: '/admin/print-portfolio', icon: FolderOpen },
         { name: 'Services', path: '/admin/services', icon: FolderOpen },
         { name: 'Blog', path: '/admin/blog', icon: FolderOpen },
+        { name: 'Testimonials', path: '/admin/testimonials', icon: MessageSquare },
         { name: 'Ready Sites', path: '/admin/ready-sites', icon: Store },
         { name: 'Store', path: '/admin/store', icon: Store },
         { name: 'Orders', path: '/admin/orders', icon: Inbox },
