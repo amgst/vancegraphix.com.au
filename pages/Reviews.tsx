@@ -136,45 +136,25 @@ const Reviews: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        const apiKey = import.meta.env.VITE_GOOGLE_PLACES_API_KEY as string | undefined;
-
-        if (!apiKey) {
-            setError('API key not configured');
-            setReviews(FALLBACK_REVIEWS);
-            setIsLoading(false);
-            return;
-        }
-
-        const url =
-            `https://maps.googleapis.com/maps/api/place/details/json` +
-            `?place_id=${PLACE_ID}` +
-            `&fields=name,rating,user_ratings_total,reviews` +
-            `&reviews_sort=newest` +
-            `&key=${apiKey}`;
-
-        // Use a CORS proxy for local dev since the Places API blocks direct browser calls without origin restrictions
-        // In production on Vercel, use the serverless endpoint instead
-        const isLocalDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        const fetchUrl = isLocalDev
-            ? `/api/google-reviews`  // Vercel function proxy (works with `vercel dev`)
-            : url;                   // Direct call on production (works if key is unrestricted or referrer-restricted to this domain)
-
-        fetch(isLocalDev ? fetchUrl : url)
+        // Always call our serverless proxy — Google Places API blocks direct browser calls (CORS).
+        // The proxy runs server-side on Vercel and makes the Google API call there.
+        fetch('/api/google-reviews')
             .then(async (res) => {
-                const data = await res.json();
-                // Handle both direct Places API format and our serverless wrapper format
-                const result = data.result ?? data;
-                const reviewsArr: GoogleReview[] = result.reviews ?? data.reviews ?? [];
-                const rating = result.rating ?? data.rating ?? 4.8;
-                const total = result.user_ratings_total ?? data.totalReviews ?? 45;
-
+                if (!res.ok) {
+                    const body = await res.json().catch(() => ({}));
+                    throw new Error(body.message || `Server error ${res.status}`);
+                }
+                return res.json();
+            })
+            .then((data) => {
+                const reviewsArr: GoogleReview[] = data.reviews ?? [];
                 if (reviewsArr.length > 0) {
                     setReviews(reviewsArr);
-                    setOverallRating(Math.round(rating * 10) / 10);
-                    setTotalReviews(total);
+                    setOverallRating(Math.round((data.rating ?? 4.8) * 10) / 10);
+                    setTotalReviews(data.totalReviews ?? 45);
                     setIsLive(true);
                 } else {
-                    throw new Error(data.status === 'REQUEST_DENIED' ? 'API key invalid or Places API not enabled' : 'No reviews returned');
+                    throw new Error(data.message || 'No reviews returned');
                 }
             })
             .catch((err: Error) => {
@@ -184,6 +164,7 @@ const Reviews: React.FC = () => {
             })
             .finally(() => setIsLoading(false));
     }, []);
+
 
     const structuredData = {
         '@context': 'https://schema.org',
