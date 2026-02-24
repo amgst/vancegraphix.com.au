@@ -25,6 +25,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ isOpen = false, onClose }) 
         { name: 'Messages', path: '/admin/messages', icon: Inbox },
         { name: 'Tools', path: '/admin/tools', icon: FolderOpen },
         { name: 'Portfolio', path: '/admin/portfolio', icon: FolderOpen },
+        { name: 'Web Registry', path: '/admin/web-registry', icon: Globe },
         { name: 'Print Portfolio', path: '/admin/print-portfolio', icon: FolderOpen },
         { name: 'Services', path: '/admin/services', icon: FolderOpen },
         { name: 'Blog', path: '/admin/blog', icon: FolderOpen },
@@ -44,7 +45,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ isOpen = false, onClose }) 
         <>
             {/* Mobile Backdrop */}
             {isOpen && (
-                <div 
+                <div
                     className="fixed inset-0 bg-black/50 z-40 md:hidden"
                     onClick={onClose}
                 />
@@ -56,7 +57,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ isOpen = false, onClose }) 
                         <span>wb<span className="text-blue-500">ify</span> Admin</span>
                     </div>
                     {/* Mobile Close Button */}
-                    <button 
+                    <button
                         onClick={onClose}
                         className="md:hidden text-slate-400 hover:text-white"
                     >

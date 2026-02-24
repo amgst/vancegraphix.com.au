@@ -1,9 +1,8 @@
 import React from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { PortfolioItem, getPortfolios, addPortfolio, updatePortfolio, deletePortfolio } from '../../lib/portfolioService';
-import { Plus, Trash2, Edit2, Save, X, Upload, Loader2, LayoutGrid, List, ExternalLink, ChevronLeft, ChevronRight, Download, Zap, ShieldCheck, Search, CheckCircle } from 'lucide-react';
+import { Plus, Trash2, Edit2, Save, X, Upload, Loader2, LayoutGrid, List, ExternalLink, ChevronLeft, ChevronRight, Download, CheckCircle, Search } from 'lucide-react';
 import { uploadFileWithProgress, generateUniqueFileName, uploadFromUrl } from '../../lib/storageService';
-import { fetchPageSpeedMetrics } from '../../lib/performanceService';
 
 const AdminPortfolio: React.FC = () => {
     const [items, setItems] = React.useState<PortfolioItem[]>([]);
@@ -14,18 +13,24 @@ const AdminPortfolio: React.FC = () => {
     const [isUploading, setIsUploading] = React.useState(false);
     const [isSaving, setIsSaving] = React.useState(false);
     const [isFetchingScreenshot, setIsFetchingScreenshot] = React.useState(false);
-    const [isCheckingPerformance, setIsCheckingPerformance] = React.useState<string | null>(null);
+
     const [uploadProgress, setUploadProgress] = React.useState(0);
+    const [searchQuery, setSearchQuery] = React.useState('');
 
     // Pagination State
     const [currentPage, setCurrentPage] = React.useState(1);
     const [itemsPerPage, setItemsPerPage] = React.useState(10);
 
-    // Pagination Logic
+    // Filter + Pagination Logic
+    const filteredItems = items.filter(item =>
+        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.link?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = items.slice(indexOfFirstItem, indexOfLastItem);
-    const totalPages = Math.ceil(items.length / itemsPerPage);
+    const currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
 
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
@@ -47,38 +52,7 @@ const AdminPortfolio: React.FC = () => {
         }
     };
 
-    const handleCheckPerformance = async (id: string, url: string) => {
-        if (!url) {
-            alert("This item has no live link to check.");
-            return;
-        }
 
-        setIsCheckingPerformance(id);
-        try {
-            const metrics = await fetchPageSpeedMetrics(url);
-            const updateData: Partial<PortfolioItem> = {
-                performanceScore: metrics.performance,
-                seoScore: metrics.seo,
-                accessibilityScore: metrics.accessibility,
-                bestPracticesScore: metrics.bestPractices,
-                lastChecked: new Date().toISOString()
-            };
-
-            await updatePortfolio(id, updateData);
-
-            // Update local state
-            setItems(prev => prev.map(item =>
-                item.id === id ? { ...item, ...updateData } : item
-            ));
-
-            alert("Performance metrics updated successfully!");
-        } catch (error) {
-            console.error("Error checking performance:", error);
-            alert("Failed to fetch performance metrics. Make sure the URL is accessible.");
-        } finally {
-            setIsCheckingPerformance(null);
-        }
-    };
 
     const handleAutoFetchData = async () => {
         if (!currentItem.link) {
@@ -266,47 +240,61 @@ const AdminPortfolio: React.FC = () => {
 
     return (
         <AdminLayout>
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-                <div>
-                    <h1 className="text-2xl font-bold text-slate-900">Manage Portfolio</h1>
-                    <p className="text-gray-500">Add or edit portfolio items.</p>
+            <div className="flex flex-col gap-4 mb-8">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <h1 className="text-2xl font-bold text-slate-900">Manage Portfolio</h1>
+                        <p className="text-gray-500">Add or edit portfolio items.</p>
+                    </div>
+                    <div className="flex items-center gap-3 w-full sm:w-auto">
+                        <div className="flex items-center gap-2 mr-2">
+                            <span className="text-sm text-gray-500 hidden md:block">Show</span>
+                            <select
+                                value={itemsPerPage}
+                                onChange={handleItemsPerPageChange}
+                                className="bg-white border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-1.5 outline-none"
+                            >
+                                <option value={5}>5</option>
+                                <option value={10}>10</option>
+                                <option value={20}>20</option>
+                                <option value={50}>50</option>
+                            </select>
+                        </div>
+                        <div className="flex items-center bg-gray-100 p-1 rounded-lg">
+                            <button
+                                onClick={() => setViewMode('card')}
+                                className={`p-1.5 rounded-md transition-all ${viewMode === 'card' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                                title="Card View"
+                            >
+                                <LayoutGrid size={18} />
+                            </button>
+                            <button
+                                onClick={() => setViewMode('list')}
+                                className={`p-1.5 rounded-md transition-all ${viewMode === 'list' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                                title="List View"
+                            >
+                                <List size={18} />
+                            </button>
+                        </div>
+                        <button
+                            onClick={handleAddNew}
+                            className="flex-1 sm:flex-none bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                        >
+                            <Plus size={18} /> Add New Item
+                        </button>
+                    </div>
                 </div>
-                <div className="flex items-center gap-3 w-full sm:w-auto">
-                    <div className="flex items-center gap-2 mr-2">
-                        <span className="text-sm text-gray-500 hidden md:block">Show</span>
-                        <select
-                            value={itemsPerPage}
-                            onChange={handleItemsPerPageChange}
-                            className="bg-white border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-1.5 outline-none"
-                        >
-                            <option value={5}>5</option>
-                            <option value={10}>10</option>
-                            <option value={20}>20</option>
-                            <option value={50}>50</option>
-                        </select>
-                    </div>
-                    <div className="flex items-center bg-gray-100 p-1 rounded-lg">
-                        <button
-                            onClick={() => setViewMode('card')}
-                            className={`p-1.5 rounded-md transition-all ${viewMode === 'card' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
-                            title="Card View"
-                        >
-                            <LayoutGrid size={18} />
-                        </button>
-                        <button
-                            onClick={() => setViewMode('list')}
-                            className={`p-1.5 rounded-md transition-all ${viewMode === 'list' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
-                            title="List View"
-                        >
-                            <List size={18} />
-                        </button>
-                    </div>
-                    <button
-                        onClick={handleAddNew}
-                        className="flex-1 sm:flex-none bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
-                    >
-                        <Plus size={18} /> Add New Item
-                    </button>
+
+                {/* Search Bar */}
+                <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                    <input
+                        type="text"
+                        placeholder="Search by title, category, or URL..."
+                        value={searchQuery}
+                        onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+                        className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm"
+                    />
                 </div>
             </div>
 
@@ -347,8 +335,8 @@ const AdminPortfolio: React.FC = () => {
                                         onClick={handleAutoFetchData}
                                         disabled={isFetchingScreenshot || !currentItem.link}
                                         className={`px-3 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${isFetchingScreenshot || !currentItem.link
-                                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                                : 'bg-slate-900 text-white hover:bg-slate-800'
+                                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                            : 'bg-slate-900 text-white hover:bg-slate-800'
                                             }`}
                                         title="Auto-fetch title, description, tags, and screenshot"
                                     >
@@ -444,8 +432,8 @@ const AdminPortfolio: React.FC = () => {
                                             type="button"
                                             onClick={() => toggleTechnology(tech)}
                                             className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${(currentItem.technologies || []).includes(tech)
-                                                    ? 'bg-blue-600 text-white'
-                                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                                ? 'bg-blue-600 text-white'
+                                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                                                 }`}
                                         >
                                             {tech}
@@ -500,6 +488,7 @@ const AdminPortfolio: React.FC = () => {
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                                 />
                             </div>
+
                             <div className="pt-4 flex justify-end gap-3">
                                 <button
                                     type="button"
@@ -578,44 +567,19 @@ const AdminPortfolio: React.FC = () => {
                                     {item.description || 'No description provided.'}
                                 </p>
 
-                                {item.performanceScore !== undefined && (
-                                    <div className="grid grid-cols-2 gap-2 mb-4">
-                                        <div className={`flex items-center justify-between px-2 py-1 rounded border text-[10px] font-bold ${getScoreColor(item.performanceScore)}`}>
-                                            <span className="flex items-center gap-1"><Zap size={10} /> Perf</span>
-                                            <span>{item.performanceScore}</span>
-                                        </div>
-                                        <div className={`flex items-center justify-between px-2 py-1 rounded border text-[10px] font-bold ${getScoreColor(item.seoScore || 0)}`}>
-                                            <span className="flex items-center gap-1"><Search size={10} /> SEO</span>
-                                            <span>{item.seoScore}</span>
-                                        </div>
-                                    </div>
-                                )}
+
 
                                 <div className="flex items-center justify-between pt-4 border-t border-gray-50">
                                     <div className="flex gap-3">
                                         {item.link ? (
-                                            <>
-                                                <a
-                                                    href={item.link}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="text-blue-600 hover:text-blue-700 text-xs font-medium flex items-center gap-1"
-                                                >
-                                                    <ExternalLink size={12} /> View
-                                                </a>
-                                                <button
-                                                    onClick={() => handleCheckPerformance(item.id, item.link!)}
-                                                    disabled={isCheckingPerformance === item.id}
-                                                    className="text-slate-600 hover:text-slate-900 text-xs font-medium flex items-center gap-1 disabled:opacity-50"
-                                                >
-                                                    {isCheckingPerformance === item.id ? (
-                                                        <Loader2 size={12} className="animate-spin" />
-                                                    ) : (
-                                                        <Zap size={12} />
-                                                    )}
-                                                    Audit
-                                                </button>
-                                            </>
+                                            <a
+                                                href={item.link}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-blue-600 hover:text-blue-700 text-xs font-medium flex items-center gap-1"
+                                            >
+                                                <ExternalLink size={12} /> View
+                                            </a>
                                         ) : (
                                             <span className="text-gray-400 text-xs italic">No link</span>
                                         )}
@@ -678,26 +642,7 @@ const AdminPortfolio: React.FC = () => {
                                             {item.category}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4">
-                                        {item.performanceScore !== undefined ? (
-                                            <div className="flex gap-2">
-                                                <div className={`px-2 py-0.5 rounded border text-[10px] font-bold ${getScoreColor(item.performanceScore)}`}>
-                                                    P: {item.performanceScore}
-                                                </div>
-                                                <div className={`px-2 py-0.5 rounded border text-[10px] font-bold ${getScoreColor(item.seoScore || 0)}`}>
-                                                    S: {item.seoScore}
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <button
-                                                onClick={() => handleCheckPerformance(item.id, item.link!)}
-                                                disabled={isCheckingPerformance === item.id || !item.link}
-                                                className="text-blue-600 hover:underline text-xs disabled:text-gray-400"
-                                            >
-                                                {isCheckingPerformance === item.id ? 'Auditing...' : 'Run Audit'}
-                                            </button>
-                                        )}
-                                    </td>
+
                                     <td className="px-6 py-4">
                                         {item.isPublic === false ? (
                                             <span className="px-2 py-1 bg-yellow-50 text-yellow-700 text-xs font-medium rounded-full flex items-center gap-1">
@@ -762,8 +707,8 @@ const AdminPortfolio: React.FC = () => {
                                     key={number}
                                     onClick={() => paginate(number)}
                                     className={`w-10 h-10 rounded-lg text-sm font-medium transition-all ${currentPage === number
-                                            ? 'bg-blue-600 text-white shadow-md'
-                                            : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+                                        ? 'bg-blue-600 text-white shadow-md'
+                                        : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
                                         }`}
                                 >
                                     {number}

@@ -29,6 +29,7 @@ import Store from './pages/Store';
 import ProductDetail from './pages/ProductDetail';
 import AdminLogin from './pages/admin/Login';
 import AdminDashboard from './pages/admin/Dashboard';
+import AdminWebRegistry from './pages/admin/WebRegistry';
 import AdminTools from './pages/admin/Tools';
 import AdminPortfolio from './pages/admin/Portfolio';
 import AdminPrintPortfolio from './pages/admin/PrintPortfolio';
@@ -104,6 +105,7 @@ const AppContent: React.FC = () => {
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="tools" element={<AdminTools />} />
               <Route path="portfolio" element={<AdminPortfolio />} />
+              <Route path="web-registry" element={<AdminWebRegistry />} />
               <Route path="print-portfolio" element={<AdminPrintPortfolio />} />
               <Route path="services" element={<AdminServices />} />
               <Route path="blog" element={<AdminBlog />} />
