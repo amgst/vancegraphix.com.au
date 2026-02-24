@@ -139,6 +139,11 @@ const Footer: React.FC = () => {
                   <ChevronRight size={14} /> Our Blog
                 </Link>
               </li>
+              <li>
+                <Link to="/reviews" className="flex items-center gap-2 text-gray-200 hover:text-white">
+                  <ChevronRight size={14} /> Client Reviews
+                </Link>
+              </li>
             </ul>
             <h3 className="text-lg font-semibold text-yellow-400 mb-3">Our Partner</h3>
             <ul className="space-y-2 text-sm">
