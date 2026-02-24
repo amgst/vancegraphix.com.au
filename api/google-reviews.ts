@@ -1,5 +1,6 @@
-// api/google-reviews.ts
+// api/google-reviews.ts — v2
 // Vercel serverless function — proxies Google Places API so the key is never exposed to the browser.
+// Reads GOOGLE_PLACES_API_KEY from Vercel environment variables (set via Vercel dashboard).
 
 const PLACE_ID = 'ChIJmUOqMVeamWsRX0ZjXdptY18'; // Vance Graphix & Print, Brisbane QLD
 
