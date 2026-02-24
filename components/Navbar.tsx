@@ -38,6 +38,7 @@ const Navbar: React.FC = () => {
     { name: 'Store', path: '/store', dropdown: false },
     { name: 'Fast Track', path: '/websites-for-sale', dropdown: false },
     { name: 'About', path: '/about-us', dropdown: false },
+    { name: 'Reviews', path: '/reviews', dropdown: false },
     { name: 'Contact', path: '/contact-us', dropdown: false },
   ];
 

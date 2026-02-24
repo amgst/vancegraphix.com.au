@@ -43,6 +43,7 @@ import AdminMessages from './pages/admin/Messages';
 import AdminTestimonials from './pages/admin/Testimonials';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsAndConditions from './pages/TermsAndConditions';
+import Reviews from './pages/Reviews';
 import NotFound from './pages/NotFound';
 import { HelmetProvider } from 'react-helmet-async';
 import { NotificationProvider } from './components/admin/NotificationProvider';
@@ -94,6 +95,7 @@ const AppContent: React.FC = () => {
             <Route path="/careers" element={<Careers />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+            <Route path="/reviews" element={<Reviews />} />
 
             {/* Admin Routes */}
             <Route path="/admin" element={
