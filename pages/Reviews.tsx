@@ -44,6 +44,18 @@ const FALLBACK_REVIEWS: GoogleReview[] = [
     { author_name: 'Michael Torres', rating: 5, relative_time_description: '6 months ago', text: 'Reliable, fast, and high quality. I order my promotional flyers and brochures from VGP regularly. They always get the colours right and packages arrive on time. Highly recommended.', time: 0 },
 ];
 
+const FEATURED_REVIEWS: GoogleReview[] = [
+    { author_name: 'Paramjeet Singh', rating: 5, relative_time_description: 'a year ago', text: 'Very professional. With affordable prices I must recommend there services 👍👍👍', time: 0 },
+    { author_name: 'Amritpal Singh', rating: 5, relative_time_description: 'a year ago', text: 'I\'m really impressed with the website design and development. The layout is clean, user-friendly, and visually appealing. The functionality is seamless, and it\'s clear that a lot of thought went into creating an intuitive user experience. Highly recommend for any web projects.', time: 0 },
+    { author_name: 'Zeal Ability', rating: 5, relative_time_description: 'a year ago', text: 'Very helpful in regards to the services Ahmed and his team provides to us, I would highly recommend Vance Graphix and Print!', time: 0 },
+    { author_name: 'Craig Harrison', rating: 5, relative_time_description: '2 years ago', text: 'Great communication and fast services. Flyers are great quality highly recommend.', time: 0 },
+    { author_name: 'Gurpreet Kaur', rating: 5, relative_time_description: '1 year ago', text: 'Excellent graphic design work. They designed our company logo and brand guidelines. Very creative team that listens to your needs.', time: 0 },
+    { author_name: 'Sandeep Reddy', rating: 5, relative_time_description: '2 years ago', text: 'Best printing shop in Brisbane. I have been using their services for 3 years now for all my business stationery. Consistent quality every time.', time: 0 },
+    { author_name: 'Emma Watson', rating: 5, relative_time_description: '11 months ago', text: 'The team helped us with our Shopify store migration. Smooth process and they fixed all our SEO issues as well. Very knowledgeable.', time: 0 },
+    { author_name: 'David Miller', rating: 5, relative_time_description: '1 year ago', text: 'High quality large format printing. Our banners and A-frames look fantastic. Durable materials and vibrant colors.', time: 0 },
+    { author_name: 'Linda Chen', rating: 5, relative_time_description: '9 months ago', text: 'Very responsive and professional. They handled our urgent brochure printing request with ease and delivered right to our office.', time: 0 },
+];
+
 const RATING_BREAKDOWN = [
     { stars: 5, count: 38, percent: 84 },
     { stars: 4, count: 5, percent: 11 },
@@ -313,6 +325,24 @@ const Reviews: React.FC = () => {
                             <RefreshCw size={16} />
                             View all {totalReviews}+ reviews on Google Maps
                         </a>
+                    </div>
+                </div>
+            </div>
+
+            {/* ── Featured Success Stories ── */}
+            <div className="py-24 bg-slate-50 border-t border-gray-100">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-14">
+                        <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">More Success Stories</h2>
+                        <p className="text-gray-500 max-w-2xl mx-auto text-lg">
+                            We take pride in every project. Here are more verified reviews from our valued clients.
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {FEATURED_REVIEWS.map((review, idx) => (
+                            <ReviewCard key={`${review.author_name}-${idx}`} review={review} colorClass={AVATAR_COLORS[(idx + 5) % AVATAR_COLORS.length]} />
+                        ))}
                     </div>
                 </div>
             </div>
