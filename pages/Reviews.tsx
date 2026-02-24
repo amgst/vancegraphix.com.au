@@ -29,9 +29,8 @@ interface ApiResponse {
 
 // Place ID for Vance Graphix & Print (Brisbane QLD)
 // Find yours at: https://developers.google.com/maps/documentation/places/web-service/place-id
-const PLACE_ID = 'ChIJmUOqMVeamWsRX0ZjXdptY18';
+const DEFAULT_PLACE_ID = 'ChIJmUOqMVeamWsRX0ZjXdptY18';
 const GOOGLE_MAPS_URL = 'https://www.google.com/maps/place/Vance+Graphix+%26+Print/@-27.6190712,153.121597,17z/data=!3m1!4b1!4m6!3m5!1s0x6b129a5731aa4399:0x58cd6dda5d63465f!8m2!3d-27.6190712!4d153.121597!16s%2Fg%2F11b5pkq516';
-const WRITE_REVIEW_URL = 'https://search.google.com/local/writereview?placeid=ChIJmUOqMVeamWsRX0ZjXdptY18';
 
 // ── Fallback data (shown while loading or if API key is not configured) ───────
 
@@ -134,6 +133,8 @@ const Reviews: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isLive, setIsLive] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [placeId, setPlaceId] = useState(DEFAULT_PLACE_ID);
+    const writeReviewUrl = `https://search.google.com/local/writereview?placeid=${encodeURIComponent(placeId)}`;
 
     useEffect(() => {
         // Always call our serverless proxy — Google Places API blocks direct browser calls (CORS).
@@ -152,6 +153,7 @@ const Reviews: React.FC = () => {
                     setReviews(reviewsArr);
                     setOverallRating(Math.round((data.rating ?? 4.8) * 10) / 10);
                     setTotalReviews(data.totalReviews ?? 45);
+                    if (data.placeId) setPlaceId(data.placeId);
                     setIsLive(true);
                 } else {
                     throw new Error(data.message || 'No reviews returned');
@@ -224,7 +226,7 @@ const Reviews: React.FC = () => {
                             className="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-slate-900 rounded-full font-bold hover:bg-amber-50 transition-colors shadow-lg">
                             <GoogleLogo className="w-5 h-5" /> View on Google Maps
                         </a>
-                        <a href={WRITE_REVIEW_URL} target="_blank" rel="noopener noreferrer"
+                        <a href={writeReviewUrl} target="_blank" rel="noopener noreferrer"
                             className="inline-flex items-center gap-2 px-8 py-3.5 bg-transparent border border-white/30 text-white rounded-full font-bold hover:bg-white/10 transition-colors">
                             Write a Review <ExternalLink size={16} />
                         </a>
@@ -327,7 +329,7 @@ const Reviews: React.FC = () => {
                                 Your review helps other Australian businesses discover us. It only takes 30 seconds!
                             </p>
                             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                                <a href={WRITE_REVIEW_URL} target="_blank" rel="noopener noreferrer"
+                                <a href={writeReviewUrl} target="_blank" rel="noopener noreferrer"
                                     className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-amber-400 text-slate-900 rounded-full font-bold hover:bg-amber-300 transition-colors shadow-lg shadow-amber-500/30 text-sm">
                                     <ThumbsUp size={18} /> Leave a Google Review
                                 </a>

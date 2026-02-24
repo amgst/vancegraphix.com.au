@@ -1,11 +1,49 @@
-// api/google-reviews.ts — v2
-// Vercel serverless function — proxies Google Places API so the key is never exposed to the browser.
-// Reads GOOGLE_PLACES_API_KEY from Vercel environment variables (set via Vercel dashboard).
+// api/google-reviews.ts - v3
+// Vercel serverless function - proxies Google Places API so the key is never exposed to the browser.
 
-const PLACE_ID = 'ChIJmUOqMVeamWsRX0ZjXdptY18'; // Vance Graphix & Print, Brisbane QLD
+const DEFAULT_PLACE_ID = 'ChIJmUOqMVeamWsRX0ZjXdptY18'; // old cached ID
+const DEFAULT_PLACE_QUERY = 'Vance Graphix & Print Brisbane QLD';
+
+function detailsUrl(placeId: string, apiKey: string) {
+    return (
+        `https://maps.googleapis.com/maps/api/place/details/json` +
+        `?place_id=${encodeURIComponent(placeId)}` +
+        `&fields=name,rating,user_ratings_total,reviews` +
+        `&reviews_sort=newest` +
+        `&key=${apiKey}`
+    );
+}
+
+async function fetchPlaceDetails(placeId: string, apiKey: string) {
+    const response = await fetch(detailsUrl(placeId, apiKey));
+    if (!response.ok) {
+        throw new Error(`Google API responded with status ${response.status}`);
+    }
+    return response.json();
+}
+
+async function resolvePlaceIdByText(query: string, apiKey: string) {
+    const url =
+        `https://maps.googleapis.com/maps/api/place/findplacefromtext/json` +
+        `?input=${encodeURIComponent(query)}` +
+        `&inputtype=textquery` +
+        `&fields=place_id,name` +
+        `&key=${apiKey}`;
+
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`Google Find Place API responded with status ${response.status}`);
+    }
+
+    const data = await response.json();
+    if (data.status !== 'OK' || !Array.isArray(data.candidates) || data.candidates.length === 0) {
+        throw new Error(`Find Place API error: ${data.status} - ${data.error_message || 'No candidates found'}`);
+    }
+
+    return data.candidates[0].place_id as string;
+}
 
 export default async function handler(req: any, res: any) {
-    // Allow GET only
     if (req.method !== 'GET') {
         return res.status(405).json({ message: 'Method not allowed' });
     }
@@ -16,34 +54,30 @@ export default async function handler(req: any, res: any) {
     }
 
     try {
-        const url =
-            `https://maps.googleapis.com/maps/api/place/details/json` +
-            `?place_id=${PLACE_ID}` +
-            `&fields=name,rating,user_ratings_total,reviews` +
-            `&reviews_sort=newest` +
-            `&key=${apiKey}`;
+        const configuredPlaceId = process.env.GOOGLE_PLACE_ID || process.env.VITE_GOOGLE_PLACE_ID || DEFAULT_PLACE_ID;
+        const placeQuery = process.env.GOOGLE_PLACE_QUERY || process.env.VITE_GOOGLE_PLACE_QUERY || DEFAULT_PLACE_QUERY;
 
-        const response = await fetch(url);
+        let resolvedPlaceId = configuredPlaceId;
+        let data = await fetchPlaceDetails(resolvedPlaceId, apiKey);
 
-        if (!response.ok) {
-            throw new Error(`Google API responded with status ${response.status}`);
+        if (data.status === 'NOT_FOUND') {
+            resolvedPlaceId = await resolvePlaceIdByText(placeQuery, apiKey);
+            data = await fetchPlaceDetails(resolvedPlaceId, apiKey);
         }
 
-        const data = await response.json();
-
         if (data.status !== 'OK') {
-            throw new Error(`Google Places API error: ${data.status} — ${data.error_message || ''}`);
+            throw new Error(`Google Places API error: ${data.status} - ${data.error_message || ''}`);
         }
 
         const { name, rating, user_ratings_total, reviews } = data.result;
 
-        // Cache the response for 6 hours on the CDN edge
         res.setHeader('Cache-Control', 's-maxage=21600, stale-while-revalidate');
 
         return res.status(200).json({
             name,
             rating,
             totalReviews: user_ratings_total,
+            placeId: resolvedPlaceId,
             reviews: (reviews || []).map((r: any) => ({
                 author_name: r.author_name,
                 author_url: r.author_url,

@@ -5,16 +5,14 @@ import { VitePWA } from 'vite-plugin-pwa';
 import tailwindcss from '@tailwindcss/vite';
 import type { Plugin } from 'vite';
 
-// ---------------------------------------------------------------------------
-// Dev-only middleware — simulates the /api/google-reviews Vercel serverless
-// function so that `npm run dev` can fetch real Google reviews without CORS.
-// ---------------------------------------------------------------------------
+// Dev-only middleware that simulates /api/google-reviews on Vite.
 function googleReviewsDevPlugin(apiKey: string): Plugin {
-  const PLACE_ID = 'ChIJmUOqMVeamWsRX0ZjXdptY18'; // Vance Graphix & Print
+  const PLACE_ID = 'ChIJmUOqMVeamWsRX0ZjXdptY18'; // cached ID (may go stale)
+  const PLACE_QUERY = 'Vance Graphix & Print Brisbane QLD';
 
   return {
     name: 'google-reviews-dev',
-    apply: 'serve', // dev server only — not included in production build
+    apply: 'serve',
     configureServer(server) {
       server.middlewares.use('/api/google-reviews', async (req: any, res: any) => {
         if (req.method !== 'GET') {
@@ -22,28 +20,54 @@ function googleReviewsDevPlugin(apiKey: string): Plugin {
           res.end(JSON.stringify({ message: 'Method not allowed' }));
           return;
         }
+
         if (!apiKey) {
           res.writeHead(500, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ message: 'Google Places API key not configured' }));
           return;
         }
-        const url =
+
+        const detailsUrl = (placeId: string) =>
           `https://maps.googleapis.com/maps/api/place/details/json` +
-          `?place_id=${PLACE_ID}` +
+          `?place_id=${encodeURIComponent(placeId)}` +
           `&fields=name,rating,user_ratings_total,reviews` +
           `&reviews_sort=newest` +
           `&key=${apiKey}`;
+
         try {
-          const response = await fetch(url);
-          const data = await response.json();
+          let resolvedPlaceId = PLACE_ID;
+          let data = await (await fetch(detailsUrl(resolvedPlaceId))).json();
+
+          if (data.status === 'NOT_FOUND') {
+            const findPlaceUrl =
+              `https://maps.googleapis.com/maps/api/place/findplacefromtext/json` +
+              `?input=${encodeURIComponent(PLACE_QUERY)}` +
+              `&inputtype=textquery` +
+              `&fields=place_id,name` +
+              `&key=${apiKey}`;
+
+            const findData = await (await fetch(findPlaceUrl)).json();
+            if (findData.status === 'OK' && Array.isArray(findData.candidates) && findData.candidates.length > 0) {
+              resolvedPlaceId = findData.candidates[0].place_id;
+              data = await (await fetch(detailsUrl(resolvedPlaceId))).json();
+            }
+          }
+
           if (data.status !== 'OK') {
             res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ message: `Google Places API: ${data.status} — ${data.error_message || ''}` }));
+            res.end(JSON.stringify({ message: `Google Places API: ${data.status} - ${data.error_message || ''}` }));
             return;
           }
+
           const { name, rating, user_ratings_total, reviews } = data.result;
           res.writeHead(200, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ name, rating, totalReviews: user_ratings_total, reviews: reviews || [] }));
+          res.end(JSON.stringify({
+            name,
+            rating,
+            totalReviews: user_ratings_total,
+            placeId: resolvedPlaceId,
+            reviews: reviews || [],
+          }));
         } catch (err: any) {
           res.writeHead(500, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ message: err.message }));
@@ -77,10 +101,10 @@ export default defineConfig(({ mode }) => {
           start_url: '/admin/dashboard',
           icons: [
             { src: 'shopify.png', sizes: '192x192', type: 'image/png' },
-            { src: 'shopify.png', sizes: '512x512', type: 'image/png' }
-          ]
-        }
-      })
+            { src: 'shopify.png', sizes: '512x512', type: 'image/png' },
+          ],
+        },
+      }),
     ],
     define: {
       'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
@@ -93,7 +117,7 @@ export default defineConfig(({ mode }) => {
       'import.meta.env.VITE_FIREBASE_APP_ID': JSON.stringify(env.VITE_FIREBASE_APP_ID || env.FIREBASE_APP_ID),
     },
     resolve: {
-      alias: { '@': path.resolve(__dirname, '.') }
-    }
+      alias: { '@': path.resolve(__dirname, '.') },
+    },
   };
 });
