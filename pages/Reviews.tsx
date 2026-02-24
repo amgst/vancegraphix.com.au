@@ -134,7 +134,9 @@ const Reviews: React.FC = () => {
     const [isLive, setIsLive] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [placeId, setPlaceId] = useState(DEFAULT_PLACE_ID);
-    const writeReviewUrl = `https://search.google.com/local/writereview?placeid=${encodeURIComponent(placeId)}`;
+    const writeReviewUrl = isLive
+        ? `https://search.google.com/local/writereview?placeid=${encodeURIComponent(placeId)}`
+        : GOOGLE_MAPS_URL;
 
     useEffect(() => {
         // Always call our serverless proxy — Google Places API blocks direct browser calls (CORS).
@@ -268,6 +270,9 @@ const Reviews: React.FC = () => {
                                 <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                                 Live from Google Maps
                             </div>
+                        )}
+                        {isLive && (
+                            <p className="text-xs text-gray-400 mt-2">Showing latest public Google reviews (Google API limit applies).</p>
                         )}
                     </div>
  
