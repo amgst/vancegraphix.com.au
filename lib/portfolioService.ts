@@ -31,7 +31,16 @@ export const getPortfolios = async (): Promise<PortfolioItem[]> => {
     const colRef = collection(db, PORTFOLIO_COLLECTION);
     const q = query(colRef);
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as PortfolioItem));
+    return snapshot.docs.map(doc => {
+        const data = doc.data();
+        // Normalize technologies to always be an array (older docs may store it as a string)
+        if (data.technologies && !Array.isArray(data.technologies)) {
+            data.technologies = [data.technologies].filter(Boolean);
+        } else if (!data.technologies) {
+            data.technologies = [];
+        }
+        return { id: doc.id, ...data } as PortfolioItem;
+    });
 };
 
 export const addPortfolio = async (item: Omit<PortfolioItem, 'id'>): Promise<PortfolioItem> => {
