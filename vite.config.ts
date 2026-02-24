@@ -63,7 +63,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       tailwindcss(),
-      googleReviewsDevPlugin(env.GOOGLE_PLACES_API_KEY || ''),
+      googleReviewsDevPlugin(env.GOOGLE_PLACES_API_KEY || env.VITE_GOOGLE_PLACES_API_KEY || ''),
       VitePWA({
         registerType: 'autoUpdate',
         includeAssets: ['favicon.ico', 'robots.txt', 'shopify.png'],

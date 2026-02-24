@@ -274,7 +274,7 @@ const Reviews: React.FC = () => {
                             <AlertCircle size={18} className="mt-0.5 flex-shrink-0" />
                             <div>
                                 <p className="font-semibold">Showing sample reviews</p>
-                                <p className="text-amber-600 mt-0.5">Configure <code className="bg-amber-100 px-1 rounded">VITE_GOOGLE_PLACES_API_KEY</code> in .env to load real reviews.</p>
+                                <p className="text-amber-600 mt-0.5">Configure <code className="bg-amber-100 px-1 rounded">GOOGLE_PLACES_API_KEY</code> (or <code className="bg-amber-100 px-1 rounded">VITE_GOOGLE_PLACES_API_KEY</code>) in .env to load real reviews.</p>
                             </div>
                         </div>
                     )}

@@ -10,7 +10,7 @@ export default async function handler(req: any, res: any) {
         return res.status(405).json({ message: 'Method not allowed' });
     }
 
-    const apiKey = process.env.GOOGLE_PLACES_API_KEY;
+    const apiKey = process.env.GOOGLE_PLACES_API_KEY || process.env.VITE_GOOGLE_PLACES_API_KEY;
     if (!apiKey || apiKey === 'YOUR_API_KEY_HERE') {
         return res.status(500).json({ message: 'Google Places API key not configured' });
     }
