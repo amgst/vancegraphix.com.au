@@ -268,7 +268,7 @@ const Reviews: React.FC = () => {
                             </div>
                         )}
                     </div>
-
+ 
                     {error && !isLive && (
                         <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 text-amber-800 rounded-xl p-4 mb-8 max-w-xl mx-auto text-sm">
                             <AlertCircle size={18} className="mt-0.5 flex-shrink-0" />
