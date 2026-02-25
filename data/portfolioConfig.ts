@@ -1,6 +1,6 @@
 // ==============================================================================
 // ==============================================================================
-// WBIFY PORTFOLIO CONFIGURATION
+// VANCE GRAPHIX & PRINT PORTFOLIO CONFIGURATION
 // ==============================================================================
 // This file replaces the Admin page. 
 // Enter your Google Drive details here to sync the portfolio.

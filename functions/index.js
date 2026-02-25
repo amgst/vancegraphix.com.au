@@ -53,7 +53,7 @@ Timeline: ${data.timeline}
 Additional Info:
 ${data.additionalInfo}
 
-View details: https://www.wbify.com/admin/inquiries
+View details: https://www.vancegraphix.com.au/admin/inquiries
             `;
             await sendEmail(adminEmail, subject, text);
         }
@@ -78,7 +78,7 @@ Service: ${data.service}
 Message:
 ${data.message}
 
-View details: https://www.wbify.com/admin/dashboard
+View details: https://www.vancegraphix.com.au/admin/dashboard
             `;
             await sendEmail(adminEmail, subject, text);
         }

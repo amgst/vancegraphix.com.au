@@ -10,7 +10,7 @@ const __dirname = path.dirname(__filename);
 const resolve = (...args) => path.join(__dirname, '..', ...args);
 
 // Configuration
-const BASE_URL = 'https://www.wbify.com';
+const BASE_URL = 'https://www.vancegraphix.com.au';
 const OUTPUT_FILE = resolve('public', 'sitemap.xml');
 const BLOG_DATA_FILE = resolve('data', 'blog-posts.json');
 
