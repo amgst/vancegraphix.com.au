@@ -123,7 +123,7 @@ const ProductDetail: React.FC = () => {
           <div className="flex items-center gap-3">
             <Link to="/store" className="inline-flex items-center text-sm text-slate-600 hover:text-slate-900">
               <ArrowLeft size={16} className="mr-1" />
-              Back to Store
+              Back to POD
             </Link>
           </div>
         </div>

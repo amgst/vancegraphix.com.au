@@ -20,9 +20,7 @@ const Navbar: React.FC = () => {
         { name: 'Graphics & Branding', path: '/graphics' },
         { name: 'Printing Solutions', path: '/printing' },
         { name: 'Video & Animation', path: '/video-animation' },
-        { name: 'AI Services', path: '/ai-services' },
         { name: 'Design Process', path: '/design-process' },
-        { name: 'Tools & Resources', path: '/tools' },
         { name: 'All Services', path: '/services' }
       ]
     },
@@ -35,7 +33,7 @@ const Navbar: React.FC = () => {
         { name: 'Print Portfolio', path: '/print-portfolio' }
       ]
     },
-    { name: 'Store', path: '/store', dropdown: false },
+    { name: 'POD', path: '/store', dropdown: false },
     { name: 'Fast Track', path: '/websites-for-sale', dropdown: false },
     { name: 'About', path: '/about-us', dropdown: false },
     { name: 'Reviews', path: '/reviews', dropdown: false },

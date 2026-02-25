@@ -31,7 +31,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ isOpen = false, onClose }) 
         { name: 'Blog', path: '/admin/blog', icon: FolderOpen },
         { name: 'Testimonials', path: '/admin/testimonials', icon: MessageSquare },
         { name: 'Ready Sites', path: '/admin/ready-sites', icon: Store },
-        { name: 'Store', path: '/admin/store', icon: Store },
+        { name: 'POD Products', path: '/admin/store', icon: Store },
         { name: 'Orders', path: '/admin/orders', icon: Inbox },
         { name: 'Settings', path: '/admin/settings', icon: Settings },
     ];

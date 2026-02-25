@@ -2,14 +2,16 @@ import React, { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { Product } from '../../data/productsData';
 import { getProducts, addProduct, updateProduct, deleteProduct } from '../../lib/productsService';
+import { PRODUCTS_SEED_DATA } from '../../data/productsSeed';
 import { uploadImage } from '../../lib/imageUploadService';
-import { Plus, Trash2, Edit2, Save, X, Upload, Image as ImageIcon } from 'lucide-react';
+import { Plus, Trash2, Edit2, Save, X, Upload, Image as ImageIcon, Download } from 'lucide-react';
 
 const AdminStore: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Partial<Product>>({});
+  const [isImporting, setIsImporting] = useState(false);
 
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -63,6 +65,39 @@ const AdminStore: React.FC = () => {
     setImagePreview(null);
     setSelectedImageFile(null);
     setIsEditing(true);
+  };
+
+  const handleImportSeed = async () => {
+    if (!window.confirm(`This will import ${PRODUCTS_SEED_DATA.length} Print on Demand products. Continue?`)) {
+      return;
+    }
+
+    setIsImporting(true);
+    try {
+      const existingProducts = await getProducts();
+      const existingNames = new Set(existingProducts.map(p => p.name.toLowerCase()));
+
+      let imported = 0;
+      let skipped = 0;
+
+      for (const product of PRODUCTS_SEED_DATA) {
+        if (existingNames.has(product.name.toLowerCase())) {
+          skipped++;
+          continue;
+        }
+
+        await addProduct(product);
+        imported++;
+      }
+
+      alert(`Import complete! Imported: ${imported}, Skipped (already exist): ${skipped}`);
+      await fetchProducts();
+    } catch (e) {
+      console.error('Error importing seed data', e);
+      alert('Failed to import products.');
+    } finally {
+      setIsImporting(false);
+    }
   };
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -156,12 +191,21 @@ const AdminStore: React.FC = () => {
             Manage products that appear in the public Store and can be ordered without payment.
           </p>
         </div>
-        <button
-          onClick={handleAddNew}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center gap-2"
-        >
-          <Plus size={18} /> Add Product
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleImportSeed}
+            disabled={isImporting}
+            className="border border-gray-200 text-slate-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors flex items-center gap-2 disabled:opacity-50"
+          >
+            <Download size={18} /> {isImporting ? 'Importing...' : 'Import POD Seed'}
+          </button>
+          <button
+            onClick={handleAddNew}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center gap-2"
+          >
+            <Plus size={18} /> Add Product
+          </button>
+        </div>
       </div>
 
       {isEditing && (

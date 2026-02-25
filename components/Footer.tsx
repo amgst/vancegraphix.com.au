@@ -110,7 +110,7 @@ const Footer: React.FC = () => {
               </li>
               <li>
                 <Link to="/ai-services" className="flex items-center gap-2 text-gray-200 hover:text-white">
-                  <ChevronRight size={14} /> AI Services
+                  <ChevronRight size={14} /> AI Tools
                 </Link>
               </li>
             </ul>
