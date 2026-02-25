@@ -1,7 +1,7 @@
 import React from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { Testimonial, getTestimonials, addTestimonial, updateTestimonial, deleteTestimonial } from '../../lib/testimonialsService';
-import { Plus, Trash2, Edit2, Save, X, Loader2, Search, Star, MessageSquare } from 'lucide-react';
+import { Plus, Trash2, Edit2, Save, X, Loader2, Search, Star, MessageSquare, RefreshCw } from 'lucide-react';
 
 const StarRatingPicker: React.FC<{ value: number; onChange: (v: number) => void }> = ({ value, onChange }) => (
     <div className="flex items-center gap-1">
@@ -38,6 +38,44 @@ const AdminTestimonials: React.FC = () => {
     });
 
     const [form, setForm] = React.useState<Partial<Testimonial>>(emptyForm());
+
+    const handleBulkImport = async () => {
+        const bulkData = [
+            { name: "Australian Sikh Association ASA", content: "I would like to commend Vance Graphix & Print for their exceptional, competence and reliability. They were able to produce excellent service and very good quality printing job, social media service and web development.", rating: 5, role: "Client", company: "ASA", order: 1 },
+            { name: "Anytime Body Beyond", content: "Thank you! I was very happy with my print and web project, your team did this job very well. They were professional and focussed to make sure everything as per brief.", rating: 5, role: "Client", company: "", order: 2 },
+            { name: "Aircon & Carpentry", content: "Really friendly, great team, and excellent service. I’ll highly recommended Vance Graphix & Print printing solutions and website development.", rating: 5, role: "Client", company: "", order: 3 },
+            { name: "Boots and Bar Restaurant", content: "Vance Graphix & Print just completed fixing up all of our printing solutions and website development. The work was done very professionally, great care was taken.", rating: 5, role: "Restaurant", company: "", order: 4 },
+            { name: "John Doe", content: "We extended a great relationship with Vance Graphix & Print and their commitment to our website is evident in all aspects of the site. We appreciate their approachability to detail and creative style to bringing our new web.", rating: 5, role: "Client", company: "", order: 5 },
+            { name: "Blacktown Denture Services", content: "Working with Vance Graphix was an outstanding experience, since long time printing work and relaunching our new website Blacktown Denture Services with their design new ideas, services and recommendations.", rating: 5, role: "Medical", company: "", order: 6 },
+            { name: "Avoca Restaurant", content: "Awesome to work with Vance Graphix & Pint, they done all our printing requirement and website design. We can't wait to work again with VGP again", rating: 5, role: "Restaurant", company: "", order: 7 },
+            { name: "Property Developer", content: "Highly recommended! My election flyers were printed and delivered within a very good time frame and small problems were easily resolved in order to achieve the deadline.", rating: 5, role: "Developer", company: "", order: 8 },
+            { name: "Hifazat", content: "I worked with VGP to design a few things and I found his designs to be very good but more importantly, I found to have an excellent work ethic. The fact that he is based in Sydney and I am in Toronto was not an issue, actually, it was a benefit and helped us finish our work quicker.", rating: 5, role: "Client", company: "", order: 9 },
+            { name: "The Godfather", content: "We are always impressed with the printing services, they listen carefully and they 'get it' very immediately as our requirement. They respond to questions almost instantly and very effectively. They are really easy to work with and seem to appreciate their customers. EXCELLENT", rating: 5, role: "Client", company: "", order: 10 },
+            { name: "Sakib Manzoor", content: "I am alone, and feel the charm of existence in this spot, which was created for the bliss of souls like mine. And yet I feel that I never was a greater artist than now.", rating: 5, role: "Client", company: "", order: 11 },
+            { name: "Azwar Ikram", content: "Last 4 jobs and graphic design and printing have been roundly appreciated as to the point and innovative. His ability to understand what the customer wants is what has been his success for the 14 + years in graphic design and printing. Keep up the good work.", rating: 5, role: "Client", company: "", order: 12 },
+        ];
+
+        if (!window.confirm(`Import ${bulkData.length} new reviews?`)) return;
+
+        setIsSaving(true);
+        let count = 0;
+        try {
+            console.log("Starting bulk import of", bulkData.length, "reviews...");
+            for (const item of bulkData) {
+                console.log("Importing review for:", item.name);
+                await addTestimonial(item as Omit<Testimonial, 'id'>);
+                count++;
+            }
+            console.log("Import complete. Successfully added", count, "reviews.");
+            alert(`Successfully imported ${count} reviews!`);
+            await fetchItems();
+        } catch (err: any) {
+            console.error("Bulk import failed:", err);
+            alert(`Failed to import after ${count} reviews. Error: ${err.message || 'Unknown error'}. Check console for details.`);
+        } finally {
+            setIsSaving(false);
+        }
+    };
 
     const fetchItems = async () => {
         setIsLoading(true);
@@ -116,12 +154,21 @@ const AdminTestimonials: React.FC = () => {
                         <h1 className="text-2xl font-bold text-slate-900">Testimonials</h1>
                         <p className="text-gray-500">Manage "Trusted by Australian Businesses" reviews.</p>
                     </div>
-                    <button
-                        onClick={handleAddNew}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center gap-2"
-                    >
-                        <Plus size={18} /> Add Testimonial
-                    </button>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={handleBulkImport}
+                            disabled={isSaving}
+                            className="bg-amber-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-amber-600 transition-colors flex items-center gap-2 disabled:opacity-50"
+                        >
+                            <RefreshCw size={18} className={isSaving ? 'animate-spin' : ''} /> Import New Reviews
+                        </button>
+                        <button
+                            onClick={handleAddNew}
+                            className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center gap-2"
+                        >
+                            <Plus size={18} /> Add Testimonial
+                        </button>
+                    </div>
                 </div>
 
                 {/* Search */}

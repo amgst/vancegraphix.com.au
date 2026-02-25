@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Star, Quote, ExternalLink, ThumbsUp, MapPin, ChevronDown, ChevronUp, AlertCircle, RefreshCw } from 'lucide-react';
 import SEO from '../components/SEO';
+import { getTestimonials, Testimonial } from '../lib/testimonialsService';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -31,7 +32,7 @@ interface ApiResponse {
 // Find yours at: https://developers.google.com/maps/documentation/places/web-service/place-id
 const DEFAULT_PLACE_ID = 'ChIJmUOqMVeamWsRX0ZjXdptY18';
 const GOOGLE_MAPS_URL = 'https://www.google.com/maps/place/Vance+Graphix+%26+Print/@-27.6190712,153.121597,17z/data=!3m1!4b1!4m6!3m5!1s0x6b129a5731aa4399:0x58cd6dda5d63465f!8m2!3d-27.6190712!4d153.121597!16s%2Fg%2F11b5pkq516';
-const WRITE_REVIEW_MAPS_URL = 'https://www.google.com/maps/place/Vance+Graphix+%26+Print/@-27.6190712,153.121597,17z/data=!4m8!3m7!1s0x6b129a5731aa4399:0x58cd6dda5d63465f!8m2!3d-27.6190712!4d153.121597!9m1!1b1!16s%2Fg%2F11b5pkq516?entry=ttu&g_ep=EgoyMDI2MDIxOC4wIKXMDSoASAFQAw%3D%3D';
+const WRITE_REVIEW_MAPS_URL = 'https://g.page/r/CV9GY13abc1YEBM/review';
 
 // ── Fallback data (shown while loading or if API key is not configured) ───────
 
@@ -42,18 +43,6 @@ const FALLBACK_REVIEWS: GoogleReview[] = [
     { author_name: 'Jason Nguyen', rating: 5, relative_time_description: '4 months ago', text: 'We needed signage for our new shopfront urgently. VGP came through with a fantastic design in under 24 hours and had it ready in 2 days. The sign looks amazing and has drawn many compliments.', time: 0 },
     { author_name: 'Priya Sharma', rating: 5, relative_time_description: '5 months ago', text: 'I approached VGP for a full brand identity package — logo, business cards, letterheads, and a website. They nailed the brief completely. The branding feels premium and professional. Couldn\'t be happier.', time: 0 },
     { author_name: 'Michael Torres', rating: 5, relative_time_description: '6 months ago', text: 'Reliable, fast, and high quality. I order my promotional flyers and brochures from VGP regularly. They always get the colours right and packages arrive on time. Highly recommended.', time: 0 },
-];
-
-const FEATURED_REVIEWS: GoogleReview[] = [
-    { author_name: 'Paramjeet Singh', rating: 5, relative_time_description: 'a year ago', text: 'Very professional. With affordable prices I must recommend there services 👍👍👍', time: 0 },
-    { author_name: 'Amritpal Singh', rating: 5, relative_time_description: 'a year ago', text: 'I\'m really impressed with the website design and development. The layout is clean, user-friendly, and visually appealing. The functionality is seamless, and it\'s clear that a lot of thought went into creating an intuitive user experience. Highly recommend for any web projects.', time: 0 },
-    { author_name: 'Zeal Ability', rating: 5, relative_time_description: 'a year ago', text: 'Very helpful in regards to the services Ahmed and his team provides to us, I would highly recommend Vance Graphix and Print!', time: 0 },
-    { author_name: 'Craig Harrison', rating: 5, relative_time_description: '2 years ago', text: 'Great communication and fast services. Flyers are great quality highly recommend.', time: 0 },
-    { author_name: 'Gurpreet Kaur', rating: 5, relative_time_description: '1 year ago', text: 'Excellent graphic design work. They designed our company logo and brand guidelines. Very creative team that listens to your needs.', time: 0 },
-    { author_name: 'Sandeep Reddy', rating: 5, relative_time_description: '2 years ago', text: 'Best printing shop in Brisbane. I have been using their services for 3 years now for all my business stationery. Consistent quality every time.', time: 0 },
-    { author_name: 'Emma Watson', rating: 5, relative_time_description: '11 months ago', text: 'The team helped us with our Shopify store migration. Smooth process and they fixed all our SEO issues as well. Very knowledgeable.', time: 0 },
-    { author_name: 'David Miller', rating: 5, relative_time_description: '1 year ago', text: 'High quality large format printing. Our banners and A-frames look fantastic. Durable materials and vibrant colors.', time: 0 },
-    { author_name: 'Linda Chen', rating: 5, relative_time_description: '9 months ago', text: 'Very responsive and professional. They handled our urgent brochure printing request with ease and delivered right to our office.', time: 0 },
 ];
 
 const RATING_BREAKDOWN = [
@@ -141,15 +130,23 @@ const ReviewCard: React.FC<{ review: GoogleReview; colorClass: string }> = ({ re
 
 const Reviews: React.FC = () => {
     const [reviews, setReviews] = useState<GoogleReview[]>([]);
+    const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
     const [overallRating, setOverallRating] = useState<number>(4.8);
     const [totalReviews, setTotalReviews] = useState<number>(45);
     const [isLoading, setIsLoading] = useState(true);
+    const [isTestimonialsLoading, setIsTestimonialsLoading] = useState(true);
     const [isLive, setIsLive] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [placeId, setPlaceId] = useState(DEFAULT_PLACE_ID);
     const writeReviewUrl = WRITE_REVIEW_MAPS_URL;
 
     useEffect(() => {
+        // Fetch custom testimonials from Admin/Firebase
+        getTestimonials()
+            .then(data => setTestimonials(data))
+            .catch(err => console.error('Failed to load testimonials:', err))
+            .finally(() => setIsTestimonialsLoading(false));
+
         // Always call our serverless proxy — Google Places API blocks direct browser calls (CORS).
         // The proxy runs server-side on Vercel and makes the Google API call there.
         fetch('/api/google-reviews')
@@ -330,22 +327,42 @@ const Reviews: React.FC = () => {
             </div>
 
             {/* ── Featured Success Stories ── */}
-            <div className="py-24 bg-slate-50 border-t border-gray-100">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-14">
-                        <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">More Success Stories</h2>
-                        <p className="text-gray-500 max-w-2xl mx-auto text-lg">
-                            We take pride in every project. Here are more verified reviews from our valued clients.
-                        </p>
-                    </div>
+            {(!isTestimonialsLoading && testimonials.length > 0) && (
+                <div className="py-24 bg-slate-50 border-t border-gray-100">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="text-center mb-14">
+                            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">More Success Stories</h2>
+                            <p className="text-gray-500 max-w-2xl mx-auto text-lg">
+                                We take pride in every project. Here are more verified reviews from our valued clients.
+                            </p>
+                        </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {FEATURED_REVIEWS.map((review, idx) => (
-                            <ReviewCard key={`${review.author_name}-${idx}`} review={review} colorClass={AVATAR_COLORS[(idx + 5) % AVATAR_COLORS.length]} />
-                        ))}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {testimonials.map((testimonial, idx) => (
+                                <div key={testimonial.id} className="bg-white rounded-2xl p-7 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 relative flex flex-col">
+                                    <Quote className="absolute top-6 right-6 text-blue-50" size={44} />
+                                    <div className="flex items-center gap-3 mb-4">
+                                        {testimonial.image ? (
+                                            <img src={testimonial.image} alt={testimonial.name}
+                                                className="w-11 h-11 rounded-full object-cover flex-shrink-0 shadow-md" />
+                                        ) : (
+                                            <div className={`w-11 h-11 rounded-full ${AVATAR_COLORS[(idx + 5) % AVATAR_COLORS.length]} flex items-center justify-center text-white text-sm font-bold flex-shrink-0 shadow-md`}>
+                                                {testimonial.name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase()}
+                                            </div>
+                                        )}
+                                        <div>
+                                            <p className="font-bold text-slate-900 leading-tight">{testimonial.name}</p>
+                                            <p className="text-xs text-gray-400 mt-0.5">{testimonial.role}{testimonial.company ? `, ${testimonial.company}` : ''}</p>
+                                        </div>
+                                    </div>
+                                    <StarRating rating={testimonial.rating} size={16} />
+                                    <p className="text-gray-600 leading-relaxed text-sm mt-4 flex-grow relative z-10 italic">"{testimonial.content}"</p>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
 
             {/* ── CTA ── */}
             <div className="py-20 bg-slate-50">
