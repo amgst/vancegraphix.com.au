@@ -1,20 +1,12 @@
 /**
- * Uploads an image file using ImgBB API (no CORS issues!)
+ * Uploads an image file to Vercel Blob storage via a serverless function.
  * @param file - The image file to upload
- * @param folder - The folder path in storage (e.g., 'ready-sites') - kept for compatibility
+ * @param folder - The folder path (optional, used in filename)
  * @returns Promise<string> - The download URL of the uploaded image
  */
-export const uploadImage = async (file: File, folder: string = 'ready-sites'): Promise<string> => {
+export const uploadImage = async (file: File, folder: string = 'products'): Promise<string> => {
     try {
-        // ImgBB API key - Get a free one from https://api.imgbb.com/
-        // For now, using a placeholder. You'll need to add your own API key.
-        const IMGBB_API_KEY = import.meta.env.VITE_IMGBB_API_KEY || 'YOUR_IMGBB_API_KEY_HERE';
-        
-        if (IMGBB_API_KEY === 'YOUR_IMGBB_API_KEY_HERE') {
-            throw new Error('Please set VITE_IMGBB_API_KEY in your .env file. Get a free API key from https://api.imgbb.com/');
-        }
-
-        // Validate file size (ImgBB allows up to 32MB, but we'll limit to 10MB for better UX)
+        // Validate file size (limit to 10MB for better UX)
         const maxSize = 10 * 1024 * 1024; // 10MB
         if (file.size > maxSize) {
             throw new Error('Image size must be less than 10MB.');
@@ -25,56 +17,39 @@ export const uploadImage = async (file: File, folder: string = 'ready-sites'): P
             throw new Error('Please select an image file.');
         }
 
-        // Convert file to base64
-        const base64 = await new Promise<string>((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => {
-                const result = reader.result as string;
-                // Remove data:image/...;base64, prefix
-                const base64Data = result.split(',')[1];
-                resolve(base64Data);
-            };
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-        });
+        // Generate a clean filename: folder/timestamp-originalName
+        const cleanFileName = file.name.replace(/[^a-zA-Z0-9.]/g, '-');
+        const filename = `${folder}/${Date.now()}-${cleanFileName}`;
 
-        // Upload to ImgBB
-        const formData = new FormData();
-        formData.append('key', IMGBB_API_KEY);
-        formData.append('image', base64);
-
-        const response = await fetch('https://api.imgbb.com/1/upload', {
+        // Upload to our internal API endpoint which uses @vercel/blob
+        const response = await fetch(`/api/upload?filename=${encodeURIComponent(filename)}&contentType=${encodeURIComponent(file.type)}`, {
             method: 'POST',
-            body: formData,
-            // No CORS issues - ImgBB allows cross-origin requests
+            body: file, // Send the file directly as the body (handled as stream by Vercel)
         });
 
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.error?.message || `Upload failed: ${response.statusText}`);
+            throw new Error(errorData.message || `Upload failed: ${response.statusText}`);
         }
 
         const data = await response.json();
 
-        if (!data.success || !data.data?.url) {
-            throw new Error('Upload failed: Invalid response from ImgBB');
+        if (!data.url) {
+            throw new Error('Upload failed: Invalid response from storage provider');
         }
 
-        // Return the image URL
-        return data.data.url;
+        // Return the Vercel Blob URL
+        return data.url;
     } catch (error: any) {
-        console.error('Error uploading image:', error);
+        console.error('Error uploading image to Vercel Blob:', error);
         
         // Provide user-friendly error messages
-        if (error.message.includes('API key')) {
-            throw new Error('Image upload is not configured. Please contact the administrator.');
-        } else if (error.message.includes('size')) {
-            throw error; // Already user-friendly
+        if (error.message.includes('size')) {
+            throw error; 
         } else if (error.message.includes('image file')) {
-            throw error; // Already user-friendly
+            throw error;
         }
         
         throw new Error(`Failed to upload image: ${error.message || 'Unknown error'}`);
     }
 };
-

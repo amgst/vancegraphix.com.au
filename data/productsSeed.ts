@@ -100,5 +100,15 @@ export const PRODUCTS_SEED_DATA: Omit<Product, 'id' | 'createdAt'>[] = [
         description: 'A premium spiral-bound notebook with 120 pages of ruled paper. Durable cover and perfect size for carrying everywhere.',
         status: 'active',
         tags: ['office', 'stationery', 'gift']
+    },
+    {
+        name: 'Set of Pin Buttons',
+        category: 'Print on Demand',
+        image: 'https://images.unsplash.com/photo-1597244237435-050965306631?q=80&w=1000&auto=format&fit=crop',
+        price: 14.25,
+        shortDescription: 'Custom pin buttons in multiple sizes.',
+        description: 'High-quality pin buttons with a glossy finish. Available in 1.25" and 2.25" sizes. Perfect for custom designs, logos, or personal expressions. Durable and vibrant digital printing.',
+        status: 'active',
+        tags: ['accessories', 'custom', 'buttons', 'pins']
     }
 ];
