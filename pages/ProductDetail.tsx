@@ -131,9 +131,9 @@ const ProductDetail: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid grid-cols-1 lg:grid-cols-3 gap-12">
         <div className="lg:col-span-2 space-y-8">
-          <div className="aspect-[4/3] bg-slate-100 rounded-2xl overflow-hidden flex items-center justify-center">
+          <div className="aspect-[4/3] bg-slate-50 rounded-2xl overflow-hidden flex items-center justify-center border border-gray-100">
             {product.image ? (
-              <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+              <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
             ) : (
               <ShoppingCart size={48} className="text-slate-400" />
             )}

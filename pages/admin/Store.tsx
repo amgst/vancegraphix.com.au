@@ -153,8 +153,8 @@ const AdminStore: React.FC = () => {
         price,
         shortDescription: currentProduct.shortDescription || '',
         description: currentProduct.description,
-        sku: currentProduct.sku,
-        tags: currentProduct.tags,
+        sku: currentProduct.sku || '',
+        tags: currentProduct.tags || [],
         status: currentProduct.status || 'active',
       };
 
@@ -414,7 +414,7 @@ const AdminStore: React.FC = () => {
                     <img
                       src={product.image}
                       alt={product.name}
-                      className="w-12 h-12 rounded-lg object-cover border border-gray-200"
+                      className="w-12 h-12 rounded-lg object-contain bg-slate-50 border border-gray-200"
                     />
                   )}
                   <div>

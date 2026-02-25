@@ -86,11 +86,11 @@ const Store: React.FC = () => {
                 className="group border border-gray-100 rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-lg transition-all flex flex-col"
               >
                 {product.image && (
-                  <div className="aspect-[4/3] bg-slate-100 overflow-hidden">
+                  <div className="aspect-[4/3] bg-slate-50 overflow-hidden">
                     <img
                       src={product.image}
                       alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>
                 )}
