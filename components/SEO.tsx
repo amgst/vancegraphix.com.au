@@ -19,7 +19,7 @@ const SEO: React.FC<SEOProps> = ({
     title,
     description,
     canonical,
-    image = 'https://vancegraphix.com.au/wp-content/uploads/2021/02/logo-vgp.png',
+    image = 'https://nbyomoqura0jkgxd.public.blob.vercel-storage.com/vgp%20logo%20horizontal.png',
     type = 'website',
     publishedTime,
     modifiedTime,
@@ -39,7 +39,7 @@ const SEO: React.FC<SEOProps> = ({
         '@type': 'Organization',
         name: 'Vance Graphix & Print (VGP)',
         url: siteUrl,
-        logo: 'https://vancegraphix.com.au/wp-content/uploads/2021/02/logo-vgp.png',
+        logo: 'https://nbyomoqura0jkgxd.public.blob.vercel-storage.com/vgp%20logo%20horizontal.png',
         description: 'Graphic design, web development, printing, e-commerce, and email marketing in Australia',
         sameAs: [
             // Add social media links here when available

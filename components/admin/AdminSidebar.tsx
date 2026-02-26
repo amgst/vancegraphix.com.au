@@ -61,7 +61,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ isOpen = false, onClose }) 
             <div className={sidebarClasses}>
                 <div className="p-6 border-b border-slate-800 flex items-center justify-between">
                     <div className="flex items-center gap-2 font-bold text-xl">
-                        <span>wb<span className="text-blue-500">ify</span> Admin</span>
+                        <span>VGP Admin</span>
                     </div>
                     {/* Mobile Close Button */}
                     <button

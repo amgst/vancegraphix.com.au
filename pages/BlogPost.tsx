@@ -50,7 +50,7 @@ const BlogPost: React.FC = () => {
         '@type': 'BlogPosting',
         headline: post.title,
         description: post.excerpt,
-        image: post.image || 'https://vancegraphix.com.au/wp-content/uploads/2021/02/logo-vgp.png',
+        image: post.image || 'https://nbyomoqura0jkgxd.public.blob.vercel-storage.com/vgp%20logo%20horizontal.png',
         datePublished: post.date,
         dateModified: post.date,
         author: {
@@ -62,7 +62,7 @@ const BlogPost: React.FC = () => {
             name: 'Vance Graphix & Print (VGP)',
             logo: {
                 '@type': 'ImageObject',
-                url: 'https://vancegraphix.com.au/wp-content/uploads/2021/02/logo-vgp.png'
+                url: 'https://nbyomoqura0jkgxd.public.blob.vercel-storage.com/vgp%20logo%20horizontal.png'
             }
         },
         keywords: post.tags.join(', ')

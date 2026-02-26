@@ -16,6 +16,7 @@ export interface SiteSettings {
 
 const SETTINGS_COLLECTION = 'settings';
 const GENERAL_SETTINGS_DOC = 'general';
+const DEFAULT_LOGO_URL = 'https://nbyomoqura0jkgxd.public.blob.vercel-storage.com/vgp%20logo%20horizontal.png';
 
 export const getSiteSettings = async (): Promise<SiteSettings> => {
     const docRef = doc(db, SETTINGS_COLLECTION, GENERAL_SETTINGS_DOC);
@@ -27,7 +28,8 @@ export const getSiteSettings = async (): Promise<SiteSettings> => {
         // Return default settings if not found
         return {
             siteName: 'Vance Graphix & Print (VGP)',
-            adminEmail: 'ahmed@vancegraphix.com.au'
+            adminEmail: 'ahmed@vancegraphix.com.au',
+            logoUrl: DEFAULT_LOGO_URL
         };
     }
 };
@@ -45,6 +47,7 @@ export const updateSiteSettings = async (settings: Partial<SiteSettings>): Promi
         await setDoc(docRef, {
             siteName: 'Vance Graphix & Print (VGP)',
             adminEmail: 'ahmed@vancegraphix.com.au',
+            logoUrl: DEFAULT_LOGO_URL,
             ...settings
         });
     }
@@ -58,7 +61,8 @@ export const subscribeToSiteSettings = (callback: (settings: SiteSettings) => vo
         } else {
             callback({
                 siteName: 'Vance Graphix & Print (VGP)',
-                adminEmail: 'ahmed@vancegraphix.com.au'
+                adminEmail: 'ahmed@vancegraphix.com.au',
+                logoUrl: DEFAULT_LOGO_URL
             });
         }
     });
