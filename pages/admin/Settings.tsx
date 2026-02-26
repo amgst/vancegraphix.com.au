@@ -12,6 +12,9 @@ const AdminSettings: React.FC = () => {
         adminEmail: '',
         logoUrl: '',
         faviconUrl: '',
+        googleAnalyticsId: '',
+        googleTagManagerId: '',
+        googleSiteVerification: '',
         socialUrls: {
             facebook: '',
             twitter: '',
@@ -30,6 +33,9 @@ const AdminSettings: React.FC = () => {
                 adminEmail: settings.adminEmail || '',
                 logoUrl: settings.logoUrl || '',
                 faviconUrl: settings.faviconUrl || '',
+                googleAnalyticsId: settings.googleAnalyticsId || '',
+                googleTagManagerId: settings.googleTagManagerId || '',
+                googleSiteVerification: settings.googleSiteVerification || '',
                 socialUrls: {
                     facebook: settings.socialUrls?.facebook || '',
                     twitter: settings.socialUrls?.twitter || '',
@@ -189,6 +195,42 @@ const AdminSettings: React.FC = () => {
                                     />
                                 </label>
                                 <p className="text-xs text-gray-500 mt-2">Recommended size: 32x32px or 64x64px. ICO, PNG, or SVG.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="pt-6 border-t border-gray-100">
+                        <h3 className="text-md font-bold text-slate-900 mb-4">Google Integrations</h3>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Google Analytics 4 Measurement ID</label>
+                                <input
+                                    type="text"
+                                    placeholder="G-XXXXXXXXXX"
+                                    value={formData.googleAnalyticsId}
+                                    onChange={(e) => setFormData({ ...formData, googleAnalyticsId: e.target.value })}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Google Tag Manager Container ID</label>
+                                <input
+                                    type="text"
+                                    placeholder="GTM-XXXXXXX"
+                                    value={formData.googleTagManagerId}
+                                    onChange={(e) => setFormData({ ...formData, googleTagManagerId: e.target.value })}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Google Search Console Verification Token</label>
+                                <input
+                                    type="text"
+                                    placeholder="Paste content value from google-site-verification meta tag"
+                                    value={formData.googleSiteVerification}
+                                    onChange={(e) => setFormData({ ...formData, googleSiteVerification: e.target.value })}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                />
                             </div>
                         </div>
                     </div>

@@ -6,6 +6,9 @@ export interface SiteSettings {
     adminEmail: string;
     logoUrl?: string;
     faviconUrl?: string;
+    googleAnalyticsId?: string;
+    googleTagManagerId?: string;
+    googleSiteVerification?: string;
     socialUrls?: {
         facebook?: string;
         twitter?: string;
@@ -17,6 +20,7 @@ export interface SiteSettings {
 const SETTINGS_COLLECTION = 'settings';
 const GENERAL_SETTINGS_DOC = 'general';
 const DEFAULT_LOGO_URL = 'https://nbyomoqura0jkgxd.public.blob.vercel-storage.com/vgp%20logo%20horizontal.png';
+const DEFAULT_GA4_ID = 'G-EB1Z519BGJ';
 
 export const getSiteSettings = async (): Promise<SiteSettings> => {
     const docRef = doc(db, SETTINGS_COLLECTION, GENERAL_SETTINGS_DOC);
@@ -29,7 +33,8 @@ export const getSiteSettings = async (): Promise<SiteSettings> => {
         return {
             siteName: 'Vance Graphix & Print (VGP)',
             adminEmail: 'ahmed@vancegraphix.com.au',
-            logoUrl: DEFAULT_LOGO_URL
+            logoUrl: DEFAULT_LOGO_URL,
+            googleAnalyticsId: DEFAULT_GA4_ID
         };
     }
 };
@@ -48,6 +53,7 @@ export const updateSiteSettings = async (settings: Partial<SiteSettings>): Promi
             siteName: 'Vance Graphix & Print (VGP)',
             adminEmail: 'ahmed@vancegraphix.com.au',
             logoUrl: DEFAULT_LOGO_URL,
+            googleAnalyticsId: DEFAULT_GA4_ID,
             ...settings
         });
     }
@@ -62,7 +68,8 @@ export const subscribeToSiteSettings = (callback: (settings: SiteSettings) => vo
             callback({
                 siteName: 'Vance Graphix & Print (VGP)',
                 adminEmail: 'ahmed@vancegraphix.com.au',
-                logoUrl: DEFAULT_LOGO_URL
+                logoUrl: DEFAULT_LOGO_URL,
+                googleAnalyticsId: DEFAULT_GA4_ID
             });
         }
     });

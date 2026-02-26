@@ -1,10 +1,11 @@
-# Firebase Cloud Functions for Push Notifications
+# Firebase Cloud Functions for Email Notifications
 
-This directory contains the backend code required to send Push Notifications when the app is closed.
+This directory contains Cloud Functions that send email notifications for new `inquiries` and `contact_messages` using Resend.
 
 ## Prerequisites
-1. You must be on the **Firebase Blaze Plan** (Pay as you go) to use Cloud Functions (sending external network requests requires it, though Firestore triggers might work on Spark for internal Google services, FCM usually counts as external or requires Blaze).
+1. You must be on the **Firebase Blaze Plan** (Pay as you go) to use Cloud Functions (external API requests require Blaze).
 2. You need `firebase-tools` installed globally: `npm install -g firebase-tools`
+3. You need a Resend account and verified sending domain/email.
 
 ## Setup Instructions
 
@@ -22,7 +23,18 @@ This directory contains the backend code required to send Push Notifications whe
    - If asked to overwrite `package.json` or `index.js`, say **NO** (N).
    - Select `Install dependencies` -> Yes.
 
-3. **Deploy Functions**:
+3. **Set environment variables** (in `functions/.env` for local/dev):
+   - `RESEND_API_KEY`
+   - `RESEND_FROM_EMAIL` (must be verified in Resend)
+   - `EMAIL_FROM_NAME`
+   - `ADMIN_EMAIL`
+
+   Or set runtime config for deployed functions:
+   ```bash
+   firebase functions:config:set resend.api_key="re_xxx" resend.from_email="no-reply@yourdomain.com" email.from_name="Vance Graphix & Print" notifications.admin_email="admin@yourdomain.com.au"
+   ```
+
+4. **Deploy Functions**:
    ```bash
    cd functions
    npm install
@@ -33,6 +45,6 @@ This directory contains the backend code required to send Push Notifications whe
 ## How it works
 - When a new document is created in `inquiries` or `contact_messages` collection in Firestore:
   - The Cloud Function triggers.
-  - It reads all tokens from `admin_fcm_tokens` collection.
-  - It uses Firebase Cloud Messaging (FCM) to send a push notification to those tokens.
-  - This works even if the admin's PWA is closed on their mobile device.
+  - It sends an email to `ADMIN_EMAIL` via the Resend API.
+  - The sender is `EMAIL_FROM_NAME <RESEND_FROM_EMAIL>`.
+  - `reply_to` is set to the form submitter's email.

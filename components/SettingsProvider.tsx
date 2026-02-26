@@ -9,7 +9,8 @@ interface SettingsContextType {
 const defaultSettings: SiteSettings = {
     siteName: 'Vance Graphix & Print (VGP)',
     adminEmail: 'ahmed@vancegraphix.com.au',
-    logoUrl: 'https://nbyomoqura0jkgxd.public.blob.vercel-storage.com/vgp%20logo%20horizontal.png'
+    logoUrl: 'https://nbyomoqura0jkgxd.public.blob.vercel-storage.com/vgp%20logo%20horizontal.png',
+    googleAnalyticsId: 'G-EB1Z519BGJ'
 };
 
 const SettingsContext = createContext<SettingsContextType>({

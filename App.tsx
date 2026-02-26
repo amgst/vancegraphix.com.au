@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation, Outlet } from 'rea
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
+import GoogleServices from './components/GoogleServices';
 import Home from './pages/Home';
 import Services from './pages/Services';
 import ServiceDetail from './pages/ServiceDetail';
@@ -140,10 +141,11 @@ const App: React.FC = () => {
   return (
     <SettingsProvider>
       <AuthProvider>
-        <Router>
-          <ScrollToTop />
-          <AppContent />
-        </Router>
+      <Router>
+        <ScrollToTop />
+        <GoogleServices />
+        <AppContent />
+      </Router>
       </AuthProvider>
     </SettingsProvider>
   );
