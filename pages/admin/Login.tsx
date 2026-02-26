@@ -15,12 +15,17 @@ const AdminLogin: React.FC = () => {
         e.preventDefault();
         setError('');
         setIsSubmitting(true);
+        console.log("[Login] Attempting login for email:", email);
 
         try {
-            await signInWithEmailAndPassword(auth, email, password);
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            console.log("[Login] Success! Logged in as:", userCredential.user.email);
             navigate('/admin/dashboard');
         } catch (err: any) {
-            console.error("Login error:", err);
+            console.error("[Login] Firebase auth error details:", {
+                code: err.code,
+                message: err.message
+            });
             if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
                 setError('Invalid email or password. Please try again.');
             } else if (err.code === 'auth/too-many-requests') {

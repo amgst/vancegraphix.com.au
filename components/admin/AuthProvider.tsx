@@ -15,19 +15,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        console.log("[AuthProvider] Initializing onAuthStateChanged listener...");
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            console.log("[AuthProvider] Auth state changed. User:", currentUser ? currentUser.email : "Not logged in");
             setUser(currentUser);
+            setLoading(false);
+        }, (error) => {
+            console.error("[AuthProvider] Auth state change error:", error);
             setLoading(false);
         });
 
-        return () => unsubscribe();
+        return () => {
+            console.log("[AuthProvider] Cleaning up auth listener.");
+            unsubscribe();
+        };
     }, []);
 
     const logout = async () => {
+        console.log("[AuthProvider] Logging out user...");
         try {
             await signOut(auth);
+            console.log("[AuthProvider] User logged out successfully.");
         } catch (error) {
-            console.error("Error logging out:", error);
+            console.error("[AuthProvider] Logout error:", error);
             throw error;
         }
     };

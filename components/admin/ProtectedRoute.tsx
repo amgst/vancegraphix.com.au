@@ -7,6 +7,7 @@ const ProtectedRoute: React.FC = () => {
     const { user, loading } = useAuth();
 
     if (loading) {
+        console.log("[ProtectedRoute] Still loading auth state...");
         return (
             <div className="min-h-screen flex items-center justify-center bg-slate-50">
                 <div className="text-center">
@@ -18,9 +19,11 @@ const ProtectedRoute: React.FC = () => {
     }
 
     if (!user) {
+        console.warn("[ProtectedRoute] No user found, redirecting to login.");
         return <Navigate to="/admin/login" replace />;
     }
 
+    console.log("[ProtectedRoute] Authorized access for:", user.email);
     return <Outlet />;
 };
 
