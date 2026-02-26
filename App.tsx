@@ -48,6 +48,8 @@ import NotFound from './pages/NotFound';
 import { HelmetProvider } from 'react-helmet-async';
 import { NotificationProvider } from './components/admin/NotificationProvider';
 import { SettingsProvider } from './components/SettingsProvider';
+import { AuthProvider } from './components/admin/AuthProvider';
+import ProtectedRoute from './components/admin/ProtectedRoute';
 
 const PageWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
@@ -105,19 +107,23 @@ const AppContent: React.FC = () => {
             }>
               <Route index element={<AdminLogin />} />
               <Route path="login" element={<AdminLogin />} />
-              <Route path="dashboard" element={<AdminDashboard />} />
-              <Route path="tools" element={<AdminTools />} />
-              <Route path="portfolio" element={<AdminPortfolio />} />
-              <Route path="web-registry" element={<AdminWebRegistry />} />
-              <Route path="print-portfolio" element={<AdminPrintPortfolio />} />
-              <Route path="services" element={<AdminServices />} />
-              <Route path="blog" element={<AdminBlog />} />
-              <Route path="ready-sites" element={<AdminReadySites />} />
-              <Route path="store" element={<AdminStore />} />
-              <Route path="orders" element={<AdminOrders />} />
-              <Route path="messages" element={<AdminMessages />} />
-              <Route path="testimonials" element={<AdminTestimonials />} />
-              <Route path="settings" element={<AdminSettings />} />
+              
+              {/* Protected Admin Routes */}
+              <Route element={<ProtectedRoute />}>
+                <Route path="dashboard" element={<AdminDashboard />} />
+                <Route path="tools" element={<AdminTools />} />
+                <Route path="portfolio" element={<AdminPortfolio />} />
+                <Route path="web-registry" element={<AdminWebRegistry />} />
+                <Route path="print-portfolio" element={<AdminPrintPortfolio />} />
+                <Route path="services" element={<AdminServices />} />
+                <Route path="blog" element={<AdminBlog />} />
+                <Route path="ready-sites" element={<AdminReadySites />} />
+                <Route path="store" element={<AdminStore />} />
+                <Route path="orders" element={<AdminOrders />} />
+                <Route path="messages" element={<AdminMessages />} />
+                <Route path="testimonials" element={<AdminTestimonials />} />
+                <Route path="settings" element={<AdminSettings />} />
+              </Route>
             </Route>
 
             {/* 404 Route */}
@@ -133,10 +139,12 @@ const AppContent: React.FC = () => {
 const App: React.FC = () => {
   return (
     <SettingsProvider>
-      <Router>
-        <ScrollToTop />
-        <AppContent />
-      </Router>
+      <AuthProvider>
+        <Router>
+          <ScrollToTop />
+          <AppContent />
+        </Router>
+      </AuthProvider>
     </SettingsProvider>
   );
 };

@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, FolderOpen, Settings, LogOut, Globe, Store, Inbox, X, Bell, MessageSquare } from 'lucide-react';
 import { NotificationContext } from './NotificationProvider';
+import { useAuth } from './AuthProvider';
 
 interface AdminSidebarProps {
     isOpen?: boolean;
@@ -12,12 +13,17 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ isOpen = false, onClose }) 
     const location = useLocation();
     const navigate = useNavigate();
     const { permission, requestPermission } = useContext(NotificationContext);
+    const { logout } = useAuth();
 
     const isActive = (path: string) => location.pathname === path;
 
-    const handleLogout = () => {
-        // In a real app, clear auth tokens here
-        navigate('/admin/login');
+    const handleLogout = async () => {
+        try {
+            await logout();
+            navigate('/admin/login');
+        } catch (error) {
+            console.error("Logout error:", error);
+        }
     };
 
     const menuItems = [
