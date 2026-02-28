@@ -23,6 +23,27 @@
       transform: translateY(0);
     }
   }
+
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes scroll-reverse {
+    0% {
+      transform: translateX(-50%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  --animate-scroll: scroll 60s linear infinite;
+  --animate-scroll-reverse: scroll-reverse 60s linear infinite;
 }
 
 /* Enhanced Blog Post Styling */

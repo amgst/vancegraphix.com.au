@@ -19,6 +19,44 @@ const Home: React.FC = () => {
   const [isPrintLoading, setIsPrintLoading] = useState(true);
   const [printError, setPrintError] = useState<string | null>(null);
   const [printCoverImages, setPrintCoverImages] = useState<Record<string, string>>({});
+  const [activeTextIndex, setActiveTextIndex] = useState(0);
+  const [prevTextIndex, setPrevTextIndex] = useState(-1);
+  const [allPortfolioImages, setAllPortfolioImages] = useState<string[]>([]);
+
+  const animatedTexts = [
+    "Print & Signage",
+    "Graphics Design",
+    "Website Design"
+  ];
+
+  useEffect(() => {
+    const fetchAllImages = async () => {
+      try {
+        const [webItems, printItems] = await Promise.all([
+          getPortfolios(),
+          getPrintPortfolios()
+        ]);
+
+        const webImages = webItems.map(item => item.imageUrl).filter(Boolean) as string[];
+        const printImages = printItems.map(item => item.coverImageUrl).filter(Boolean) as string[];
+        
+        // Combine and shuffle for background variety
+        const combined = [...webImages, ...printImages].sort(() => Math.random() - 0.5);
+        setAllPortfolioImages(combined);
+      } catch (err) {
+        console.error('Error fetching all portfolio images', err);
+      }
+    };
+    fetchAllImages();
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPrevTextIndex(activeTextIndex);
+      setActiveTextIndex((prev) => (prev + 1) % animatedTexts.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [activeTextIndex]);
 
   // Take first 4 categories for the preview
   const featuredCategories = SERVICE_CATEGORIES.slice(0, 4);
@@ -136,71 +174,106 @@ const Home: React.FC = () => {
       <ServiceQuizModal isOpen={isQuizOpen} onClose={() => setIsQuizOpen(false)} />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-white pt-16  lg:pt-20 lg:pb-10">
-        {/* Background decoration */}
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-50 via-white to-white -z-10"></div>
+      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-slate-900 pt-20 pb-16">
+        {/* Scrolling Portfolio Background */}
+        <div className="absolute inset-0 z-0 opacity-30">
+          {allPortfolioImages.length > 0 ? (
+            <div className="flex flex-col gap-4 absolute inset-0 -rotate-12 scale-150">
+              {/* Row 1 - Scroll Left */}
+              <div className="flex gap-4 animate-scroll whitespace-nowrap">
+                {[...allPortfolioImages, ...allPortfolioImages, ...allPortfolioImages].map((img, i) => (
+                  <div key={`row1-${i}`} className="w-80 h-48 flex-shrink-0 rounded-xl overflow-hidden shadow-2xl border border-white/10">
+                    <img src={img} alt="" className="w-full h-full object-cover grayscale-[0.4]" />
+                  </div>
+                ))}
+              </div>
+              {/* Row 2 - Scroll Right */}
+              <div className="flex gap-4 animate-scroll-reverse whitespace-nowrap">
+                {[...allPortfolioImages, ...allPortfolioImages, ...allPortfolioImages].reverse().map((img, i) => (
+                  <div key={`row2-${i}`} className="w-80 h-48 flex-shrink-0 rounded-xl overflow-hidden shadow-2xl border border-white/10">
+                    <img src={img} alt="" className="w-full h-full object-cover grayscale-[0.4]" />
+                  </div>
+                ))}
+              </div>
+              {/* Row 3 - Scroll Left */}
+              <div className="flex gap-4 animate-scroll whitespace-nowrap">
+                {[...allPortfolioImages, ...allPortfolioImages, ...allPortfolioImages].map((img, i) => (
+                  <div key={`row3-${i}`} className="w-80 h-48 flex-shrink-0 rounded-xl overflow-hidden shadow-2xl border border-white/10">
+                    <img src={img} alt="" className="w-full h-full object-cover grayscale-[0.4]" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="absolute inset-0 bg-slate-800 animate-pulse"></div>
+          )}
+          {/* Dark Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-900/90 via-slate-900/70 to-slate-900/95"></div>
+        </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
-
-            {/* Text Content */}
-            <div className="flex-1 text-center lg:text-left space-y-8 animate-fade-in-up">
-              <span className="inline-block py-1 px-3 rounded-full bg-blue-50 text-blue-600 text-sm font-semibold tracking-wide">
-                Vance Graphix &amp; Print (VGP)
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center space-y-8 max-w-4xl mx-auto">
+            <div className="animate-fade-in-up">
+              <span className="inline-block py-2 px-6 rounded-full bg-blue-600/10 border border-blue-500/20 text-blue-400 text-sm font-bold tracking-widest uppercase mb-8">
+                Australia's Leading Creative &amp; Production Studio
               </span>
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-slate-900 tracking-tight leading-tight">
-                Print, Signage &amp; <br /><span className="text-blue-600">Graphic Design That Gets Seen</span>
+              
+              <h1 className="text-6xl md:text-7xl lg:text-8xl font-black text-white tracking-tight leading-tight lg:leading-[112px] pb-10 lg:pb-0">
+                <div className="relative h-[1.2em] flex items-center justify-center overflow-visible px-6">
+                  {/* Hidden placeholder to maintain spacing */}
+                  <span className="opacity-0 pointer-events-none select-none px-4">
+                    {animatedTexts.reduce((a, b) => a.length > b.length ? a : b)}
+                  </span>
+                  
+                  {animatedTexts.map((text, idx) => (
+                    <div
+                      key={text}
+                      className={`absolute inset-0 flex items-center justify-center transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)] ${
+                        idx === activeTextIndex
+                          ? "opacity-100 translate-y-0 blur-none scale-100"
+                          : "opacity-0 -translate-y-12 blur-lg scale-110 pointer-events-none"
+                      }`}
+                    >
+                      <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-300 to-blue-400 drop-shadow-2xl px-4 py-2">
+                        {text}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <div className="relative inline-block">
+                  <span className="relative z-10">That Gets Seen</span>
+                  <div className="absolute -bottom-2 left-0 w-full h-3 bg-blue-500/30 -rotate-1 rounded-full -z-10 blur-[2px]"></div>
+                </div>
               </h1>
-              <p className="text-xl text-gray-500 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-                From business cards, brochures and banners to shopfronts and vehicle graphics, we handle it all in-house. Plus, we back it up with professional web and Shopify solutions to keep your brand consistent everywhere.
+
+              <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed mb-12">
+                From high-impact signage and professional printing to custom web development. 
+                One connected team building consistent brands across Australia.
               </p>
 
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
-                <Link to="/services">
-                  <button className="w-full sm:w-auto px-8 py-4 bg-slate-900 text-white rounded-full font-medium hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
-                    Browse All Services <ArrowRight size={18} />
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+                <Link to="/services" className="w-full sm:w-auto">
+                  <button className="w-full px-10 py-5 bg-blue-600 text-white rounded-full font-bold text-lg hover:bg-blue-700 transition-all shadow-[0_0_30px_rgba(37,99,235,0.3)] hover:shadow-[0_0_40px_rgba(37,99,235,0.5)] flex items-center justify-center gap-2 group">
+                    Browse Our Services 
+                    <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                   </button>
                 </Link>
-                <Link to="/contact-us">
-                  <button className="w-full sm:w-auto px-8 py-4 bg-white text-slate-900 border border-gray-200 rounded-full font-medium hover:border-slate-300 hover:bg-gray-50 transition-all">
-                    Get a Quote
+                <a href="tel:+61470642633" className="w-full sm:w-auto">
+                  <button className="w-full px-10 py-5 bg-white text-slate-900 rounded-full font-bold text-lg hover:bg-gray-50 transition-all border-2 border-transparent hover:border-blue-500/30">
+                    +61 470 642 633
                   </button>
-                </Link>
+                </a>
               </div>
 
-              <div className="pt-2">
+              <div className="mt-10">
                 <button
                   onClick={() => setIsQuizOpen(true)}
-                  className="text-sm text-gray-500 hover:text-blue-600 underline decoration-dotted underline-offset-4 transition-colors"
+                  className="text-sm text-gray-400 hover:text-blue-400 underline decoration-dotted underline-offset-4 transition-colors"
                 >
                   Not sure what you need? Take our 30-second quiz
                 </button>
               </div>
             </div>
-
-            {/* Hero Image */}
-            <div className="flex-1 w-full max-w-xl lg:max-w-none relative animate-fade-in-up delay-100">
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-100">
-                <img
-                  src="https://drive.google.com/thumbnail?id=1LwxFOakQ6_g_ns19lIln2GAlc2sO8FDm&sz=w2000"
-                  alt="Vance Graphix & Print large format print and signage"
-                  className="w-full h-auto object-cover transform hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/20 to-transparent pointer-events-none"></div>
-              </div>
-
-              {/* Floating Badge */}
-              <div className="absolute -bottom-6 -left-6 bg-white p-4 rounded-xl shadow-xl border border-gray-50 hidden md:flex items-center gap-3 animate-bounce-slow">
-                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600">
-                  <CheckCircle size={20} />
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 font-medium">Projects Completed</p>
-                  <p className="text-lg font-bold text-slate-900">500+</p>
-                </div>
-              </div>
-            </div>
-
           </div>
         </div>
       </section>
