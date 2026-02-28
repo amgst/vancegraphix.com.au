@@ -184,21 +184,6 @@ const Footer: React.FC = () => {
             <h3 className="text-lg font-semibold text-yellow-400 mb-4">Australia Offices</h3>
             <div className="space-y-5 text-sm">
               <div>
-                <p className="font-semibold text-white">Sydney Office</p>
-                <div className="mt-1 space-y-1 text-gray-300">
-                  <p className="flex items-start gap-2">
-                    <MapPin size={14} className="mt-[2px]" />
-                    <span>44 Flushcombe Rd, Blacktown</span>
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <Phone size={14} /> <span>+61 470 642 633</span>
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <Mail size={14} /> <span>ahmed@vancegraphix.com.au</span>
-                  </p>
-                </div>
-              </div>
-              <div>
                 <p className="font-semibold text-white">Brisbane Office</p>
                 <div className="mt-1 space-y-1 text-gray-300">
                   <p className="flex items-start gap-2">
@@ -210,6 +195,21 @@ const Footer: React.FC = () => {
                   </p>
                   <p className="flex items-center gap-2">
                     <Mail size={14} /> <span>info@vancegraphix.com.au</span>
+                  </p>
+                </div>
+              </div>
+              <div>
+                <p className="font-semibold text-white">Sydney Office</p>
+                <div className="mt-1 space-y-1 text-gray-300">
+                  <p className="flex items-start gap-2">
+                    <MapPin size={14} className="mt-[2px]" />
+                    <span>44 Flushcombe Rd, Blacktown</span>
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <Phone size={14} /> <span>+61 470 642 633</span>
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <Mail size={14} /> <span>ahmed@vancegraphix.com.au</span>
                   </p>
                 </div>
               </div>

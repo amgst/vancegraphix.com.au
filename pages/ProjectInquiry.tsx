@@ -176,7 +176,6 @@ const ProjectInquiry: React.FC = () => {
                                     value={formData.name}
                                     onChange={handleChange}
                                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                                    placeholder="John Doe"
                                 />
                             </div>
 
@@ -190,7 +189,6 @@ const ProjectInquiry: React.FC = () => {
                                         value={formData.email}
                                         onChange={handleChange}
                                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                                        placeholder="john@example.com"
                                     />
                                 </div>
                                 <div>
@@ -201,7 +199,6 @@ const ProjectInquiry: React.FC = () => {
                                         value={formData.phone}
                                         onChange={handleChange}
                                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                                        placeholder="+1 (555) 000-0000"
                                     />
                                 </div>
                             </div>
@@ -237,7 +234,6 @@ const ProjectInquiry: React.FC = () => {
                                         value={formData.shopifyProductType || ''}
                                         onChange={handleChange}
                                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                                        placeholder="e.g., Clothing, Electronics, Digital Products"
                                     />
                                 </div>
 
@@ -382,7 +378,6 @@ const ProjectInquiry: React.FC = () => {
                                         value={formData.graphicsUsage || ''}
                                         onChange={handleChange}
                                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent outline-none"
-                                        placeholder="e.g., Website, Social Media, Print Materials"
                                     />
                                 </div>
                             </div>
@@ -416,7 +411,6 @@ const ProjectInquiry: React.FC = () => {
                                     onChange={handleChange}
                                     rows={4}
                                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all resize-none"
-                                    placeholder="Tell us more about your project, goals, or any specific requirements..."
                                 />
                             </div>
                         </div>

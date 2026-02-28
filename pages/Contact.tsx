@@ -198,7 +198,6 @@ const Contact: React.FC = () => {
                   onChange={handleChange}
                   required
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all"
-                  placeholder="John"
                 />
               </div>
               <div>
@@ -210,7 +209,6 @@ const Contact: React.FC = () => {
                   onChange={handleChange}
                   required
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all"
-                  placeholder="Doe"
                 />
               </div>
             </div>
@@ -224,7 +222,6 @@ const Contact: React.FC = () => {
                 onChange={handleChange}
                 required
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all"
-                placeholder="john@example.com"
               />
             </div>
 
@@ -253,7 +250,6 @@ const Contact: React.FC = () => {
                 required
                 rows={5}
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all"
-                placeholder="Tell us about your project..."
               ></textarea>
             </div>
 

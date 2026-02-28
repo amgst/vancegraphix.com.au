@@ -32,7 +32,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
             if (p === 'granted') {
                 new Notification('Notifications Enabled', {
                     body: 'You will now receive local browser alerts for new inquiries while this tab is open.',
-                    icon: '/shopify.png'
+                    icon: 'https://nbyomoqura0jkgxd.public.blob.vercel-storage.com/vgp%20logo%20horizontal.png'
                 });
             }
         } catch (error) {
@@ -44,7 +44,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         if (permission === 'granted') {
             const notification = new Notification(title, {
                 body,
-                icon: '/shopify.png'
+                icon: 'https://nbyomoqura0jkgxd.public.blob.vercel-storage.com/vgp%20logo%20horizontal.png'
             });
 
             if (url) {
