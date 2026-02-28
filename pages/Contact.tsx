@@ -125,9 +125,27 @@ const Contact: React.FC = () => {
           {/* Contact Info */}
           <div className="space-y-8">
             <div className="bg-slate-50 p-8 rounded-2xl border border-gray-100">
-              <h3 className="text-xl font-bold text-slate-900 mb-6">Australia Office</h3>
+              <h3 className="text-xl font-bold text-slate-900 mb-6">Australia Offices</h3>
 
               <div className="space-y-8">
+                <div>
+                  <p className="font-semibold text-slate-900 mb-2">Brisbane Office</p>
+                  <div className="space-y-3">
+                    <div className="flex items-start">
+                      <Phone className="text-blue-600 mt-1 mr-4" />
+                      <p className="text-gray-500">+61 404 777 738</p>
+                    </div>
+                    <div className="flex items-start">
+                      <Mail className="text-blue-600 mt-1 mr-4" />
+                      <p className="text-gray-500">info@vancegraphix.com.au</p>
+                    </div>
+                    <div className="flex items-start">
+                      <MapPin className="text-blue-600 mt-1 mr-4" />
+                      <p className="text-gray-500">280 Yarrabilba Dr., Yarrabilba, QLD, 4207</p>
+                    </div>
+                  </div>
+                </div>
+
                 <div>
                   <p className="font-semibold text-slate-900 mb-2">Sydney Office</p>
                   <div className="space-y-3">
@@ -147,19 +165,19 @@ const Contact: React.FC = () => {
                 </div>
 
                 <div>
-                  <p className="font-semibold text-slate-900 mb-2">Brisbane Office</p>
+                  <p className="font-semibold text-slate-900 mb-2">UAE Office</p>
                   <div className="space-y-3">
                     <div className="flex items-start">
                       <Phone className="text-blue-600 mt-1 mr-4" />
-                      <p className="text-gray-500">+61 404 777 738</p>
+                      <p className="text-gray-500">+971 50 49 94 143</p>
                     </div>
                     <div className="flex items-start">
                       <Mail className="text-blue-600 mt-1 mr-4" />
-                      <p className="text-gray-500">info@vancegraphix.com.au</p>
+                      <p className="text-gray-500">rashiprint@gmail.com</p>
                     </div>
                     <div className="flex items-start">
                       <MapPin className="text-blue-600 mt-1 mr-4" />
-                      <p className="text-gray-500">280 Yarrabilba Dr., Yarrabilba, QLD, 4207</p>
+                      <p className="text-gray-500">Industrial Area 3, Sharjah UAE</p>
                     </div>
                   </div>
                 </div>
