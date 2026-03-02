@@ -5,6 +5,7 @@ import { Helmet } from 'react-helmet-async';
 import { Product } from '../data/productsData';
 import { getProductById } from '../lib/productsService';
 import { submitOrder } from '../lib/ordersService';
+import { getProductImageUrl, PRODUCT_IMAGE_PLACEHOLDER } from '../lib/productImage';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -133,7 +134,15 @@ const ProductDetail: React.FC = () => {
         <div className="lg:col-span-2 space-y-8">
           <div className="aspect-[4/3] bg-slate-50 rounded-2xl overflow-hidden flex items-center justify-center border border-gray-100">
             {product.image ? (
-              <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
+              <img
+                src={getProductImageUrl(product.image)}
+                alt={product.name}
+                className="w-full h-full object-contain"
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = PRODUCT_IMAGE_PLACEHOLDER;
+                }}
+              />
             ) : (
               <ShoppingCart size={48} className="text-slate-400" />
             )}
@@ -274,4 +283,3 @@ const ProductDetail: React.FC = () => {
 };
 
 export default ProductDetail;
-

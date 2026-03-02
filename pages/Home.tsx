@@ -7,6 +7,7 @@ import ServiceQuizModal from '../components/ServiceQuizModal';
 import { getPortfolios, PortfolioItem } from '../lib/portfolioService';
 import { getPrintPortfolios, PrintPortfolioCategory } from '../lib/printPortfolioService';
 import { PORTFOLIO_CONFIG } from '../data/portfolioConfig';
+import { resolveImageUrl } from '../lib/imageUrl';
 
 import SEO from '../components/SEO';
 
@@ -37,8 +38,12 @@ const Home: React.FC = () => {
           getPrintPortfolios()
         ]);
 
-        const webImages = webItems.map(item => item.imageUrl).filter(Boolean) as string[];
-        const printImages = printItems.map(item => item.coverImageUrl).filter(Boolean) as string[];
+        const webImages = webItems
+          .map(item => resolveImageUrl(item.imageUrl))
+          .filter(Boolean) as string[];
+        const printImages = printItems
+          .map(item => resolveImageUrl(item.coverImageUrl))
+          .filter(Boolean) as string[];
         
         // Combine and shuffle for background variety
         const combined = [...webImages, ...printImages].sort(() => Math.random() - 0.5);
@@ -118,7 +123,7 @@ const Home: React.FC = () => {
         const entries = await Promise.all(
           topCategories.map(async (cat) => {
             if (cat.coverImageUrl) {
-              return [cat.id, cat.coverImageUrl] as const;
+              return [cat.id, resolveImageUrl(cat.coverImageUrl)] as const;
             }
             if (!cat.folderId) {
               return null;
@@ -345,7 +350,7 @@ const Home: React.FC = () => {
             </div>
             <div className="flex-1 w-full relative">
               <img
-                src="https://vancegraphix.com.au/wp-content/uploads/2020/01/16278-scaled.jpg"
+                src={resolveImageUrl('16278-scaled.jpg')}
                 alt="Large format printing and signage at Vance Graphix & Print"
                 className="relative z-10 rounded-2xl shadow-2xl border border-slate-700 transform rotate-1 hover:rotate-0 transition-all duration-500 w-full h-auto"
               />
@@ -382,8 +387,8 @@ const Home: React.FC = () => {
 
             <div className="relative">
               <div className="grid grid-cols-2 gap-4">
-                <img src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=800&q=80" alt="Coding and Development" className="rounded-2xl shadow-lg w-full h-64 object-cover transform translate-y-8" />
-                <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80" alt="Team Collaboration" className="rounded-2xl shadow-lg w-full h-64 object-cover" />
+                <img src={resolveImageUrl('coding-development.jpg')} alt="Coding and Development" className="rounded-2xl shadow-lg w-full h-64 object-cover transform translate-y-8" />
+                <img src={resolveImageUrl('team-collaboration.jpg')} alt="Team Collaboration" className="rounded-2xl shadow-lg w-full h-64 object-cover" />
               </div>
             </div>
           </div>
@@ -427,7 +432,7 @@ const Home: React.FC = () => {
                   <div className="relative aspect-[16/10] bg-gray-100 overflow-hidden">
                     {item.imageUrl && (
                       <img
-                        src={item.imageUrl}
+                        src={resolveImageUrl(item.imageUrl)}
                         alt={item.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
@@ -511,7 +516,7 @@ const Home: React.FC = () => {
                     <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden">
                       {coverImage && (
                         <img
-                          src={coverImage}
+                          src={resolveImageUrl(coverImage)}
                           alt={cat.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />

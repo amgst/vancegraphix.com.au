@@ -1,5 +1,9 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
+import ProcessTimeline from '../components/ProcessTimeline';
+import { getPageMedia } from '../lib/pageMediaService';
+import { resolveImageUrl } from '../lib/imageUrl';
 
 const DesignProcess: React.FC = () => {
   const structuredData = {
@@ -14,6 +18,20 @@ const DesignProcess: React.FC = () => {
     },
   };
 
+  const [media, setMedia] = React.useState<Record<string, string>>({});
+
+  React.useEffect(() => {
+    const load = async () => {
+      try {
+        const m = await getPageMedia('design_process');
+        setMedia(m || {});
+      } catch (e) {
+        // ignore
+      }
+    };
+    load();
+  }, []);
+
   return (
     <div className="min-h-screen bg-white py-20">
       <SEO
@@ -23,13 +41,36 @@ const DesignProcess: React.FC = () => {
         structuredData={structuredData}
       />
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="relative bg-slate-50 rounded-3xl px-6 sm:px-10 py-12 mb-16 overflow-hidden">
+          <div className="absolute top-0 right-0 w-1/3 h-full bg-blue-50/50 skew-x-12 translate-x-20"></div>
+          <div className="relative z-10">
+            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 tracking-tight">
+              Our Design Process
+            </h1>
+            <p className="text-lg text-gray-600 leading-relaxed mb-6 max-w-2xl">
+              A structured, collaborative approach that takes you from brief to launch with clarity and momentum.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link to="/inquiry">
+                <button className="px-8 py-4 bg-blue-600 text-white rounded-full font-bold hover:bg-blue-500 transition-all">
+                  Start a Project
+                </button>
+              </Link>
+              <Link to="/contact-us">
+                <button className="px-8 py-4 bg-white text-slate-900 rounded-full font-bold hover:bg-gray-50 transition-all border border-gray-200">
+                  Talk To Our Team
+                </button>
+              </Link>
+            </div>
+          </div>
+        </section>
+
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center mb-16">
           <div>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight uppercase">
-              <span>Our Design </span>
-              <span className="text-yellow-500">Process</span>
-            </h1>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">
+              How We Work
+            </h2>
             <p className="text-lg text-gray-600 leading-relaxed mb-4">
               If you are looking for a creative studio, you have come to the right place. Under one roof,
               our team delivers graphic design, website design and development using the latest and most
@@ -42,19 +83,21 @@ const DesignProcess: React.FC = () => {
             </p>
           </div>
           <div className="rounded-2xl overflow-hidden shadow-lg">
-            <img
-              src="https://vancegraphix.com.au/wp-content/uploads/2022/02/Design_Processing_ImageB-462x500.jpg"
+              <img
+              src={resolveImageUrl(media.introRightImage) || "https://vancegraphix.com.au/wp-content/uploads/2022/02/Design_Processing_ImageB-462x500.jpg"}
               alt="VGP design process layout with branding work"
               className="w-full h-full object-cover"
             />
           </div>
         </section>
 
+        <ProcessTimeline />
+
         <section className="bg-white">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
             <div className="rounded-2xl overflow-hidden shadow-lg">
               <img
-                src="https://vancegraphix.com.au/wp-content/uploads/2024/09/37980.jpg"
+                src={resolveImageUrl(media.commencingImage) || "https://vancegraphix.com.au/wp-content/uploads/2024/09/37980.jpg"}
                 alt="Project commencing discussion at VGP"
                 className="w-full h-full object-cover"
               />
@@ -99,7 +142,7 @@ const DesignProcess: React.FC = () => {
 
           <div className="mt-10 flex justify-center">
             <img
-              src="https://vancegraphix.com.au/wp-content/uploads/2023/09/design-process-1536x529.jpg"
+              src={resolveImageUrl(media.processDiagramImage) || "https://vancegraphix.com.au/wp-content/uploads/2023/09/design-process-1536x529.jpg"}
               alt="VGP design process steps diagram"
               className="w-full max-w-4xl rounded-2xl shadow-md object-contain"
             />
@@ -123,7 +166,7 @@ const DesignProcess: React.FC = () => {
             </div>
             <div className="rounded-2xl overflow-hidden shadow-lg">
               <img
-                src="https://vancegraphix.com.au/wp-content/uploads/2020/01/desktop-of-hard-working-entrepreneur.jpg"
+                src={resolveImageUrl(media.researchImage) || "https://vancegraphix.com.au/wp-content/uploads/2020/01/desktop-of-hard-working-entrepreneur.jpg"}
                 alt="Research and brainstorming at VGP workstation"
                 className="w-full h-full object-cover"
               />
@@ -135,7 +178,7 @@ const DesignProcess: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
             <div className="rounded-2xl overflow-hidden shadow-lg">
               <img
-                src="https://vancegraphix.com.au/wp-content/uploads/2020/01/young-male-graphic-designer-at-computer-screen-while-holding-graphic-pen-at-desk-in-office.jpg"
+                src={resolveImageUrl(media.developmentImage) || "https://vancegraphix.com.au/wp-content/uploads/2020/01/young-male-graphic-designer-at-computer-screen-while-holding-graphic-pen-at-desk-in-office.jpg"}
                 alt="Designer developing concepts on screen"
                 className="w-full h-full object-cover"
               />
@@ -173,7 +216,7 @@ const DesignProcess: React.FC = () => {
             </div>
             <div className="rounded-2xl overflow-hidden shadow-lg">
               <img
-                src="https://vancegraphix.com.au/wp-content/uploads/2020/01/white-male-executive-leading-a-meeting.jpg"
+                src={resolveImageUrl(media.presentationImage) || "https://vancegraphix.com.au/wp-content/uploads/2020/01/white-male-executive-leading-a-meeting.jpg"}
                 alt="Presentation of design concepts in meeting"
                 className="w-full h-full object-cover"
               />
@@ -185,7 +228,7 @@ const DesignProcess: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
             <div className="rounded-2xl overflow-hidden shadow-lg">
               <img
-                src="https://vancegraphix.com.au/wp-content/uploads/2020/01/color-shade-swatch-stationary-designer-creative-concept.jpg"
+                src={resolveImageUrl(media.productionImage) || "https://vancegraphix.com.au/wp-content/uploads/2020/01/color-shade-swatch-stationary-designer-creative-concept.jpg"}
                 alt="Color swatches and stationery for production"
                 className="w-full h-full object-cover"
               />
@@ -235,10 +278,31 @@ const DesignProcess: React.FC = () => {
             </div>
             <div className="rounded-2xl overflow-hidden shadow-lg">
               <img
-                src="https://vancegraphix.com.au/wp-content/uploads/2020/01/successful-business-meeting.jpg"
+                src={resolveImageUrl(media.completionImage) || "https://vancegraphix.com.au/wp-content/uploads/2020/01/successful-business-meeting.jpg"}
                 alt="Successful business meeting after project completion"
                 className="w-full h-full object-cover"
               />
+            </div>
+          </div>
+        </section>
+
+        <section className="mt-16 rounded-3xl px-6 sm:px-10 py-12 bg-slate-50 border border-gray-100">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+              <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2">Ready to move from brief to results?</h3>
+              <p className="text-gray-600">Send us your goals and we’ll map the next steps with clear timelines and deliverables.</p>
+            </div>
+            <div className="flex gap-4">
+              <Link to="/inquiry">
+                <button className="px-8 py-4 bg-blue-600 text-white rounded-full font-bold hover:bg-blue-500 transition-all">
+                  Start a Project
+                </button>
+              </Link>
+              <Link to="/contact-us">
+                <button className="px-8 py-4 bg-white text-slate-900 rounded-full font-bold hover:bg-gray-50 transition-all border border-gray-200">
+                  Contact Us
+                </button>
+              </Link>
             </div>
           </div>
         </section>

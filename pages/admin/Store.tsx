@@ -3,8 +3,8 @@ import AdminLayout from '../../components/admin/AdminLayout';
 import { Product } from '../../data/productsData';
 import { getProducts, addProduct, updateProduct, deleteProduct } from '../../lib/productsService';
 import { PRODUCTS_SEED_DATA } from '../../data/productsSeed';
-import { uploadImage } from '../../lib/imageUploadService';
-import { Plus, Trash2, Edit2, Save, X, Upload, Image as ImageIcon, Download } from 'lucide-react';
+import { getProductImageUrl, PRODUCT_IMAGE_PLACEHOLDER } from '../../lib/productImage';
+import { Plus, Trash2, Edit2, Save, X, Download } from 'lucide-react';
 
 const AdminStore: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -12,10 +12,6 @@ const AdminStore: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Partial<Product>>({});
   const [isImporting, setIsImporting] = useState(false);
-
-  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
 
   const fetchProducts = async () => {
     setIsLoading(true);
@@ -47,8 +43,6 @@ const AdminStore: React.FC = () => {
 
   const handleEdit = (product: Product) => {
     setCurrentProduct(product);
-    setImagePreview(product.image || null);
-    setSelectedImageFile(null);
     setIsEditing(true);
   };
 
@@ -62,8 +56,6 @@ const AdminStore: React.FC = () => {
       description: '',
       status: 'active',
     });
-    setImagePreview(null);
-    setSelectedImageFile(null);
     setIsEditing(true);
   };
 
@@ -97,43 +89,6 @@ const AdminStore: React.FC = () => {
       alert('Failed to import products.');
     } finally {
       setIsImporting(false);
-    }
-  };
-
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (!file.type.startsWith('image/')) {
-        alert('Please select an image file.');
-        return;
-      }
-      if (file.size > 5 * 1024 * 1024) {
-        alert('Image size should be less than 5MB.');
-        return;
-      }
-      setSelectedImageFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleImageUpload = async () => {
-    if (!selectedImageFile) return;
-    setIsUploading(true);
-    try {
-      const imageUrl = await uploadImage(selectedImageFile, 'products');
-      setCurrentProduct({ ...currentProduct, image: imageUrl });
-      setImagePreview(imageUrl);
-      setSelectedImageFile(null);
-      alert('Image uploaded successfully.');
-    } catch (e: any) {
-      console.error('Error uploading image', e);
-      alert(e.message || 'Failed to upload image.');
-    } finally {
-      setIsUploading(false);
     }
   };
 
@@ -218,8 +173,6 @@ const AdminStore: React.FC = () => {
               <button
                 onClick={() => {
                   setIsEditing(false);
-                  setImagePreview(null);
-                  setSelectedImageFile(null);
                 }}
                 className="text-gray-400 hover:text-slate-900"
               >
@@ -320,45 +273,27 @@ const AdminStore: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Image</label>
-                {imagePreview && (
+                <label className="block text-sm font-medium text-gray-700 mb-2">Image (URL or Filename)</label>
+                {currentProduct.image && (
                   <div className="mb-3">
                     <img
-                      src={imagePreview}
+                      src={getProductImageUrl(currentProduct.image)}
                       alt="Preview"
                       className="w-full h-48 object-cover rounded-lg border border-gray-200"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = PRODUCT_IMAGE_PLACEHOLDER;
+                      }}
                     />
                   </div>
                 )}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3">
-                    <label className="flex-1 cursor-pointer">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageSelect}
-                        className="hidden"
-                      />
-                      <div className="flex items-center justify-center gap-2 px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors">
-                        <ImageIcon size={20} className="text-gray-400" />
-                        <span className="text-sm text-gray-600">
-                          {selectedImageFile ? selectedImageFile.name : 'Choose image to upload'}
-                        </span>
-                      </div>
-                    </label>
-                    {selectedImageFile && (
-                      <button
-                        type="button"
-                        onClick={handleImageUpload}
-                        disabled={isUploading}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-60 flex items-center gap-2"
-                      >
-                        <Upload size={16} />
-                        {isUploading ? 'Uploading...' : 'Upload'}
-                      </button>
-                    )}
-                  </div>
-                </div>
+                <input
+                  type="text"
+                  value={currentProduct.image || ''}
+                  onChange={e => setCurrentProduct({ ...currentProduct, image: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  placeholder="https://... or /products/foo.jpg or foo.jpg"
+                />
               </div>
 
               <div className="flex justify-end gap-3 pt-4">
@@ -366,8 +301,6 @@ const AdminStore: React.FC = () => {
                   type="button"
                   onClick={() => {
                     setIsEditing(false);
-                    setImagePreview(null);
-                    setSelectedImageFile(null);
                   }}
                   className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 flex items-center gap-2"
                 >
@@ -412,9 +345,13 @@ const AdminStore: React.FC = () => {
                 <td className="px-4 py-3 flex items-center gap-3">
                   {product.image && (
                     <img
-                      src={product.image}
+                      src={getProductImageUrl(product.image)}
                       alt={product.name}
                       className="w-12 h-12 rounded-lg object-contain bg-slate-50 border border-gray-200"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = PRODUCT_IMAGE_PLACEHOLDER;
+                      }}
                     />
                   )}
                   <div>
@@ -472,4 +409,3 @@ const AdminStore: React.FC = () => {
 };
 
 export default AdminStore;
-

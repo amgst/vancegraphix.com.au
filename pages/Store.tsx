@@ -4,6 +4,7 @@ import { ShoppingCart, Tag, Loader, Package } from 'lucide-react';
 import SEO from '../components/SEO';
 import { Product } from '../data/productsData';
 import { getProducts } from '../lib/productsService';
+import { getProductImageUrl, PRODUCT_IMAGE_PLACEHOLDER } from '../lib/productImage';
 
 const Store: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -88,9 +89,13 @@ const Store: React.FC = () => {
                 {product.image && (
                   <div className="aspect-[4/3] bg-slate-50 overflow-hidden">
                     <img
-                      src={product.image}
+                      src={getProductImageUrl(product.image)}
                       alt={product.name}
                       className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = PRODUCT_IMAGE_PLACEHOLDER;
+                      }}
                     />
                   </div>
                 )}
@@ -129,4 +134,3 @@ const Store: React.FC = () => {
 };
 
 export default Store;
-
