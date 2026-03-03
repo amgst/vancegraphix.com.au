@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, CheckCircle } from 'lucide-react';
-import { SERVICE_CATEGORIES } from '../data/servicesData';
+import { ArrowRight, CheckCircle, Palette, Monitor, Printer, Megaphone } from 'lucide-react';
 import Testimonials from '../components/Testimonials';
 import ServiceQuizModal from '../components/ServiceQuizModal';
 import { getPortfolios, PortfolioItem } from '../lib/portfolioService';
@@ -63,8 +62,36 @@ const Home: React.FC = () => {
     return () => clearInterval(interval);
   }, [activeTextIndex]);
 
-  // Take first 4 categories for the preview
-  const featuredCategories = SERVICE_CATEGORIES.slice(0, 4);
+  const featuredServiceBoxes = [
+    {
+      id: 'graphics',
+      title: 'Graphics',
+      description: 'Branding, logo design and visual assets that keep your business consistent everywhere.',
+      icon: Palette,
+      link: '/services'
+    },
+    {
+      id: 'website',
+      title: 'Website',
+      description: 'Custom business websites and eCommerce builds designed for speed and conversions.',
+      icon: Monitor,
+      link: '/services'
+    },
+    {
+      id: 'prints',
+      title: 'Prints',
+      description: 'Business cards, signage, banners and promotional print products for real-world impact.',
+      icon: Printer,
+      link: '/printing'
+    },
+    {
+      id: 'digital-solutions',
+      title: 'Digital Solutions',
+      description: 'Ongoing digital support including updates, marketing assets and online growth services.',
+      icon: Megaphone,
+      link: '/services'
+    }
+  ];
 
   const websiteStructuredData = {
     '@context': 'https://schema.org',
@@ -287,20 +314,20 @@ const Home: React.FC = () => {
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-slate-900 mb-4">Print, Graphics &amp; Digital Services</h2>
-            <p className="text-gray-500">From real-world print and signage to branding, websites and digital marketing.</p>
+            <h2 className="text-3xl font-bold text-slate-900 mb-4">Graphics | Website | Prints &amp; Digital Solutions</h2>
+            <p className="text-gray-500">One team delivering design, web, print and digital support for growing brands.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredCategories.map((cat) => (
-              <div key={cat.id} className="group p-8 border border-gray-100 rounded-2xl hover:shadow-xl hover:border-transparent transition-all duration-300 bg-white">
+            {featuredServiceBoxes.map((box) => (
+              <div key={box.id} className="group p-8 border border-gray-100 rounded-2xl hover:shadow-xl hover:border-transparent transition-all duration-300 bg-white">
                 <div className="w-14 h-14 bg-blue-50 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <cat.icon className="text-blue-600" size={28} />
+                  <box.icon className="text-blue-600" size={28} />
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">{cat.title}</h3>
-                <p className="text-sm text-gray-500 mb-6 min-h-[40px]">{cat.description}</p>
-                <Link to="/services" className="text-blue-600 font-medium text-sm hover:text-blue-700 flex items-center gap-1">
-                  View {cat.services.length} services <ArrowRight size={14} />
+                <h3 className="text-xl font-bold text-slate-900 mb-2">{box.title}</h3>
+                <p className="text-sm text-gray-500 mb-6 min-h-[40px]">{box.description}</p>
+                <Link to={box.link} className="text-blue-600 font-medium text-sm hover:text-blue-700 flex items-center gap-1">
+                  Learn more <ArrowRight size={14} />
                 </Link>
               </div>
             ))}
@@ -350,7 +377,7 @@ const Home: React.FC = () => {
             </div>
             <div className="flex-1 w-full relative">
               <img
-                src={resolveImageUrl('16278-scaled.jpg')}
+                src={resolveImageUrl('brand.jpg')}
                 alt="Large format printing and signage at Vance Graphix & Print"
                 className="relative z-10 rounded-2xl shadow-2xl border border-slate-700 transform rotate-1 hover:rotate-0 transition-all duration-500 w-full h-auto"
               />

@@ -1,7 +1,78 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowRight, CheckCircle } from 'lucide-react';
 import SEO from '../components/SEO';
+import { getPrintPortfolios } from '../lib/printPortfolioService';
+import { PORTFOLIO_CONFIG } from '../data/portfolioConfig';
+import { resolveImageUrl } from '../lib/imageUrl';
 
 const Printing: React.FC = () => {
+  const [printHeroImages, setPrintHeroImages] = useState<string[]>([]);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  useEffect(() => {
+    const fetchPrintHeroImages = async () => {
+      try {
+        const categories = await getPrintPortfolios();
+        const visibleCategories = categories.filter((cat) => cat.isPublic !== false);
+
+        const imageEntries = await Promise.all(
+          visibleCategories.map(async (cat) => {
+            if (cat.coverImageUrl) {
+              return resolveImageUrl(cat.coverImageUrl);
+            }
+
+            if (!cat.folderId || !PORTFOLIO_CONFIG.apiKey) {
+              return null;
+            }
+
+            try {
+              const query = `'${cat.folderId}' in parents and trashed = false and mimeType contains 'image/'`;
+              const url = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(
+                query
+              )}&fields=files(id,name,mimeType)&key=${PORTFOLIO_CONFIG.apiKey}&pageSize=1`;
+              const res = await fetch(url);
+              if (!res.ok) {
+                return null;
+              }
+              const data = await res.json();
+              const file = data.files && data.files[0];
+              if (!file || !file.id) {
+                return null;
+              }
+              return `https://drive.google.com/thumbnail?id=${file.id}&sz=w2000`;
+            } catch {
+              return null;
+            }
+          })
+        );
+
+        const images = imageEntries.filter(Boolean) as string[];
+        setPrintHeroImages(images.slice(0, 8));
+      } catch (error) {
+        console.error('Failed to load print portfolio images for hero section', error);
+      }
+    };
+
+    fetchPrintHeroImages();
+  }, []);
+
+  useEffect(() => {
+    setActiveImageIndex(0);
+  }, [printHeroImages.length]);
+
+  useEffect(() => {
+    if (printHeroImages.length <= 1) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setActiveImageIndex((prev) => (prev + 1) % printHeroImages.length);
+    }, 3500);
+
+    return () => clearInterval(interval);
+  }, [printHeroImages.length]);
+
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'Service',
@@ -16,7 +87,7 @@ const Printing: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white py-20">
+    <div className="min-h-screen bg-white">
       <SEO
         title="Printing Solutions | Large Format & Digital Printing in Australia"
         description="Vance Graphix & Print (VGP) delivers fast, cost-effective printing solutions from one purpose-built premises, including large format signage and digital print services."
@@ -24,62 +95,91 @@ const Printing: React.FC = () => {
         structuredData={structuredData}
       />
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center mb-16">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight uppercase">
-              <span>Printing </span>
-              <span className="text-yellow-500">Solutions</span>
-            </h1>
-            <p className="text-lg text-gray-600 leading-relaxed mb-4">
-              Unique to many creative agencies, Vance Graphix &amp; Print handles its print production
-              and output from the one, purpose-built premises. Conveniently placed, we believe this offers
-              the best possible service to you and your business.
-            </p>
-            <p className="text-gray-600 leading-relaxed">
-              Featuring state-of-the-art large format and digital printing equipment, we can provide our
-              clients with fast turnaround and extremely cost-effective marketing solutions.
-            </p>
-            <p className="mt-4 text-sm font-semibold uppercase tracking-wide text-blue-600">
-              Print in Australia with VGP.
-            </p>
-          </div>
-          <div className="rounded-2xl overflow-hidden shadow-lg">
-            <img
-              src="https://vancegraphix.com.au/wp-content/uploads/2022/02/20964-scaled-1.png"
-              alt="VGP printing solutions hero artwork"
-              className="w-full h-full object-cover"
-            />
-          </div>
-        </section>
+      <section className="relative bg-slate-900 text-white py-24 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="flex flex-col md:flex-row items-center gap-12">
+            <div className="flex-1 space-y-8">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-sm font-medium">
+                <CheckCircle size={16} />
+                <span>Print &amp; Signage Specialists</span>
+              </div>
+              <h1 className="text-5xl md:text-7xl font-bold leading-tight">
+                Professional <span className="text-blue-400">Printing</span> Solutions.
+              </h1>
+              <p className="text-xl text-gray-300 max-w-2xl leading-relaxed">
+                From shopfront signage and vehicle wraps to business cards and brochures, we deliver fast,
+                high-quality print from one purpose-built production facility.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link to="/contact">
+                  <button className="px-8 py-4 bg-blue-600 text-white rounded-full font-bold hover:bg-blue-500 transition-all shadow-lg hover:shadow-blue-500/25 flex items-center gap-2">
+                    Start Your Print Project <ArrowRight size={18} />
+                  </button>
+                </Link>
+                <Link to="/print-portfolio">
+                  <button className="px-8 py-4 bg-white/10 text-white border border-white/20 rounded-full font-bold hover:bg-white/20 transition-all backdrop-blur-sm">
+                    View Print Portfolio
+                  </button>
+                </Link>
+              </div>
+            </div>
 
+            <div className="flex-1 w-full">
+              <div className="relative">
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-2xl blur opacity-30"></div>
+                <div className="relative bg-slate-800 rounded-2xl p-4 border border-slate-700">
+                  {printHeroImages.length > 0 ? (
+                    <div className="relative rounded-lg overflow-hidden h-[22rem]">
+                      {printHeroImages.map((image, index) => (
+                        <img
+                          key={`${image}-${index}`}
+                          src={image}
+                          alt="Printing portfolio project"
+                          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+                            index === activeImageIndex ? 'opacity-100' : 'opacity-0'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <img
+                      src="https://vancegraphix.com.au/wp-content/uploads/2022/02/20964-scaled-1.png"
+                      alt="VGP printing solutions hero artwork"
+                      className="rounded-lg w-full h-[22rem] object-cover"
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <section className="mt-10 bg-slate-50 rounded-3xl px-6 sm:px-10 py-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
             <div>
-              <h2 className="text-2xl font-extrabold text-slate-900 mb-3">
-                <span>Large Format Print </span>
-                <span className="text-yellow-500">Division</span>
+              <h2 className="text-3xl font-bold text-slate-900 mb-4">
+                Large Format <span className="text-blue-600">Printing</span>
               </h2>
               <p className="text-gray-600 mb-4 leading-relaxed">
-                Specifically geared towards small to medium businesses, we can easily cater for
-                specialised print runs or low minimum quantities.
+                Specifically geared towards small to medium businesses, we can easily cater for specialised
+                print runs or low minimum quantities.
               </p>
               <p className="text-gray-600 mb-4 leading-relaxed">
-                We can print on just about anything. Our production team is responsible for applying
-                incredible designs to all sorts of materials every day – from paper prints through to
-                glass, acrylic, aluminium composite board, corflute, foamboard, timber and much more.
+                We can print on just about anything. Our production team applies designs to materials every
+                day, from paper through to glass, acrylic, aluminium composite board, corflute, foamboard,
+                timber and much more.
               </p>
               <p className="text-gray-600 leading-relaxed">
                 Flexible materials such as banner vinyl or mesh are printed on our large format solvent
                 printers and are suitable for exterior use. They can be finished with ropes and eyelets or
-                sail-track frames for building and hoarding display, or eyelets for property fencing. These
-                low-cost options are popular for short-term promotions and signage and are easily
-                transported, stored and re-used.
+                sail-track frames for building and hoarding display.
               </p>
             </div>
             <div className="rounded-2xl overflow-hidden shadow-lg">
               <img
-                src="https://vancegraphix.com.au/wp-content/uploads/2020/01/16278-scaled.jpg"
+                src="brand.jpg"
                 alt="Large format printing and signage at VGP"
                 className="w-full h-full object-cover"
               />
@@ -97,15 +197,12 @@ const Printing: React.FC = () => {
               />
             </div>
             <div>
-              <h2 className="text-2xl font-extrabold text-slate-900 mb-3">
-                <span>Digital Print </span>
-                <span className="text-yellow-500">Section</span>
+              <h2 className="text-3xl font-bold text-slate-900 mb-4">
+                Digital Print <span className="text-blue-600">Services</span>
               </h2>
               <p className="text-gray-600 mb-4 leading-relaxed">
                 The digital print department is perfect for proposals, flyers, menus, brochures,
-                newsletters and letters, with the added flexibility of variable data. Letters and vouchers
-                can be uniquely numbered or personalised in any combination, making it easier to track and
-                pinpoint your marketing.
+                newsletters and letters, with the added flexibility of variable data.
               </p>
               <p className="text-gray-600 mb-4 leading-relaxed">
                 Providing an on-demand print service, Vance Graphix &amp; Print can store your data and
@@ -135,4 +232,3 @@ const Printing: React.FC = () => {
 };
 
 export default Printing;
-

@@ -1,9 +1,48 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Code, CheckCircle, ArrowRight, Layout, Smartphone, Zap, Globe } from 'lucide-react';
+import { Code, CheckCircle, ArrowRight, Layout, Smartphone, Zap } from 'lucide-react';
 import SEO from '../components/SEO';
+import { getPortfolios } from '../lib/portfolioService';
+import { resolveImageUrl } from '../lib/imageUrl';
 
 const WebDevLanding: React.FC = () => {
+    const [reactPortfolioImages, setReactPortfolioImages] = useState<string[]>([]);
+    const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+    useEffect(() => {
+        const fetchReactPortfolioImages = async () => {
+            try {
+                const items = await getPortfolios();
+                const images = items
+                    .filter((item) => item.isPublic !== false && item.category === 'React' && item.imageUrl)
+                    .map((item) => resolveImageUrl(item.imageUrl))
+                    .filter(Boolean) as string[];
+
+                setReactPortfolioImages(images.slice(0, 4));
+            } catch (error) {
+                console.error('Failed to load React portfolio images for hero section', error);
+            }
+        };
+
+        fetchReactPortfolioImages();
+    }, []);
+
+    useEffect(() => {
+        setActiveImageIndex(0);
+    }, [reactPortfolioImages.length]);
+
+    useEffect(() => {
+        if (reactPortfolioImages.length <= 1) {
+            return;
+        }
+
+        const interval = setInterval(() => {
+            setActiveImageIndex((prev) => (prev + 1) % reactPortfolioImages.length);
+        }, 3500);
+
+        return () => clearInterval(interval);
+    }, [activeImageIndex, reactPortfolioImages.length]);
+
     const serviceStructuredData = {
         '@context': 'https://schema.org',
         '@type': 'Service',
@@ -57,7 +96,30 @@ const WebDevLanding: React.FC = () => {
                             <div className="relative">
                                 <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-2xl blur opacity-30"></div>
                                 <div className="relative bg-slate-800 rounded-2xl p-4 border border-slate-700">
-                                    <img src="https://picsum.photos/800/600?random=10" alt="Web Development" className="rounded-lg w-full h-auto" />
+                                    {reactPortfolioImages.length > 0 ? (
+                                        <div className="relative rounded-lg overflow-hidden h-[22rem]">
+                                            {reactPortfolioImages.map((image, index) => (
+                                                <div
+                                                    key={`${image}-${index}`}
+                                                    className={`absolute inset-0 transition-opacity duration-1000 ${
+                                                        index === activeImageIndex
+                                                            ? 'opacity-100'
+                                                            : 'opacity-0'
+                                                    }`}
+                                                >
+                                                    <img
+                                                        src={image}
+                                                        alt={`React portfolio project ${index + 1}`}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="rounded-lg w-full h-[22rem] bg-slate-700/70 flex items-center justify-center text-slate-300 text-sm">
+                                            React portfolio preview unavailable.
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>

@@ -1,9 +1,47 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { CheckCircle, ArrowRight, Layout, Settings, Shield, Smartphone, ExternalLink, Zap, Search, Globe, Database } from 'lucide-react';
+import { CheckCircle, ArrowRight, Layout, Settings, Shield, ExternalLink, Zap, Search, Globe, Database } from 'lucide-react';
 import SEO from '../components/SEO';
+import { getPortfolios } from '../lib/portfolioService';
+import { resolveImageUrl } from '../lib/imageUrl';
 
 const WordPressLanding: React.FC = () => {
+    const [wordpressPortfolioImages, setWordpressPortfolioImages] = useState<string[]>([]);
+    const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+    useEffect(() => {
+        const fetchWordPressPortfolioImages = async () => {
+            try {
+                const items = await getPortfolios();
+                const images = items
+                    .filter((item) => item.isPublic !== false && item.category === 'WordPress' && item.imageUrl)
+                    .map((item) => resolveImageUrl(item.imageUrl))
+                    .filter(Boolean) as string[];
+
+                setWordpressPortfolioImages(images.slice(0, 6));
+            } catch (error) {
+                console.error('Failed to load WordPress portfolio images for hero section', error);
+            }
+        };
+
+        fetchWordPressPortfolioImages();
+    }, []);
+
+    useEffect(() => {
+        setActiveImageIndex(0);
+    }, [wordpressPortfolioImages.length]);
+
+    useEffect(() => {
+        if (wordpressPortfolioImages.length <= 1) {
+            return;
+        }
+
+        const interval = setInterval(() => {
+            setActiveImageIndex((prev) => (prev + 1) % wordpressPortfolioImages.length);
+        }, 3500);
+
+        return () => clearInterval(interval);
+    }, [wordpressPortfolioImages.length]);
     const serviceStructuredData = {
         '@context': 'https://schema.org',
         '@type': 'Service',
@@ -26,32 +64,56 @@ const WordPressLanding: React.FC = () => {
             />
             {/* Hero Section */}
             <section className="relative bg-slate-900 text-white py-32 overflow-hidden">
-                <div className="absolute inset-0 bg-[url('https://picsum.photos/1920/1080?random=11')] bg-cover bg-center opacity-20"></div>
-                <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/90 to-transparent"></div>
-
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                    <div className="max-w-3xl animate-fade-in-up">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 text-sm font-medium mb-6">
-                            <Globe size={16} />
-                            <span>WordPress Specialists</span>
+                    <div className="flex flex-col md:flex-row items-center gap-12">
+                        <div className="flex-1 space-y-8 animate-fade-in-up">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 text-sm font-medium">
+                                <Globe size={16} />
+                                <span>WordPress Specialists</span>
+                            </div>
+                            <h1 className="text-5xl md:text-7xl font-bold leading-tight">
+                                Modern <span className="text-blue-400">WordPress</span> Sites Built for Growth.
+                            </h1>
+                            <p className="text-xl text-gray-300 leading-relaxed max-w-2xl">
+                                From business websites to complex LMS platforms, we build secure, fast, and easy-to-manage WordPress solutions.
+                            </p>
+                            <div className="flex flex-col sm:flex-row gap-4">
+                                <Link to="/contact">
+                                    <button className="px-8 py-4 bg-blue-600 text-white rounded-full font-bold hover:bg-blue-500 transition-all shadow-lg hover:shadow-blue-600/25 flex items-center gap-2">
+                                        Get Started <ArrowRight size={18} />
+                                    </button>
+                                </Link>
+                                <Link to="/portfolio?category=WordPress">
+                                    <button className="px-8 py-4 bg-white/10 text-white border border-white/20 rounded-full font-bold hover:bg-white/20 transition-all backdrop-blur-sm flex items-center gap-2">
+                                        See Our Work <ExternalLink size={18} />
+                                    </button>
+                                </Link>
+                            </div>
                         </div>
-                        <h1 className="text-5xl md:text-7xl font-bold leading-tight mb-6">
-                            Modern <span className="text-blue-400">WordPress</span> Sites Built for Growth.
-                        </h1>
-                        <p className="text-xl text-gray-300 mb-8 leading-relaxed max-w-2xl">
-                            From business websites to complex LMS platforms, we build secure, fast, and easy-to-manage WordPress solutions.
-                        </p>
-                        <div className="flex flex-col sm:flex-row gap-4">
-                            <Link to="/contact">
-                                <button className="px-8 py-4 bg-blue-600 text-white rounded-full font-bold hover:bg-blue-500 transition-all shadow-lg hover:shadow-blue-600/25 flex items-center gap-2">
-                                    Get Started <ArrowRight size={18} />
-                                </button>
-                            </Link>
-                            <Link to="/portfolio?category=WordPress">
-                                <button className="px-8 py-4 bg-white/10 text-white border border-white/20 rounded-full font-bold hover:bg-white/20 transition-all backdrop-blur-sm flex items-center gap-2">
-                                    See Our Work <ExternalLink size={18} />
-                                </button>
-                            </Link>
+                        <div className="flex-1 w-full">
+                            <div className="relative">
+                                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-2xl blur opacity-30"></div>
+                                <div className="relative bg-slate-800 rounded-2xl p-4 border border-slate-700">
+                                    {wordpressPortfolioImages.length > 0 ? (
+                                        <div className="relative rounded-lg overflow-hidden h-[22rem]">
+                                            {wordpressPortfolioImages.map((image, index) => (
+                                                <img
+                                                    key={`${image}-${index}`}
+                                                    src={image}
+                                                    alt="WordPress portfolio project"
+                                                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+                                                        index === activeImageIndex ? 'opacity-100' : 'opacity-0'
+                                                    }`}
+                                                />
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="rounded-lg w-full h-[22rem] bg-slate-700/70 flex items-center justify-center text-slate-300 text-sm">
+                                            WordPress portfolio preview unavailable.
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -138,7 +200,7 @@ const WordPressLanding: React.FC = () => {
                         </div>
                         <div className="flex-1 relative">
                             <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl">
-                                <img src="https://picsum.photos/800/600?random=12" alt="WordPress Dashboard" className="w-full" />
+                                <img src="/products/wp.jpg" alt="WordPress Dashboard" className="w-full" />
                             </div>
                             <div className="absolute -top-10 -right-10 w-64 h-64 bg-blue-400/10 rounded-full blur-3xl -z-10"></div>
                             <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-indigo-400/10 rounded-full blur-3xl -z-10"></div>
@@ -167,3 +229,4 @@ const WordPressLanding: React.FC = () => {
 };
 
 export default WordPressLanding;
+

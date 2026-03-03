@@ -1,9 +1,47 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CheckCircle, ArrowRight, ShoppingBag, BarChart, Globe, Settings, Shield, Smartphone, ExternalLink } from 'lucide-react';
 import SEO from '../components/SEO';
+import { getPortfolios } from '../lib/portfolioService';
+import { resolveImageUrl } from '../lib/imageUrl';
 
 const ShopifyLanding: React.FC = () => {
+    const [shopifyPortfolioImages, setShopifyPortfolioImages] = useState<string[]>([]);
+    const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+    useEffect(() => {
+        const fetchShopifyPortfolioImages = async () => {
+            try {
+                const items = await getPortfolios();
+                const images = items
+                    .filter((item) => item.isPublic !== false && item.category === 'Shopify' && item.imageUrl)
+                    .map((item) => resolveImageUrl(item.imageUrl))
+                    .filter(Boolean) as string[];
+
+                setShopifyPortfolioImages(images.slice(0, 6));
+            } catch (error) {
+                console.error('Failed to load Shopify portfolio images for hero section', error);
+            }
+        };
+
+        fetchShopifyPortfolioImages();
+    }, []);
+
+    useEffect(() => {
+        setActiveImageIndex(0);
+    }, [shopifyPortfolioImages.length]);
+
+    useEffect(() => {
+        if (shopifyPortfolioImages.length <= 1) {
+            return;
+        }
+
+        const interval = setInterval(() => {
+            setActiveImageIndex((prev) => (prev + 1) % shopifyPortfolioImages.length);
+        }, 3500);
+
+        return () => clearInterval(interval);
+    }, [shopifyPortfolioImages.length]);
     const serviceStructuredData = {
         '@context': 'https://schema.org',
         '@type': 'Service',
@@ -26,32 +64,56 @@ const ShopifyLanding: React.FC = () => {
             />
             {/* Hero Section */}
             <section className="relative bg-slate-900 text-white py-32 overflow-hidden">
-                <div className="absolute inset-0 bg-[url('https://picsum.photos/1920/1080?random=10')] bg-cover bg-center opacity-20"></div>
-                <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/90 to-transparent"></div>
-
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                    <div className="max-w-3xl animate-fade-in-up">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-sm font-medium mb-6">
-                            <ShoppingBag size={16} />
-                            <span>Shopify Experts</span>
+                    <div className="flex flex-col md:flex-row items-center gap-12">
+                        <div className="flex-1 space-y-8 animate-fade-in-up">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-sm font-medium">
+                                <ShoppingBag size={16} />
+                                <span>Shopify Experts</span>
+                            </div>
+                            <h1 className="text-5xl md:text-7xl font-bold leading-tight">
+                                Build a <span className="text-green-400">High-Converting</span> Shopify Store.
+                            </h1>
+                            <p className="text-xl text-gray-300 leading-relaxed max-w-2xl">
+                                From dropshipping to custom brand stores, we design, build, and scale Shopify businesses that drive sales.
+                            </p>
+                            <div className="flex flex-col sm:flex-row gap-4">
+                                <Link to="/contact">
+                                    <button className="px-8 py-4 bg-green-500 text-slate-900 rounded-full font-bold hover:bg-green-400 transition-all shadow-lg hover:shadow-green-500/25 flex items-center gap-2">
+                                        Start Your Store <ArrowRight size={18} />
+                                    </button>
+                                </Link>
+                                <Link to="/portfolio?category=Shopify">
+                                    <button className="px-8 py-4 bg-white/10 text-white border border-white/20 rounded-full font-bold hover:bg-white/20 transition-all backdrop-blur-sm flex items-center gap-2">
+                                        See Our Work <ExternalLink size={18} />
+                                    </button>
+                                </Link>
+                            </div>
                         </div>
-                        <h1 className="text-5xl md:text-7xl font-bold leading-tight mb-6">
-                            Build a <span className="text-green-400">High-Converting</span> Shopify Store.
-                        </h1>
-                        <p className="text-xl text-gray-300 mb-8 leading-relaxed max-w-2xl">
-                            From dropshipping to custom brand stores, we design, build, and scale Shopify businesses that drive sales.
-                        </p>
-                        <div className="flex flex-col sm:flex-row gap-4">
-                            <Link to="/contact">
-                                <button className="px-8 py-4 bg-green-500 text-slate-900 rounded-full font-bold hover:bg-green-400 transition-all shadow-lg hover:shadow-green-500/25 flex items-center gap-2">
-                                    Start Your Store <ArrowRight size={18} />
-                                </button>
-                            </Link>
-                            <Link to="/portfolio?category=Shopify">
-                                <button className="px-8 py-4 bg-white/10 text-white border border-white/20 rounded-full font-bold hover:bg-white/20 transition-all backdrop-blur-sm flex items-center gap-2">
-                                    See Our Work <ExternalLink size={18} />
-                                </button>
-                            </Link>
+                        <div className="flex-1 w-full">
+                            <div className="relative">
+                                <div className="absolute -inset-1 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl blur opacity-30"></div>
+                                <div className="relative bg-slate-800 rounded-2xl p-4 border border-slate-700">
+                                    {shopifyPortfolioImages.length > 0 ? (
+                                        <div className="relative rounded-lg overflow-hidden h-[22rem]">
+                                            {shopifyPortfolioImages.map((image, index) => (
+                                                <img
+                                                    key={`${image}-${index}`}
+                                                    src={image}
+                                                    alt="Shopify portfolio project"
+                                                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+                                                        index === activeImageIndex ? 'opacity-100' : 'opacity-0'
+                                                    }`}
+                                                />
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="rounded-lg w-full h-[22rem] bg-slate-700/70 flex items-center justify-center text-slate-300 text-sm">
+                                            Shopify portfolio preview unavailable.
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -222,3 +284,4 @@ const ShopifyLanding: React.FC = () => {
 };
 
 export default ShopifyLanding;
+

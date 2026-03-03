@@ -1,9 +1,78 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Palette, CheckCircle, ArrowRight, Sparkles, Layers, PenTool } from 'lucide-react';
 import SEO from '../components/SEO';
+import { getPrintPortfolios } from '../lib/printPortfolioService';
+import { PORTFOLIO_CONFIG } from '../data/portfolioConfig';
+import { resolveImageUrl } from '../lib/imageUrl';
 
 const GraphicsLanding: React.FC = () => {
+    const [printHeroImages, setPrintHeroImages] = useState<string[]>([]);
+    const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+    useEffect(() => {
+        const fetchPrintHeroImages = async () => {
+            try {
+                const categories = await getPrintPortfolios();
+                const visibleCategories = categories.filter((cat) => cat.isPublic !== false);
+
+                const imageEntries = await Promise.all(
+                    visibleCategories.map(async (cat) => {
+                        if (cat.coverImageUrl) {
+                            return resolveImageUrl(cat.coverImageUrl);
+                        }
+
+                        if (!cat.folderId || !PORTFOLIO_CONFIG.apiKey) {
+                            return null;
+                        }
+
+                        try {
+                            const query = `'${cat.folderId}' in parents and trashed = false and mimeType contains 'image/'`;
+                            const url = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(
+                                query
+                            )}&fields=files(id,name,mimeType)&key=${PORTFOLIO_CONFIG.apiKey}&pageSize=1`;
+                            const res = await fetch(url);
+                            if (!res.ok) {
+                                return null;
+                            }
+                            const data = await res.json();
+                            const file = data.files && data.files[0];
+                            if (!file || !file.id) {
+                                return null;
+                            }
+                            return `https://drive.google.com/thumbnail?id=${file.id}&sz=w2000`;
+                        } catch {
+                            return null;
+                        }
+                    })
+                );
+
+                const images = imageEntries.filter(Boolean) as string[];
+                setPrintHeroImages(images.slice(0, 8));
+            } catch (error) {
+                console.error('Failed to load print portfolio images for graphics hero section', error);
+            }
+        };
+
+        fetchPrintHeroImages();
+    }, []);
+
+    useEffect(() => {
+        setActiveImageIndex(0);
+    }, [printHeroImages.length]);
+
+    useEffect(() => {
+        if (printHeroImages.length <= 1) {
+            return;
+        }
+
+        const interval = setInterval(() => {
+            setActiveImageIndex((prev) => (prev + 1) % printHeroImages.length);
+        }, 3500);
+
+        return () => clearInterval(interval);
+    }, [printHeroImages.length]);
+
     const serviceStructuredData = {
         '@context': 'https://schema.org',
         '@type': 'Service',
@@ -54,15 +123,23 @@ const GraphicsLanding: React.FC = () => {
                             </div>
                         </div>
                         <div className="flex-1 w-full">
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-4">
-                                    <img src="https://picsum.photos/300/300?random=20" alt="Design 1" className="rounded-2xl shadow-2xl w-full h-auto transform hover:scale-105 transition-transform" />
-                                    <img src="https://picsum.photos/300/400?random=21" alt="Design 2" className="rounded-2xl shadow-2xl w-full h-auto transform hover:scale-105 transition-transform" />
-                                </div>
-                                <div className="space-y-4 pt-8">
-                                    <img src="https://picsum.photos/300/400?random=22" alt="Design 3" className="rounded-2xl shadow-2xl w-full h-auto transform hover:scale-105 transition-transform" />
-                                    <img src="https://picsum.photos/300/300?random=23" alt="Design 4" className="rounded-2xl shadow-2xl w-full h-auto transform hover:scale-105 transition-transform" />
-                                </div>
+                            <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-white/15 bg-white/5 h-[26rem]">
+                                {printHeroImages.length > 0 ? (
+                                    printHeroImages.map((image, index) => (
+                                        <img
+                                            key={`${image}-${index}`}
+                                            src={image}
+                                            alt="Print portfolio project"
+                                            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+                                                index === activeImageIndex ? 'opacity-100' : 'opacity-0'
+                                            }`}
+                                        />
+                                    ))
+                                ) : (
+                                    <div className="absolute inset-0 flex items-center justify-center text-pink-100/80 text-sm">
+                                        Print portfolio preview unavailable.
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
