@@ -20,7 +20,6 @@ const Navbar: React.FC = () => {
         { name: 'Graphics & Branding', path: '/graphics' },
         { name: 'Printing Solutions', path: '/printing' },
         { name: 'Video & Animation', path: '/video-animation' },
-        { name: 'Design Process', path: '/design-process' },
         { name: 'All Services', path: '/services' }
       ]
     },

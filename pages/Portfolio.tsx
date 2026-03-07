@@ -3,6 +3,7 @@ import { ArrowUpRight, X, ChevronLeft, ChevronRight, Loader, ExternalLink, Alert
 import { getPortfolios, PortfolioItem } from '../lib/portfolioService';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { getPreferredPortfolioImage } from '../lib/webPortfolioImages';
 
 interface ProjectItem {
   id: string | number;
@@ -257,7 +258,7 @@ const Portfolio: React.FC = () => {
 
                       <div className="relative flex-1 overflow-hidden">
                         <img
-                          src={project.imageUrl}
+                          src={getPreferredPortfolioImage(project, indexOfFirstItem + index)}
                           alt={project.title}
                           className="w-full h-full object-cover object-top transform group-hover:scale-105 transition-transform duration-500"
                           loading="lazy"
@@ -408,7 +409,7 @@ const Portfolio: React.FC = () => {
               </button>
 
               <img
-                src={currentProject.imageUrl}
+                src={getPreferredPortfolioImage(currentProject, currentProjectIndex)}
                 alt={currentProject.title}
                 className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
               />

@@ -9,7 +9,6 @@ import Services from './pages/Services';
 import ServiceDetail from './pages/ServiceDetail';
 import Contact from './pages/Contact';
 import About from './pages/About';
-import DesignProcess from './pages/DesignProcess';
 import Printing from './pages/Printing';
 import ShopifyLanding from './pages/ShopifyLanding';
 import WebDevLanding from './pages/WebDevLanding';
@@ -77,7 +76,6 @@ const AppContent: React.FC = () => {
             <Route path="/about" element={<About />} />
             <Route path="/about-us" element={<About />} />
             <Route path="/our-team" element={<About />} />
-            <Route path="/design-process" element={<DesignProcess />} />
             <Route path="/printing" element={<Printing />} />
             <Route path="/shopify" element={<ShopifyLanding />} />
             <Route path="/web-dev" element={<WebDevLanding />} />
