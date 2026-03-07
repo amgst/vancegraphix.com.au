@@ -5,10 +5,57 @@ import Testimonials from '../components/Testimonials';
 import ServiceQuizModal from '../components/ServiceQuizModal';
 import { getPortfolios, PortfolioItem } from '../lib/portfolioService';
 import { getPrintPortfolios, PrintPortfolioCategory } from '../lib/printPortfolioService';
-import { PORTFOLIO_CONFIG } from '../data/portfolioConfig';
 import { resolveImageUrl } from '../lib/imageUrl';
 
 import SEO from '../components/SEO';
+
+const PRINT_FALLBACK_FILENAMES = [
+  'brand.jpg',
+  '37980.jpg',
+  'color-shade-swatch-stationary-designer-creative-concept.jpg'
+];
+
+interface PortfolioManifest {
+  generatedAt: string;
+  categories: Record<string, string[]>;
+}
+
+const getPrintFallbackImage = (index: number): string =>
+  `/products/${PRINT_FALLBACK_FILENAMES[index % PRINT_FALLBACK_FILENAMES.length]}`;
+
+const normalizeFolderName = (value?: string) =>
+  (value || '')
+    .toLowerCase()
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, '')
+    .trim();
+
+const getFolderKeyForCategory = (
+  category: PrintPortfolioCategory,
+  manifestCategories: Record<string, string[]>
+) => {
+  const keys = Object.keys(manifestCategories);
+  if (keys.length === 0) return null;
+
+  const normalizedMap = new Map<string, string>();
+  keys.forEach((key) => normalizedMap.set(normalizeFolderName(key), key));
+
+  const folderIdMatch = normalizedMap.get(normalizeFolderName(category.folderId));
+  if (folderIdMatch) return folderIdMatch;
+
+  const titleMatch = normalizedMap.get(normalizeFolderName(category.title));
+  if (titleMatch) return titleMatch;
+
+  return null;
+};
+
+const getCategorySlug = (category: Pick<PrintPortfolioCategory, 'id' | 'title'>) => {
+  const base = category.title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return base || category.id;
+};
 
 const Home: React.FC = () => {
   const [isQuizOpen, setIsQuizOpen] = useState(false);
@@ -32,17 +79,27 @@ const Home: React.FC = () => {
   useEffect(() => {
     const fetchAllImages = async () => {
       try {
-        const [webItems, printItems] = await Promise.all([
+        const [webItems, printItems, manifestRes] = await Promise.all([
           getPortfolios(),
-          getPrintPortfolios()
+          getPrintPortfolios(),
+          fetch('/portfolio-manifest.json', { cache: 'no-store' })
         ]);
 
         const webImages = webItems
           .map(item => resolveImageUrl(item.imageUrl))
           .filter(Boolean) as string[];
+
+        const manifest: PortfolioManifest | null = manifestRes.ok
+          ? ((await manifestRes.json()) as PortfolioManifest)
+          : null;
+
         const printImages = printItems
-          .map(item => resolveImageUrl(item.coverImageUrl))
-          .filter(Boolean) as string[];
+          .flatMap((item) => {
+            const folderKey = manifest ? getFolderKeyForCategory(item, manifest.categories) : null;
+            return folderKey ? manifest!.categories[folderKey] || [] : [];
+          })
+          .filter(Boolean)
+          .slice(0, 120);
         
         // Combine and shuffle for background variety
         const combined = [...webImages, ...printImages].sort(() => Math.random() - 0.5);
@@ -137,52 +194,25 @@ const Home: React.FC = () => {
       try {
         setIsPrintLoading(true);
         setPrintError(null);
-        const categories = await getPrintPortfolios();
+        const [categories, manifestRes] = await Promise.all([
+          getPrintPortfolios(),
+          fetch('/portfolio-manifest.json', { cache: 'no-store' })
+        ]);
         const visible = categories.filter((cat) => cat.isPublic !== false);
         const sorted = visible.sort((a, b) => (a.order || 0) - (b.order || 0));
         const topCategories = sorted.slice(0, 3);
         setPrintCategories(topCategories);
 
-        if (!PORTFOLIO_CONFIG.apiKey) {
-          return;
-        }
-
-        const entries = await Promise.all(
-          topCategories.map(async (cat) => {
-            if (cat.coverImageUrl) {
-              return [cat.id, resolveImageUrl(cat.coverImageUrl)] as const;
-            }
-            if (!cat.folderId) {
-              return null;
-            }
-            try {
-              const query = `'${cat.folderId}' in parents and trashed = false and mimeType contains 'image/'`;
-              const url = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(
-                query
-              )}&fields=files(id,name,mimeType)&key=${PORTFOLIO_CONFIG.apiKey}&pageSize=1`;
-              const res = await fetch(url);
-              if (!res.ok) {
-                return null;
-              }
-              const data = await res.json();
-              const file = data.files && data.files[0];
-              if (!file || !file.id) {
-                return null;
-              }
-              return [cat.id, `https://drive.google.com/thumbnail?id=${file.id}&sz=w2000`] as const;
-            } catch {
-              return null;
-            }
-          })
-        );
+        const manifest: PortfolioManifest | null = manifestRes.ok
+          ? ((await manifestRes.json()) as PortfolioManifest)
+          : null;
 
         const images: Record<string, string> = {};
-        for (const entry of entries) {
-          if (entry) {
-            const [id, url] = entry;
-            images[id] = url;
-          }
-        }
+        topCategories.forEach((cat, index) => {
+          const folderKey = manifest ? getFolderKeyForCategory(cat, manifest.categories) : null;
+          const localCover = folderKey ? (manifest!.categories[folderKey] || [])[0] : '';
+          images[cat.id] = localCover || getPrintFallbackImage(index);
+        });
         setPrintCoverImages(images);
       } catch (err) {
         console.error('Error loading print portfolio for home', err);
@@ -532,20 +562,29 @@ const Home: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {printCategories.map((cat) => {
-                const coverImage = printCoverImages[cat.id] || cat.coverImageUrl;
+              {printCategories.map((cat, index) => {
+                const coverImage = printCoverImages[cat.id] || getPrintFallbackImage(index);
+                const categorySlug = getCategorySlug(cat);
                 return (
                   <Link
                     key={cat.id}
-                    to="/print-portfolio"
+                    to={`/print-portfolio/${categorySlug}`}
                     className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-blue-100 transition-all overflow-hidden flex flex-col"
                   >
                     <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden">
                       {coverImage && (
                         <img
-                          src={resolveImageUrl(coverImage)}
+                          src={coverImage}
                           alt={cat.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          onError={(e) => {
+                            const target = e.currentTarget;
+                            if (target.dataset.fallbackApplied === 'true') {
+                              return;
+                            }
+                            target.dataset.fallbackApplied = 'true';
+                            target.src = getPrintFallbackImage(index);
+                          }}
                         />
                       )}
                     </div>

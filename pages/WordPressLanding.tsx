@@ -104,6 +104,20 @@ const WordPressLanding: React.FC = () => {
                                                     className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
                                                         index === activeImageIndex ? 'opacity-100' : 'opacity-0'
                                                     }`}
+                                                    onLoad={(e) => {
+                                                        console.log('WordPressLanding: hero image loaded', {
+                                                            index,
+                                                            src: e.currentTarget.currentSrc,
+                                                            width: e.currentTarget.naturalWidth,
+                                                            height: e.currentTarget.naturalHeight
+                                                        });
+                                                    }}
+                                                    onError={(e) => {
+                                                        console.error('WordPressLanding: hero image failed', {
+                                                            index,
+                                                            src: e.currentTarget.currentSrc || e.currentTarget.src
+                                                        });
+                                                    }}
                                                 />
                                             ))}
                                         </div>

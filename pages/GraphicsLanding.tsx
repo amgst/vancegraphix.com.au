@@ -2,9 +2,38 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Palette, CheckCircle, ArrowRight, Sparkles, Layers, PenTool } from 'lucide-react';
 import SEO from '../components/SEO';
-import { getPrintPortfolios } from '../lib/printPortfolioService';
-import { PORTFOLIO_CONFIG } from '../data/portfolioConfig';
-import { resolveImageUrl } from '../lib/imageUrl';
+import { getPrintPortfolios, PrintPortfolioCategory } from '../lib/printPortfolioService';
+
+interface PortfolioManifest {
+    generatedAt: string;
+    categories: Record<string, string[]>;
+}
+
+const normalizeFolderName = (value?: string) =>
+    (value || '')
+        .toLowerCase()
+        .replace(/&/g, ' and ')
+        .replace(/[^a-z0-9]+/g, '')
+        .trim();
+
+const getFolderKeyForCategory = (
+    category: PrintPortfolioCategory,
+    manifestCategories: Record<string, string[]>
+) => {
+    const keys = Object.keys(manifestCategories);
+    if (keys.length === 0) return null;
+
+    const normalizedMap = new Map<string, string>();
+    keys.forEach((key) => normalizedMap.set(normalizeFolderName(key), key));
+
+    const folderIdMatch = normalizedMap.get(normalizeFolderName(category.folderId));
+    if (folderIdMatch) return folderIdMatch;
+
+    const titleMatch = normalizedMap.get(normalizeFolderName(category.title));
+    if (titleMatch) return titleMatch;
+
+    return null;
+};
 
 const GraphicsLanding: React.FC = () => {
     const [printHeroImages, setPrintHeroImages] = useState<string[]>([]);
@@ -13,41 +42,21 @@ const GraphicsLanding: React.FC = () => {
     useEffect(() => {
         const fetchPrintHeroImages = async () => {
             try {
-                const categories = await getPrintPortfolios();
+                const [categories, manifestRes] = await Promise.all([
+                    getPrintPortfolios(),
+                    fetch('/portfolio-manifest.json', { cache: 'no-store' })
+                ]);
                 const visibleCategories = categories.filter((cat) => cat.isPublic !== false);
+                const manifest: PortfolioManifest | null = manifestRes.ok
+                    ? ((await manifestRes.json()) as PortfolioManifest)
+                    : null;
 
-                const imageEntries = await Promise.all(
-                    visibleCategories.map(async (cat) => {
-                        if (cat.coverImageUrl) {
-                            return resolveImageUrl(cat.coverImageUrl);
-                        }
-
-                        if (!cat.folderId || !PORTFOLIO_CONFIG.apiKey) {
-                            return null;
-                        }
-
-                        try {
-                            const query = `'${cat.folderId}' in parents and trashed = false and mimeType contains 'image/'`;
-                            const url = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(
-                                query
-                            )}&fields=files(id,name,mimeType)&key=${PORTFOLIO_CONFIG.apiKey}&pageSize=1`;
-                            const res = await fetch(url);
-                            if (!res.ok) {
-                                return null;
-                            }
-                            const data = await res.json();
-                            const file = data.files && data.files[0];
-                            if (!file || !file.id) {
-                                return null;
-                            }
-                            return `https://drive.google.com/thumbnail?id=${file.id}&sz=w2000`;
-                        } catch {
-                            return null;
-                        }
+                const images = visibleCategories
+                    .flatMap((cat) => {
+                        const folderKey = manifest ? getFolderKeyForCategory(cat, manifest.categories) : null;
+                        return folderKey ? manifest!.categories[folderKey] || [] : [];
                     })
-                );
-
-                const images = imageEntries.filter(Boolean) as string[];
+                    .filter(Boolean) as string[];
                 setPrintHeroImages(images.slice(0, 8));
             } catch (error) {
                 console.error('Failed to load print portfolio images for graphics hero section', error);

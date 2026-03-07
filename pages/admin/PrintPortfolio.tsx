@@ -34,24 +34,8 @@ const AdminPrintPortfolio: React.FC = () => {
     }, []);
 
     const parseFolderInput = (value: string) => {
-        let folderId = value.trim();
-        let folderUrl = value.trim();
-
-        const foldersIndex = value.indexOf('/folders/');
-        if (foldersIndex !== -1) {
-            const start = foldersIndex + 9;
-            const end = value.indexOf('/', start) !== -1 ? value.indexOf('/', start) : value.length;
-            folderId = value.substring(start, end);
-        } else {
-            const idIndex = value.indexOf('id=');
-            if (idIndex !== -1) {
-                const start = idIndex + 3;
-                const end = value.indexOf('&', start) !== -1 ? value.indexOf('&', start) : value.length;
-                folderId = value.substring(start, end);
-            }
-        }
-
-        return { folderId, folderUrl };
+        const folderId = value.trim();
+        return { folderId, folderUrl: folderId };
     };
 
     const handleAddNew = () => {
@@ -86,7 +70,7 @@ const AdminPrintPortfolio: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!currentItem.title || !currentItem.folderId) {
-            alert('Title and Google Drive folder are required.');
+            alert('Title and local folder name are required.');
             return;
         }
 
@@ -128,7 +112,7 @@ const AdminPrintPortfolio: React.FC = () => {
                 <div className="flex justify-between items-center mb-6">
                     <div>
                         <h1 className="text-2xl font-bold text-slate-900">Print Portfolio Categories</h1>
-                        <p className="text-gray-500 text-sm">Manage print portfolio heads linked to Google Drive folders.</p>
+                        <p className="text-gray-500 text-sm">Manage print portfolio heads linked to local folders in public/Portfolio.</p>
                     </div>
                     <button
                         onClick={handleAddNew}
@@ -176,7 +160,7 @@ const AdminPrintPortfolio: React.FC = () => {
                                         </span>
                                     </div>
                                     <div className="mt-2 text-xs text-gray-500 break-all">
-                                        <div className="font-semibold text-gray-700">Folder ID</div>
+                                        <div className="font-semibold text-gray-700">Folder Name</div>
                                         <div>{item.folderId}</div>
                                     </div>
                                     <div className="mt-4 flex justify-between items-center">
@@ -243,7 +227,7 @@ const AdminPrintPortfolio: React.FC = () => {
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Google Drive Folder Link or ID
+                                        Local Folder Name
                                     </label>
                                     <input
                                         type="text"
@@ -251,11 +235,11 @@ const AdminPrintPortfolio: React.FC = () => {
                                         value={currentItem.folderUrl || currentItem.folderId || ''}
                                         onChange={e => handleFolderInputChange(e.target.value)}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
-                                        placeholder="Paste folder link or ID"
+                                        placeholder="Example: Business Card"
                                     />
                                     {currentItem.folderId && (
                                         <p className="mt-1 text-xs text-gray-500">
-                                            Detected folder ID: {currentItem.folderId}
+                                            Saved folder name: {currentItem.folderId}
                                         </p>
                                     )}
                                 </div>
@@ -337,4 +321,3 @@ const AdminPrintPortfolio: React.FC = () => {
 };
 
 export default AdminPrintPortfolio;
-

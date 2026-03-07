@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { PORTFOLIO_CONFIG } from '../data/portfolioConfig';
 import { getPrintPortfolios, PrintPortfolioCategory } from '../lib/printPortfolioService';
 import { Loader, AlertCircle, ChevronLeft, ChevronRight, LayoutGrid } from 'lucide-react';
 
@@ -9,6 +8,16 @@ interface LightboxState {
     open: boolean;
     categoryId: string | null;
     index: number;
+}
+
+interface PortfolioImage {
+    id: string;
+    src: string;
+}
+
+interface PortfolioManifest {
+    generatedAt: string;
+    categories: Record<string, string[]>;
 }
 
 const getCategorySlug = (category: Pick<PrintPortfolioCategory, 'id' | 'title'>) => {
@@ -19,15 +28,42 @@ const getCategorySlug = (category: Pick<PrintPortfolioCategory, 'id' | 'title'>)
     return base || category.id;
 };
 
+const normalizeFolderName = (value?: string) =>
+    (value || '')
+        .toLowerCase()
+        .replace(/&/g, ' and ')
+        .replace(/[^a-z0-9]+/g, '')
+        .trim();
+
+const getFolderKeyForCategory = (
+    category: PrintPortfolioCategory,
+    manifestCategories: Record<string, string[]>
+) => {
+    const keys = Object.keys(manifestCategories);
+    if (keys.length === 0) return null;
+
+    const normalizedMap = new Map<string, string>();
+    keys.forEach((key) => normalizedMap.set(normalizeFolderName(key), key));
+
+    const folderIdMatch = normalizedMap.get(normalizeFolderName(category.folderId));
+    if (folderIdMatch) return folderIdMatch;
+
+    const titleMatch = normalizedMap.get(normalizeFolderName(category.title));
+    if (titleMatch) return titleMatch;
+
+    return null;
+};
+
 const PrintPortfolio: React.FC = () => {
     const { slug } = useParams<{ slug?: string }>();
-    const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const [categories, setCategories] = useState<PrintPortfolioCategory[]>([]);
     const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
-    const [imagesByCategory, setImagesByCategory] = useState<Record<string, string[]>>({});
+    const [imagesByCategory, setImagesByCategory] = useState<Record<string, PortfolioImage[]>>({});
+    const [portfolioManifest, setPortfolioManifest] = useState<PortfolioManifest | null>(null);
+    const [failedImageIdsByCategory, setFailedImageIdsByCategory] = useState<Record<string, string[]>>({});
+    const [hasMappedLocalImages, setHasMappedLocalImages] = useState(false);
     const [isLoadingCategories, setIsLoadingCategories] = useState(true);
-    const [loadingCategoryId, setLoadingCategoryId] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [lightbox, setLightbox] = useState<LightboxState>({ open: false, categoryId: null, index: 0 });
     const [currentPage, setCurrentPage] = useState(1);
@@ -36,9 +72,26 @@ const PrintPortfolio: React.FC = () => {
     const [initializedFromUrl, setInitializedFromUrl] = useState(false);
 
     useEffect(() => {
+        const fetchManifest = async () => {
+            try {
+                const res = await fetch('/portfolio-manifest.json', { cache: 'no-store' });
+                if (!res.ok) {
+                    throw new Error(`Manifest fetch failed: ${res.status}`);
+                }
+                const manifest = (await res.json()) as PortfolioManifest;
+                setPortfolioManifest(manifest);
+            } catch (e) {
+                console.error('Failed to load portfolio manifest', e);
+                setError('Failed to load local portfolio images manifest.');
+            }
+        };
+
+        fetchManifest();
+    }, []);
+
+    useEffect(() => {
         const fetchCategories = async () => {
             setIsLoadingCategories(true);
-            setError(null);
             try {
                 const items = await getPrintPortfolios();
                 console.log('PrintPortfolio: fetched categories from Firestore', items);
@@ -68,71 +121,51 @@ const PrintPortfolio: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        const loadImages = async () => {
-            if (!activeCategoryId) return;
-            if (imagesByCategory[activeCategoryId]) {
-                console.log('PrintPortfolio: images already loaded for category', activeCategoryId);
-                return;
-            }
+        if (!portfolioManifest) return;
+        if (categories.length === 0) return;
+        if (hasMappedLocalImages) return;
 
-            const category = categories.find(c => c.id === activeCategoryId);
-            if (!category) {
-                console.log('PrintPortfolio: no category found for id', activeCategoryId);
-                return;
-            }
-            if (!category.folderId) {
-                console.log('PrintPortfolio: category has no folderId', category);
-                return;
-            }
-            if (!PORTFOLIO_CONFIG.apiKey) {
-                console.log('PrintPortfolio: missing Google Drive API key');
-                return;
-            }
+        try {
+            const mappedImagesByCategory: Record<string, PortfolioImage[]> = {};
+            const mappedFailedByCategory: Record<string, string[]> = {};
 
-            console.log('PrintPortfolio: loading images', {
-                activeCategoryId,
-                folderId: category.folderId,
-                apiKeyPresent: !!PORTFOLIO_CONFIG.apiKey
+            categories.forEach((category) => {
+                const folderKey = getFolderKeyForCategory(category, portfolioManifest.categories);
+                const files = folderKey ? portfolioManifest.categories[folderKey] || [] : [];
+                mappedImagesByCategory[category.id] = files.map((src, index) => ({
+                    id: `${category.id}-${index + 1}`,
+                    src
+                }));
+                mappedFailedByCategory[category.id] = [];
             });
 
-            setLoadingCategoryId(activeCategoryId);
+            setImagesByCategory(mappedImagesByCategory);
+            setFailedImageIdsByCategory(mappedFailedByCategory);
+            setHasMappedLocalImages(true);
             setError(null);
+        } catch (e) {
+            console.error('Failed to map local images by category', e);
+            setError('Failed to prepare local images for this page.');
+        }
+    }, [portfolioManifest, categories, hasMappedLocalImages]);
 
-            try {
-                const query = `'${category.folderId}' in parents and trashed = false and mimeType contains 'image/'`;
-                const url = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(query)}&fields=files(id,name,mimeType)&key=${PORTFOLIO_CONFIG.apiKey}&pageSize=80`;
-                console.log('PrintPortfolio: requesting Google Drive API', url);
-
-                const res = await fetch(url);
-                console.log('PrintPortfolio: response status', res.status, res.ok);
-                if (!res.ok) {
-                    throw new Error(`Google Drive API error: ${res.status}`);
-                }
-
-                const result = await res.json();
-                console.log('PrintPortfolio: API result', result);
-                if (result.files) {
-                    const images = result.files.map(
-                        (f: any) =>
-                            `https://www.googleapis.com/drive/v3/files/${f.id}?alt=media&key=${PORTFOLIO_CONFIG.apiKey}`
-                    );
-                    console.log('PrintPortfolio: mapped image URLs', images);
-                    setImagesByCategory(prev => ({ ...prev, [activeCategoryId]: images }));
-                }
-            } catch (e) {
-                console.error('Failed to load images for category', e);
-                setError('Failed to load images from Google Drive for this category.');
-            } finally {
-                setLoadingCategoryId(null);
-            }
-        };
-
-        loadImages();
-    }, [activeCategoryId, categories, imagesByCategory]);
+    const markImageFailed = (categoryId: string | null, imageId: string) => {
+        if (!categoryId) return;
+        setFailedImageIdsByCategory(prev => {
+            const existing = prev[categoryId] || [];
+            if (existing.includes(imageId)) return prev;
+            return { ...prev, [categoryId]: [...existing, imageId] };
+        });
+    };
 
     const activeCategory = categories.find(c => c.id === activeCategoryId) || null;
     const activeSlug = activeCategory ? getCategorySlug(activeCategory) : null;
-    const activeImages = activeCategoryId ? imagesByCategory[activeCategoryId] || [] : [];
+    const activeImages =
+        activeCategoryId
+            ? (imagesByCategory[activeCategoryId] || []).filter(
+                  img => !(failedImageIdsByCategory[activeCategoryId] || []).includes(img.id)
+              )
+            : [];
 
     useEffect(() => {
         setCurrentPage(1);
@@ -154,6 +187,16 @@ const PrintPortfolio: React.FC = () => {
         if (gridCols === 2) return "grid-cols-2 md:grid-cols-2 xl:grid-cols-2";
         if (gridCols === 4) return "grid-cols-2 md:grid-cols-3 xl:grid-cols-4";
         return "grid-cols-2 md:grid-cols-3 xl:grid-cols-3";
+    };
+
+    const updateCategoryUrlSilently = (nextSlug: string) => {
+        const params = new URLSearchParams(searchParams);
+        params.delete('image');
+        const query = params.toString();
+        const nextUrl = query
+            ? `/print-portfolio/${nextSlug}?${query}`
+            : `/print-portfolio/${nextSlug}`;
+        window.history.replaceState(window.history.state, '', nextUrl);
     };
 
     const openLightbox = (index: number) => {
@@ -222,7 +265,7 @@ const PrintPortfolio: React.FC = () => {
                     <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">Print Portfolio</h1>
                     <p className="text-gray-500 max-w-2xl mx-auto">
                         Browse our print work by category. Select a category on the left to explore full galleries
-                        pulled directly from our studio Google Drive.
+                        pulled directly from our local portfolio library.
                     </p>
                 </div>
 
@@ -242,7 +285,7 @@ const PrintPortfolio: React.FC = () => {
                                         onClick={() => {
                                             setActiveCategoryId(category.id);
                                             const slugForCategory = getCategorySlug(category);
-                                            navigate(`/print-portfolio/${slugForCategory}`);
+                                            updateCategoryUrlSilently(slugForCategory);
                                         }}
                                         className={`flex items-center justify-between lg:justify-start gap-3 px-4 py-3 rounded-xl whitespace-nowrap text-sm font-medium transition-all ${
                                             category.id === activeCategoryId
@@ -300,18 +343,37 @@ const PrintPortfolio: React.FC = () => {
                                             onClick={() => openLightbox(0)}
                                         >
                                             <img
-                                                src={coverImage}
+                                                src={coverImage.src}
                                                 alt={`${activeCategory.title} cover`}
                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                onLoad={(e) => {
+                                                    console.log('PrintPortfolio: cover image loaded', {
+                                                        categoryId: activeCategory.id,
+                                                        imageId: coverImage.id,
+                                                        src: e.currentTarget.currentSrc,
+                                                        width: e.currentTarget.naturalWidth,
+                                                        height: e.currentTarget.naturalHeight
+                                                    });
+                                                }}
+                                                onError={(e) => {
+                                                    const target = e.currentTarget;
+                                                    const failedSrc = target.currentSrc || target.src;
+                                                    console.error('PrintPortfolio: cover image failed', {
+                                                        categoryId: activeCategory.id,
+                                                        imageId: coverImage.id,
+                                                        src: failedSrc
+                                                    });
+                                                    markImageFailed(activeCategory.id, coverImage.id);
+                                                }}
                                             />
                                             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors" />
                                         </button>
                                     </div>
                                 )}
-                                {loadingCategoryId === activeCategory.id && (
+                                {!hasMappedLocalImages && (
                                     <div className="flex items-center text-sm text-gray-500">
                                         <Loader className="animate-spin mr-2" size={18} />
-                                        Loading images from Google Drive...
+                                        Preparing images...
                                     </div>
                                 )}
                             </div>
@@ -325,9 +387,9 @@ const PrintPortfolio: React.FC = () => {
 
                         {activeCategory && (
                             <>
-                                {totalImages === 0 && loadingCategoryId !== activeCategory.id && (
+                                {totalImages === 0 && hasMappedLocalImages && (
                                     <div className="border border-dashed border-gray-200 rounded-2xl p-10 text-center text-gray-400 text-sm">
-                                        No images found in this Google Drive folder yet.
+                                        No images found in this local folder yet.
                                     </div>
                                 )}
 
@@ -367,17 +429,38 @@ const PrintPortfolio: React.FC = () => {
                                         </div>
 
                                         <div className={`grid ${getGridClass()} gap-4`}>
-                                            {paginatedImages.map((src, index) => (
+                                            {paginatedImages.map((image, index) => (
                                                 <button
-                                                    key={`${src}-${index}`}
+                                                    key={`${image.id}-${index}`}
                                                     type="button"
                                                     className="group relative aspect-[3/4] md:aspect-[4/5] rounded-xl overflow-hidden bg-gray-50 shadow-sm hover:shadow-md transition-all"
                                                     onClick={() => openLightbox(indexOfFirst + index)}
                                                 >
                                                     <img
-                                                        src={src}
+                                                        src={image.src}
                                                         alt={`${activeCategory.title} sample ${indexOfFirst + index + 1}`}
                                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                        onLoad={(e) => {
+                                                            console.log('PrintPortfolio: grid image loaded', {
+                                                                categoryId: activeCategory.id,
+                                                                imageId: image.id,
+                                                                index: indexOfFirst + index,
+                                                                src: e.currentTarget.currentSrc,
+                                                                width: e.currentTarget.naturalWidth,
+                                                                height: e.currentTarget.naturalHeight
+                                                            });
+                                                        }}
+                                                        onError={(e) => {
+                                                            const target = e.currentTarget;
+                                                            const failedSrc = target.currentSrc || target.src;
+                                                            console.error('PrintPortfolio: grid image failed', {
+                                                                categoryId: activeCategory.id,
+                                                                imageId: image.id,
+                                                                index: indexOfFirst + index,
+                                                                src: failedSrc
+                                                            });
+                                                            markImageFailed(activeCategory.id, image.id);
+                                                        }}
                                                     />
                                                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors" />
                                                 </button>
@@ -476,9 +559,31 @@ const PrintPortfolio: React.FC = () => {
 
                     <div className="max-w-5xl max-h-[85vh] w-full px-4" onClick={e => e.stopPropagation()}>
                         <img
-                            src={lightboxCurrentImage}
+                            src={lightboxCurrentImage.src}
                             alt="Print portfolio item"
                             className="w-full h-full object-contain rounded-lg shadow-2xl"
+                            onLoad={(e) => {
+                                console.log('PrintPortfolio: lightbox image loaded', {
+                                    categoryId: lightbox.categoryId,
+                                    imageId: lightboxCurrentImage.id,
+                                    index: lightbox.index,
+                                    src: e.currentTarget.currentSrc,
+                                    width: e.currentTarget.naturalWidth,
+                                    height: e.currentTarget.naturalHeight
+                                });
+                            }}
+                            onError={(e) => {
+                                const target = e.currentTarget;
+                                const failedSrc = target.currentSrc || target.src;
+                                console.error('PrintPortfolio: lightbox image failed', {
+                                    categoryId: lightbox.categoryId,
+                                    imageId: lightboxCurrentImage.id,
+                                    index: lightbox.index,
+                                    src: failedSrc
+                                });
+                                markImageFailed(lightbox.categoryId, lightboxCurrentImage.id);
+                                closeLightbox();
+                            }}
                         />
                     </div>
 
