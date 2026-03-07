@@ -8,6 +8,7 @@ export interface ReadySite {
     previewLink?: string;
     order?: number; // For ordering templates
     isConcept?: boolean;
+    published?: boolean;
 }
 
 export const READY_SITES_SEED_DATA: ReadySite[] = [
@@ -19,7 +20,8 @@ export const READY_SITES_SEED_DATA: ReadySite[] = [
         description: 'A high-end car rental website with fleet showcase and booking inquiry system.',
         features: ['Fleet Gallery', 'Booking Form', 'Service Details'],
         previewLink: 'https://cars-six-rouge.vercel.app/',
-        order: 1
+        order: 1,
+        published: true
     },
     {
         id: '2',
@@ -29,7 +31,8 @@ export const READY_SITES_SEED_DATA: ReadySite[] = [
         description: 'Clean and trustworthy design for dental clinics with appointment scheduling.',
         features: ['Appointment Booking', 'Service List', 'Team Profiles'],
         previewLink: 'https://dental-clinic-website-seven.vercel.app/',
-        order: 2
+        order: 2,
+        published: true
     },
     {
         id: '5',
@@ -39,7 +42,8 @@ export const READY_SITES_SEED_DATA: ReadySite[] = [
         description: 'A delightful website for bakeries and event planners. Showcase your treats and manage event bookings.',
         features: ['Menu Showcase', 'Event Booking', 'Gallery'],
         previewLink: 'https://sweet-treats-black.vercel.app/',
-        order: 3
+        order: 3,
+        published: true
     },
     {
         id: '6',
@@ -49,7 +53,8 @@ export const READY_SITES_SEED_DATA: ReadySite[] = [
         description: 'Professional accounting and advisory website. Perfect for CPA firms and financial consultants.',
         features: ['Service Overview', 'Client Portal', 'Consultation Booking'],
         previewLink: 'https://clear-leadger.vercel.app/',
-        order: 4
+        order: 4,
+        published: true
     }
 ];
 

@@ -34,7 +34,6 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ isOpen = false, onClose }) 
         { name: 'Web Registry', path: '/admin/web-registry', icon: Globe },
         { name: 'Print Portfolio', path: '/admin/print-portfolio', icon: FolderOpen },
         { name: 'Services', path: '/admin/services', icon: FolderOpen },
-        { name: 'Page Media', path: '/admin/page-media', icon: FolderOpen },
         { name: 'Blog', path: '/admin/blog', icon: FolderOpen },
         { name: 'Testimonials', path: '/admin/testimonials', icon: MessageSquare },
         { name: 'Ready Sites', path: '/admin/ready-sites', icon: Store },

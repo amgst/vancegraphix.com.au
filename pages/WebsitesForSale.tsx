@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { CheckCircle, Layout, ShoppingCart, Zap, ArrowRight } from 'lucide-react';
 import { ReadySite } from '../data/readySitesData';
 import { getReadySites } from '../lib/readySitesService';
+import { getReadySiteImageUrl } from '../lib/readySiteImage';
 import SEO from '../components/SEO';
 
 const WebsitesForSale: React.FC = () => {
@@ -319,7 +320,7 @@ const WebsitesForSale: React.FC = () => {
                                     <div className="relative h-80 overflow-hidden bg-gray-200">
                                         {template.image ? (
                                             <img
-                                                src={template.image}
+                                                src={getReadySiteImageUrl(template.image)}
                                                 alt={template.title}
                                                 className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
                                                 onError={(e) => {

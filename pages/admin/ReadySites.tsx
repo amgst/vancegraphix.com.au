@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { ReadySite } from '../../data/readySitesData';
 import { getReadySites, addReadySite, updateReadySite, deleteReadySite } from '../../lib/readySitesService';
-import { uploadImage } from '../../lib/imageUploadService';
-import { Plus, Trash2, Edit2, Save, X, Upload, Image as ImageIcon } from 'lucide-react';
+import { getReadySiteImageUrl, normalizeReadySiteImage, READY_SITE_IMAGE_FOLDER, READY_SITE_IMAGE_PLACEHOLDER } from '../../lib/readySiteImage';
+import { Plus, Trash2, Edit2, Save, X, Eye, EyeOff } from 'lucide-react';
 
 const AdminReadySites: React.FC = () => {
     const [readySites, setReadySites] = useState<ReadySite[]>([]);
@@ -11,14 +11,10 @@ const AdminReadySites: React.FC = () => {
     const [currentSite, setCurrentSite] = useState<Partial<ReadySite>>({});
     const [isLoading, setIsLoading] = useState(true);
 
-    const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
-    const [imagePreview, setImagePreview] = useState<string | null>(null);
-    const [isUploading, setIsUploading] = useState(false);
-
     const fetchReadySites = async () => {
         setIsLoading(true);
         try {
-            const fetchedSites = await getReadySites();
+            const fetchedSites = await getReadySites(true);
             setReadySites(fetchedSites);
         } catch (error) {
             console.error("Error fetching ready sites:", error);
@@ -46,8 +42,6 @@ const AdminReadySites: React.FC = () => {
 
     const handleEdit = (site: ReadySite) => {
         setCurrentSite(site);
-        setImagePreview(site.image || null);
-        setSelectedImageFile(null);
         setIsEditing(true);
     };
 
@@ -60,51 +54,19 @@ const AdminReadySites: React.FC = () => {
             features: [],
             previewLink: '',
             order: readySites.length + 1,
-            isConcept: false
+            isConcept: false,
+            published: true
         });
-        setImagePreview(null);
-        setSelectedImageFile(null);
         setIsEditing(true);
     };
 
-    const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            // Validate file type
-            if (!file.type.startsWith('image/')) {
-                alert('Please select an image file.');
-                return;
-            }
-            // Validate file size (max 5MB)
-            if (file.size > 5 * 1024 * 1024) {
-                alert('Image size should be less than 5MB.');
-                return;
-            }
-            setSelectedImageFile(file);
-            // Create preview
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImagePreview(reader.result as string);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
-    const handleImageUpload = async () => {
-        if (!selectedImageFile) return;
-
-        setIsUploading(true);
+    const handleTogglePublished = async (site: ReadySite) => {
         try {
-            const imageUrl = await uploadImage(selectedImageFile, 'ready-sites');
-            setCurrentSite({ ...currentSite, image: imageUrl });
-            setImagePreview(imageUrl);
-            setSelectedImageFile(null);
-            alert('Image uploaded successfully!');
+            await updateReadySite(site.id, { published: site.published === false });
+            await fetchReadySites();
         } catch (error) {
-            console.error('Error uploading image:', error);
-            alert('Failed to upload image. Please try again.');
-        } finally {
-            setIsUploading(false);
+            console.error("Error updating ready site visibility:", error);
+            alert("Failed to update publish status.");
         }
     };
 
@@ -120,8 +82,10 @@ const AdminReadySites: React.FC = () => {
 
             const siteData = {
                 ...currentSite,
+                image: normalizeReadySiteImage(currentSite.image),
                 features,
-                order: currentSite.order || readySites.length + 1
+                order: currentSite.order || readySites.length + 1,
+                published: currentSite.published ?? true
             };
 
             if (currentSite.id) {
@@ -180,8 +144,6 @@ const AdminReadySites: React.FC = () => {
                             <button
                                 onClick={() => {
                                     setIsEditing(false);
-                                    setImagePreview(null);
-                                    setSelectedImageFile(null);
                                 }}
                                 className="text-gray-400 hover:text-slate-900"
                             >
@@ -223,70 +185,35 @@ const AdminReadySites: React.FC = () => {
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Image (optional)</label>
-
-                                {/* Image Preview */}
-                                {imagePreview && (
+                                {currentSite.image && (
                                     <div className="mb-3">
                                         <img
-                                            src={imagePreview}
+                                            src={getReadySiteImageUrl(currentSite.image)}
                                             alt="Preview"
                                             className="w-full h-48 object-cover rounded-lg border border-gray-200"
+                                            onError={(e) => {
+                                                e.currentTarget.onerror = null;
+                                                e.currentTarget.src = READY_SITE_IMAGE_PLACEHOLDER;
+                                            }}
                                         />
                                     </div>
                                 )}
-
-                                {/* Upload Section */}
-                                <div className="space-y-3">
-                                    <div className="flex items-center gap-3">
-                                        <label className="flex-1 cursor-pointer">
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={handleImageSelect}
-                                                className="hidden"
-                                                id="image-upload"
-                                            />
-                                            <div className="flex items-center justify-center gap-2 px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors">
-                                                <ImageIcon size={20} className="text-gray-400" />
-                                                <span className="text-sm text-gray-600">
-                                                    {selectedImageFile ? selectedImageFile.name : 'Choose Image to Upload'}
-                                                </span>
-                                            </div>
-                                        </label>
-                                        {selectedImageFile && (
-                                            <button
-                                                type="button"
-                                                onClick={handleImageUpload}
-                                                disabled={isUploading}
-                                                className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                                            >
-                                                <Upload size={18} />
-                                                {isUploading ? 'Uploading...' : 'Upload'}
-                                            </button>
-                                        )}
-                                    </div>
-
-                                    {/* Or use URL */}
-                                    <div className="relative">
-                                        <div className="absolute inset-0 flex items-center">
-                                            <div className="w-full border-t border-gray-300"></div>
-                                        </div>
-                                        <div className="relative flex justify-center text-sm">
-                                            <span className="px-2 bg-white text-gray-500">OR</span>
-                                        </div>
-                                    </div>
-
-                                    {/* URL Input */}
+                                <div className="space-y-2">
                                     <input
                                         type="text"
                                         value={currentSite.image || ''}
                                         onChange={e => {
                                             setCurrentSite({ ...currentSite, image: e.target.value });
-                                            setImagePreview(e.target.value || null);
                                         }}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                                        placeholder="Enter image URL (https://example.com/image.png or /template_cars.png)"
+                                        placeholder="example.jpg or /ready sites/example.jpg"
                                     />
+                                    <p className="text-xs text-gray-500">
+                                        Store ready-site images in <code>public\ready sites</code>. Enter only the filename and it will save as <code>{READY_SITE_IMAGE_FOLDER}filename</code>.
+                                    </p>
+                                    <p className="text-xs text-gray-500">
+                                        Existing absolute URLs still work, but new images should use the local folder.
+                                    </p>
                                 </div>
                             </div>
                             <div>
@@ -329,6 +256,16 @@ const AdminReadySites: React.FC = () => {
                                 />
                                 <label htmlFor="isConcept" className="text-sm font-medium text-gray-700">Concept Demo</label>
                             </div>
+                            <div className="flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    id="published"
+                                    checked={currentSite.published !== false}
+                                    onChange={e => setCurrentSite({ ...currentSite, published: e.target.checked })}
+                                    className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                                />
+                                <label htmlFor="published" className="text-sm font-medium text-gray-700">Published</label>
+                            </div>
                             <div className="pt-4 flex justify-end gap-3">
                                 <button
                                     type="button"
@@ -355,6 +292,7 @@ const AdminReadySites: React.FC = () => {
                         <tr>
                             <th className="px-6 py-4 font-semibold text-gray-700">Title</th>
                             <th className="px-6 py-4 font-semibold text-gray-700">Category</th>
+                            <th className="px-6 py-4 font-semibold text-gray-700">Status</th>
                             <th className="px-6 py-4 font-semibold text-gray-700">Order</th>
                             <th className="px-6 py-4 font-semibold text-gray-700">Preview</th>
                             <th className="px-6 py-4 font-semibold text-gray-700 text-right">Actions</th>
@@ -367,11 +305,11 @@ const AdminReadySites: React.FC = () => {
                                     <div className="flex items-center gap-3">
                                         {site.image && (
                                             <img
-                                                src={site.image}
+                                                src={getReadySiteImageUrl(site.image)}
                                                 alt={site.title}
                                                 className="w-16 h-16 object-cover rounded-lg"
                                                 onError={(e) => {
-                                                    (e.target as HTMLImageElement).src = '/template_cars.png';
+                                                    (e.target as HTMLImageElement).src = READY_SITE_IMAGE_PLACEHOLDER;
                                                 }}
                                             />
                                         )}
@@ -394,6 +332,17 @@ const AdminReadySites: React.FC = () => {
                                     </span>
                                 </td>
                                 <td className="px-6 py-4">
+                                    <span
+                                        className={`px-2 py-1 text-xs font-medium rounded-full ${
+                                            site.published === false
+                                                ? 'bg-amber-100 text-amber-700'
+                                                : 'bg-green-100 text-green-700'
+                                        }`}
+                                    >
+                                        {site.published === false ? 'Unpublished' : 'Published'}
+                                    </span>
+                                </td>
+                                <td className="px-6 py-4">
                                     <span className="text-gray-600">{site.order || 0}</span>
                                 </td>
                                 <td className="px-6 py-4">
@@ -413,6 +362,17 @@ const AdminReadySites: React.FC = () => {
                                 <td className="px-6 py-4 text-right">
                                     <div className="flex items-center justify-end gap-2">
                                         <button
+                                            onClick={() => handleTogglePublished(site)}
+                                            className={`p-2 rounded-lg transition-colors ${
+                                                site.published === false
+                                                    ? 'text-amber-600 hover:text-amber-700 hover:bg-amber-50'
+                                                    : 'text-green-600 hover:text-green-700 hover:bg-green-50'
+                                            }`}
+                                            title={site.published === false ? 'Publish site' : 'Unpublish site'}
+                                        >
+                                            {site.published === false ? <Eye size={18} /> : <EyeOff size={18} />}
+                                        </button>
+                                        <button
                                             onClick={() => handleEdit(site)}
                                             className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                         >
@@ -430,7 +390,7 @@ const AdminReadySites: React.FC = () => {
                         ))}
                         {readySites.length === 0 && (
                             <tr>
-                                <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
+                                <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
                                     No ready sites found. Click "Add New Site" to create one.
                                 </td>
                             </tr>
@@ -443,4 +403,3 @@ const AdminReadySites: React.FC = () => {
 };
 
 export default AdminReadySites;
-

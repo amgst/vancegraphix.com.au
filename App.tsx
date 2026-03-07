@@ -41,7 +41,6 @@ import AdminOrders from './pages/admin/Orders';
 import AdminSettings from './pages/admin/Settings';
 import AdminMessages from './pages/admin/Messages';
 import AdminTestimonials from './pages/admin/Testimonials';
-import AdminPageMedia from './pages/admin/PageMedia';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsAndConditions from './pages/TermsAndConditions';
 import Reviews from './pages/Reviews';
@@ -116,7 +115,6 @@ const AppContent: React.FC = () => {
                 <Route path="web-registry" element={<AdminWebRegistry />} />
                 <Route path="print-portfolio" element={<AdminPrintPortfolio />} />
                 <Route path="services" element={<AdminServices />} />
-                <Route path="page-media" element={<AdminPageMedia />} />
                 <Route path="blog" element={<AdminBlog />} />
                 <Route path="ready-sites" element={<AdminReadySites />} />
                 <Route path="store" element={<AdminStore />} />
