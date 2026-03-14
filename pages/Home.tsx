@@ -6,6 +6,7 @@ import ServiceQuizModal from '../components/ServiceQuizModal';
 import { getPortfolios, PortfolioItem } from '../lib/portfolioService';
 import { getPrintPortfolios, PrintPortfolioCategory } from '../lib/printPortfolioService';
 import { resolveImageUrl } from '../lib/imageUrl';
+import { getWebPortfolioImageUrl } from '../lib/webPortfolioImage';
 
 import SEO from '../components/SEO';
 
@@ -86,7 +87,7 @@ const Home: React.FC = () => {
         ]);
 
         const webImages = webItems
-          .map(item => resolveImageUrl(item.imageUrl))
+          .map(item => getWebPortfolioImageUrl(item.imageUrl))
           .filter(Boolean) as string[];
 
         const manifest: PortfolioManifest | null = manifestRes.ok
@@ -489,7 +490,7 @@ const Home: React.FC = () => {
                   <div className="relative aspect-[16/10] bg-gray-100 overflow-hidden">
                     {item.imageUrl && (
                       <img
-                        src={resolveImageUrl(item.imageUrl)}
+                        src={getWebPortfolioImageUrl(item.imageUrl)}
                         alt={item.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />

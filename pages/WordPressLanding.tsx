@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { CheckCircle, ArrowRight, Layout, Settings, Shield, ExternalLink, Zap, Search, Globe, Database } from 'lucide-react';
 import SEO from '../components/SEO';
 import { getPortfolios } from '../lib/portfolioService';
-import { resolveImageUrl } from '../lib/imageUrl';
+import { getWebPortfolioImageUrl } from '../lib/webPortfolioImage';
 
 const WordPressLanding: React.FC = () => {
     const [wordpressPortfolioImages, setWordpressPortfolioImages] = useState<string[]>([]);
@@ -15,7 +15,7 @@ const WordPressLanding: React.FC = () => {
                 const items = await getPortfolios();
                 const images = items
                     .filter((item) => item.isPublic !== false && item.category === 'WordPress' && item.imageUrl)
-                    .map((item) => resolveImageUrl(item.imageUrl))
+                    .map((item) => getWebPortfolioImageUrl(item.imageUrl))
                     .filter(Boolean) as string[];
 
                 setWordpressPortfolioImages(images.slice(0, 6));

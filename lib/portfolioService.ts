@@ -1,5 +1,6 @@
 import { db } from './firebase';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy } from 'firebase/firestore';
+import { normalizeWebPortfolioImage } from './webPortfolioImage';
 
 export interface PortfolioItem {
     id: string;
@@ -27,6 +28,16 @@ export interface PortfolioItem {
 
 const PORTFOLIO_COLLECTION = 'portfolios';
 
+const normalizePortfolioItem = <T extends Partial<PortfolioItem>>(item: T): T => {
+    const payload = { ...item } as T;
+
+    if (Object.prototype.hasOwnProperty.call(payload, 'imageUrl')) {
+        payload.imageUrl = normalizeWebPortfolioImage(payload.imageUrl) as T['imageUrl'];
+    }
+
+    return payload;
+};
+
 export const getPortfolios = async (): Promise<PortfolioItem[]> => {
     const colRef = collection(db, PORTFOLIO_COLLECTION);
     const q = query(colRef);
@@ -45,13 +56,14 @@ export const getPortfolios = async (): Promise<PortfolioItem[]> => {
 
 export const addPortfolio = async (item: Omit<PortfolioItem, 'id'>): Promise<PortfolioItem> => {
     const colRef = collection(db, PORTFOLIO_COLLECTION);
-    const docRef = await addDoc(colRef, item);
-    return { id: docRef.id, ...item };
+    const payload = normalizePortfolioItem(item);
+    const docRef = await addDoc(colRef, payload);
+    return { id: docRef.id, ...payload };
 };
 
 export const updatePortfolio = async (id: string, item: Partial<PortfolioItem>) => {
     const docRef = doc(db, PORTFOLIO_COLLECTION, id);
-    await updateDoc(docRef, item);
+    await updateDoc(docRef, normalizePortfolioItem(item));
 };
 
 export const deletePortfolio = async (id: string) => {

@@ -1,5 +1,5 @@
 import type { PortfolioItem } from './portfolioService';
-import { resolveImageUrl } from './imageUrl';
+import { getWebPortfolioImageUrl } from './webPortfolioImage';
 
 const GOOGLE_DRIVE_URL_PATTERN = /(?:drive\.google\.com|googleusercontent\.com|googleapis\.com)/i;
 
@@ -46,7 +46,7 @@ export const getPreferredPortfolioImage = (
   index = 0
 ): string => {
   if (!isGoogleDriveUrl(item.imageUrl)) {
-    return resolveImageUrl(item.imageUrl);
+    return getWebPortfolioImageUrl(item.imageUrl);
   }
 
   const localImages = getLocalPortfolioImagesByCategory(item.category);

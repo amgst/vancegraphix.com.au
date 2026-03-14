@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Code, CheckCircle, ArrowRight, Layout, Smartphone, Zap } from 'lucide-react';
 import SEO from '../components/SEO';
 import { getPortfolios } from '../lib/portfolioService';
-import { resolveImageUrl } from '../lib/imageUrl';
+import { getWebPortfolioImageUrl } from '../lib/webPortfolioImage';
 
 const WebDevLanding: React.FC = () => {
     const [reactPortfolioImages, setReactPortfolioImages] = useState<string[]>([]);
@@ -15,7 +15,7 @@ const WebDevLanding: React.FC = () => {
                 const items = await getPortfolios();
                 const images = items
                     .filter((item) => item.isPublic !== false && item.category === 'React' && item.imageUrl)
-                    .map((item) => resolveImageUrl(item.imageUrl))
+                    .map((item) => getWebPortfolioImageUrl(item.imageUrl))
                     .filter(Boolean) as string[];
 
                 setReactPortfolioImages(images.slice(0, 4));

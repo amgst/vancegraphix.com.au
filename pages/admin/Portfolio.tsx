@@ -1,8 +1,8 @@
 import React from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { PortfolioItem, getPortfolios, addPortfolio, updatePortfolio, deletePortfolio } from '../../lib/portfolioService';
-import { Plus, Trash2, Edit2, Save, X, Upload, Loader2, LayoutGrid, List, ExternalLink, ChevronLeft, ChevronRight, Download, CheckCircle, Search } from 'lucide-react';
-import { uploadFileWithProgress, generateUniqueFileName, uploadFromUrl } from '../../lib/storageService';
+import { Plus, Trash2, Edit2, Save, X, Loader2, LayoutGrid, List, ExternalLink, ChevronLeft, ChevronRight, CheckCircle, Search } from 'lucide-react';
+import { getWebPortfolioImageUrl, normalizeWebPortfolioImage, WEB_PORTFOLIO_IMAGE_FOLDER, WEB_PORTFOLIO_IMAGE_PLACEHOLDER } from '../../lib/webPortfolioImage';
 
 const AdminPortfolio: React.FC = () => {
     const [items, setItems] = React.useState<PortfolioItem[]>([]);
@@ -10,11 +10,7 @@ const AdminPortfolio: React.FC = () => {
     const [isEditing, setIsEditing] = React.useState(false);
     const [currentItem, setCurrentItem] = React.useState<Partial<PortfolioItem>>({});
     const [isLoading, setIsLoading] = React.useState(true);
-    const [isUploading, setIsUploading] = React.useState(false);
     const [isSaving, setIsSaving] = React.useState(false);
-    const [isFetchingScreenshot, setIsFetchingScreenshot] = React.useState(false);
-
-    const [uploadProgress, setUploadProgress] = React.useState(0);
     const [searchQuery, setSearchQuery] = React.useState('');
 
     // Pagination State
@@ -60,9 +56,7 @@ const AdminPortfolio: React.FC = () => {
             return;
         }
 
-        setIsFetchingScreenshot(true);
         try {
-            // 1. Fetch Metadata (Title, Description, etc.)
             const metaResponse = await fetch(`https://api.microlink.io?url=${encodeURIComponent(currentItem.link)}&palette=true`);
             const metaData = await metaResponse.json();
 
@@ -92,73 +86,16 @@ const AdminPortfolio: React.FC = () => {
                     }));
                 }
             }
-
-            // 2. Fetch & Upload Screenshot (optimized for size)
-            const screenshotUrl = `https://api.microlink.io?url=${encodeURIComponent(currentItem.link)}&screenshot=true&meta=false&embed=screenshot.url&screenshot.width=1000&screenshot.type=jpeg&screenshot.quality=80`;
-            const fileName = generateUniqueFileName('screenshot.jpg');
-            const uploadPath = `portfolios/${fileName}`;
-            const downloadURL = await uploadFromUrl(screenshotUrl, uploadPath);
-
-            setCurrentItem(prev => ({ ...prev, imageUrl: downloadURL }));
-            alert("Website data and screenshot imported successfully!");
+            alert("Website details imported. Add the matching image filename from the local web-portfolio folder.");
         } catch (error) {
             console.error("Error auto-fetching data:", error);
             alert("Failed to auto-fetch some data. You may need to fill it manually.");
-        } finally {
-            setIsFetchingScreenshot(false);
-        }
-    };
-
-    const handleImportFromUrl = async () => {
-        if (!currentItem.imageUrl || currentItem.imageUrl.includes('firebasestorage.googleapis.com')) {
-            return;
-        }
-
-        setIsUploading(true);
-        try {
-            const fileName = generateUniqueFileName('imported-image.jpg');
-            const uploadPath = `portfolios/${fileName}`;
-            const downloadURL = await uploadFromUrl(currentItem.imageUrl, uploadPath);
-            setCurrentItem(prev => ({ ...prev, imageUrl: downloadURL }));
-            alert("Image imported and saved to your hosting!");
-        } catch (error) {
-            console.error("Error importing image:", error);
-            alert("Failed to import image from URL.");
-        } finally {
-            setIsUploading(false);
         }
     };
 
     React.useEffect(() => {
         fetchItems();
     }, []);
-
-    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        setIsUploading(true);
-        setUploadProgress(0);
-        try {
-            // Generate a filename, forcing .jpg if it's an image since we optimize to JPEG
-            const baseName = file.name.split('.')[0];
-            const fileName = file.type.startsWith('image/')
-                ? generateUniqueFileName(`${baseName}.jpg`)
-                : generateUniqueFileName(file.name);
-
-            const uploadPath = `portfolios/${fileName}`;
-            const downloadURL = await uploadFileWithProgress(file, uploadPath, (progress) => {
-                setUploadProgress(progress);
-            });
-            setCurrentItem(prev => ({ ...prev, imageUrl: downloadURL }));
-        } catch (error) {
-            console.error("Error uploading image:", error);
-            alert("Failed to upload image.");
-        } finally {
-            setIsUploading(false);
-            setUploadProgress(0);
-        }
-    };
 
     const handleDelete = async (id: string) => {
         if (window.confirm('Are you sure you want to delete this item?')) {
@@ -222,10 +159,14 @@ const AdminPortfolio: React.FC = () => {
 
         setIsSaving(true);
         try {
+            const payload = {
+                ...currentItem,
+                imageUrl: normalizeWebPortfolioImage(currentItem.imageUrl)
+            };
             if (currentItem.id) {
-                await updatePortfolio(currentItem.id, currentItem);
+                await updatePortfolio(currentItem.id, payload);
             } else {
-                await addPortfolio(currentItem as PortfolioItem);
+                await addPortfolio(payload as PortfolioItem);
             }
             await fetchItems();
             setIsEditing(false);
@@ -333,81 +274,43 @@ const AdminPortfolio: React.FC = () => {
                                     <button
                                         type="button"
                                         onClick={handleAutoFetchData}
-                                        disabled={isFetchingScreenshot || !currentItem.link}
-                                        className={`px-3 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${isFetchingScreenshot || !currentItem.link
+                                        disabled={!currentItem.link}
+                                        className={`px-3 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${!currentItem.link
                                             ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                                             : 'bg-slate-900 text-white hover:bg-slate-800'
                                             }`}
-                                        title="Auto-fetch title, description, tags, and screenshot"
+                                        title="Auto-fill title, description, and category from the website URL"
                                     >
-                                        {isFetchingScreenshot ? <Loader2 size={14} className="animate-spin" /> : <LayoutGrid size={14} />}
+                                        <LayoutGrid size={14} />
                                         Magic Fill
                                     </button>
                                 </div>
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Portfolio Image</label>
-                                <div className="mt-1 flex items-center gap-4">
-                                    {currentItem.imageUrl ? (
-                                        <div className="relative group">
-                                            <img
-                                                src={currentItem.imageUrl}
-                                                alt="Preview"
-                                                className="w-24 h-24 object-cover rounded-lg border border-gray-200"
-                                            />
-                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                                                <label className="cursor-pointer text-white p-1">
-                                                    <Upload size={16} />
-                                                    <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={isUploading} />
-                                                </label>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <label className="w-24 h-24 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all overflow-hidden relative">
-                                            {isUploading ? (
-                                                <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/90">
-                                                    <div className="relative w-12 h-12 flex items-center justify-center">
-                                                        <Loader2 className="w-full h-full text-blue-600 animate-spin absolute" />
-                                                        <span className="text-[10px] font-bold text-blue-700">{uploadProgress}%</span>
-                                                    </div>
-                                                    <div className="w-16 h-1 bg-gray-100 rounded-full mt-2 overflow-hidden">
-                                                        <div
-                                                            className="h-full bg-blue-600 transition-all duration-300"
-                                                            style={{ width: `${uploadProgress}%` }}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            ) : (
-                                                <>
-                                                    <Upload className="w-6 h-6 text-gray-400" />
-                                                    <span className="text-[10px] text-gray-500 mt-1">Upload</span>
-                                                </>
-                                            )}
-                                            <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={isUploading} />
-                                        </label>
+                                <div className="mt-1 space-y-3">
+                                    {currentItem.imageUrl && (
+                                        <img
+                                            src={getWebPortfolioImageUrl(currentItem.imageUrl)}
+                                            alt="Preview"
+                                            className="w-24 h-24 object-cover rounded-lg border border-gray-200"
+                                            onError={(e) => {
+                                                e.currentTarget.onerror = null;
+                                                e.currentTarget.src = WEB_PORTFOLIO_IMAGE_PLACEHOLDER;
+                                            }}
+                                        />
                                     )}
-                                    <div className="flex-1 space-y-2">
-                                        <div className="relative flex-1">
-                                            <input
-                                                type="url"
-                                                placeholder="Or paste image URL"
-                                                value={currentItem.imageUrl || ''}
-                                                onChange={e => setCurrentItem({ ...currentItem, imageUrl: e.target.value })}
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm pr-10"
-                                            />
-                                            {currentItem.imageUrl && !currentItem.imageUrl.includes('firebasestorage.googleapis.com') && (
-                                                <button
-                                                    type="button"
-                                                    onClick={handleImportFromUrl}
-                                                    title="Save to our hosting"
-                                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-blue-600 hover:text-blue-800 p-1"
-                                                >
-                                                    {isUploading ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
-                                                </button>
-                                            )}
-                                        </div>
-                                        <p className="text-[10px] text-gray-500">Recommended: Square or 4:3 aspect ratio</p>
-                                    </div>
+                                    <input
+                                        type="text"
+                                        placeholder="example.jpg or /web-portfolio/example.jpg"
+                                        value={currentItem.imageUrl || ''}
+                                        onChange={e => setCurrentItem({ ...currentItem, imageUrl: e.target.value })}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                                    />
+                                    <p className="text-[10px] text-gray-500">
+                                        Store website images in <code>public\web-portfolio</code>. Enter only the filename and it will save as <code>{WEB_PORTFOLIO_IMAGE_FOLDER}filename</code>.
+                                    </p>
+                                    <p className="text-[10px] text-gray-500">Existing absolute URLs still work until you replace them. Recommended: 4:3 or 16:10 aspect ratio.</p>
                                 </div>
                             </div>
                             <div>
@@ -499,8 +402,8 @@ const AdminPortfolio: React.FC = () => {
                                 </button>
                                 <button
                                     type="submit"
-                                    disabled={isSaving || isUploading}
-                                    className={`px-4 py-2 bg-blue-600 text-white font-medium hover:bg-blue-700 rounded-lg transition-colors flex items-center gap-2 ${(isSaving || isUploading) ? 'opacity-70 cursor-not-allowed' : ''
+                                    disabled={isSaving}
+                                    className={`px-4 py-2 bg-blue-600 text-white font-medium hover:bg-blue-700 rounded-lg transition-colors flex items-center gap-2 ${isSaving ? 'opacity-70 cursor-not-allowed' : ''
                                         }`}
                                 >
                                     {isSaving ? (
@@ -527,9 +430,13 @@ const AdminPortfolio: React.FC = () => {
                         <div key={item.id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col group hover:shadow-md transition-shadow">
                             <div className="relative aspect-video overflow-hidden bg-gray-100">
                                 <img
-                                    src={item.imageUrl}
+                                    src={getWebPortfolioImageUrl(item.imageUrl)}
                                     alt={item.title}
                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                    onError={(e) => {
+                                        e.currentTarget.onerror = null;
+                                        e.currentTarget.src = WEB_PORTFOLIO_IMAGE_PLACEHOLDER;
+                                    }}
                                 />
                                 <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <button
@@ -625,7 +532,15 @@ const AdminPortfolio: React.FC = () => {
                             {currentItems.map((item) => (
                                 <tr key={item.id} className="hover:bg-gray-50 transition-colors">
                                     <td className="px-6 py-4">
-                                        <img src={item.imageUrl} alt={item.title} className="w-12 h-12 object-cover rounded-lg" />
+                                        <img
+                                            src={getWebPortfolioImageUrl(item.imageUrl)}
+                                            alt={item.title}
+                                            className="w-12 h-12 object-cover rounded-lg"
+                                            onError={(e) => {
+                                                e.currentTarget.onerror = null;
+                                                e.currentTarget.src = WEB_PORTFOLIO_IMAGE_PLACEHOLDER;
+                                            }}
+                                        />
                                     </td>
                                     <td className="px-6 py-4 font-medium text-slate-900">
                                         <div className="flex items-center gap-2">

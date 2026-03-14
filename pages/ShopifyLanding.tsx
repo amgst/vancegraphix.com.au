@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { CheckCircle, ArrowRight, ShoppingBag, BarChart, Globe, Settings, Shield, Smartphone, ExternalLink } from 'lucide-react';
 import SEO from '../components/SEO';
 import { getPortfolios } from '../lib/portfolioService';
-import { resolveImageUrl } from '../lib/imageUrl';
+import { getWebPortfolioImageUrl } from '../lib/webPortfolioImage';
 
 const ShopifyLanding: React.FC = () => {
     const [shopifyPortfolioImages, setShopifyPortfolioImages] = useState<string[]>([]);
@@ -15,7 +15,7 @@ const ShopifyLanding: React.FC = () => {
                 const items = await getPortfolios();
                 const images = items
                     .filter((item) => item.isPublic !== false && item.category === 'Shopify' && item.imageUrl)
-                    .map((item) => resolveImageUrl(item.imageUrl))
+                    .map((item) => getWebPortfolioImageUrl(item.imageUrl))
                     .filter(Boolean) as string[];
 
                 setShopifyPortfolioImages(images.slice(0, 6));
