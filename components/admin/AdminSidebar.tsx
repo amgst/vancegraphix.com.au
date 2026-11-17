@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, FolderOpen, Settings, LogOut, Globe, Store, Inbox, X, Bell, MessageSquare } from 'lucide-react';
+import { LayoutDashboard, FolderOpen, Settings, LogOut, Globe, Store, Inbox, X, Bell, MessageSquare, Zap } from 'lucide-react';
 import { NotificationContext } from './NotificationProvider';
 import { useAuth } from './AuthProvider';
 
@@ -29,6 +29,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ isOpen = false, onClose }) 
     const menuItems = [
         { name: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
         { name: 'Messages', path: '/admin/messages', icon: Inbox },
+        { name: 'CRM', path: '/admin/crm', icon: MessageSquare },
         { name: 'Tools', path: '/admin/tools', icon: FolderOpen },
         { name: 'Portfolio', path: '/admin/portfolio', icon: FolderOpen },
         { name: 'Web Registry', path: '/admin/web-registry', icon: Globe },
@@ -38,6 +39,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ isOpen = false, onClose }) 
         { name: 'Testimonials', path: '/admin/testimonials', icon: MessageSquare },
         { name: 'Ready Sites', path: '/admin/ready-sites', icon: Store },
         { name: 'POD Products', path: '/admin/store', icon: Store },
+        { name: 'Etsy Store', path: '/admin/store-etsy', icon: Zap },
         { name: 'Orders', path: '/admin/orders', icon: Inbox },
         { name: 'Settings', path: '/admin/settings', icon: Settings },
     ];

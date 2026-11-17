@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "wbify-869a4"
+    "default": "vgp-web",
+    "legacy": "wbify-869a4"
   }
 }

@@ -1,5 +1,4 @@
-import { storage } from './firebase';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { uploadImage } from './imageUploadService';
 
 /**
  * Optimizes an image file by resizing it to a maximum width and compressing it.
@@ -52,7 +51,7 @@ export const optimizeImage = async (file: Blob | File, maxWidth: number = 1000, 
 };
 
 /**
- * Uploads a file to Firebase Storage with progress tracking and optional optimization.
+ * Uploads an image through the site's existing Vercel Blob endpoint.
  */
 export const uploadFileWithProgress = async (
     file: File | Blob, 
@@ -71,35 +70,17 @@ export const uploadFileWithProgress = async (
         }
     }
 
-    return new Promise((resolve, reject) => {
-        const storageRef = ref(storage, path);
-        const uploadTask = uploadBytesResumable(storageRef, fileToUpload);
-
-        uploadTask.on('state_changed', 
-            (snapshot) => {
-                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                if (onProgress) {
-                    onProgress(Math.round(progress));
-                }
-            }, 
-            (error) => {
-                console.error("Error uploading file:", error);
-                reject(error);
-            }, 
-            async () => {
-                try {
-                    const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-                    resolve(downloadURL);
-                } catch (error) {
-                    reject(error);
-                }
-            }
-        );
-    });
+    onProgress?.(0);
+    const folder = path.includes('/') ? path.slice(0, path.lastIndexOf('/')) : 'images';
+    const filename = path.split('/').pop() || 'image.jpg';
+    const upload = new File([fileToUpload], filename, { type: fileToUpload.type });
+    const url = await uploadImage(upload, folder);
+    onProgress?.(100);
+    return url;
 };
 
 /**
- * Downloads an image from a URL and uploads it to Firebase Storage with optimization.
+ * Downloads an image and uploads it through the existing image endpoint.
  */
 export const uploadFromUrl = async (url: string, path: string): Promise<string> => {
     try {

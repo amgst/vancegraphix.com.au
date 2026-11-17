@@ -37,9 +37,11 @@ import AdminServices from './pages/admin/Services';
 import AdminBlog from './pages/admin/Blog';
 import AdminReadySites from './pages/admin/ReadySites';
 import AdminStore from './pages/admin/Store';
+import AdminStoreWithEtsy from './pages/admin/StoreWithEtsy';
 import AdminOrders from './pages/admin/Orders';
 import AdminSettings from './pages/admin/Settings';
 import AdminMessages from './pages/admin/Messages';
+import AdminCRM from './pages/admin/CRM';
 import AdminTestimonials from './pages/admin/Testimonials';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsAndConditions from './pages/TermsAndConditions';
@@ -118,8 +120,10 @@ const AppContent: React.FC = () => {
                 <Route path="blog" element={<AdminBlog />} />
                 <Route path="ready-sites" element={<AdminReadySites />} />
                 <Route path="store" element={<AdminStore />} />
+                <Route path="store-etsy" element={<AdminStoreWithEtsy />} />
                 <Route path="orders" element={<AdminOrders />} />
                 <Route path="messages" element={<AdminMessages />} />
+                <Route path="crm" element={<AdminCRM />} />
                 <Route path="testimonials" element={<AdminTestimonials />} />
                 <Route path="settings" element={<AdminSettings />} />
               </Route>
