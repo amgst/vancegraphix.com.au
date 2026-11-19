@@ -64,10 +64,13 @@ const PageWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 };
 
 const AppContent: React.FC = () => {
+  const { pathname } = useLocation();
+  const isAdmin = pathname === '/admin' || pathname.startsWith('/admin/');
+  const ContentContainer = isAdmin ? 'div' : 'main';
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar />
-      <main className="flex-grow">
+      {!isAdmin && <Navbar />}
+      <ContentContainer className="flex-grow">
         <PageWrapper>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -133,8 +136,8 @@ const AppContent: React.FC = () => {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </PageWrapper>
-      </main>
-      <Footer />
+      </ContentContainer>
+      {!isAdmin && <Footer />}
     </div>
   );
 };

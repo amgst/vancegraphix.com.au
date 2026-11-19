@@ -1,111 +1,38 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Lock, Mail, Loader2 } from 'lucide-react';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { ArrowLeft, ArrowUpRight, Check, Eye, EyeOff, Loader2, LockKeyhole, Mail, ShieldCheck } from 'lucide-react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../lib/firebase';
+import { useAuth } from '../../components/admin/AuthProvider';
+import '../../components/admin/admin.css';
 
-const AdminLogin: React.FC = () => {
+export default function AdminLogin() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [visible, setVisible] = useState(false);
     const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate = useNavigate();
-
-    const handleLogin = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError('');
-        setIsSubmitting(true);
-        console.log("[Login] Attempting login for email:", email);
-
-        try {
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            console.log("[Login] Success! Logged in as:", userCredential.user.email);
-            navigate('/admin/dashboard');
-        } catch (err: any) {
-            console.error("[Login] Firebase auth error details:", {
-                code: err.code,
-                message: err.message
-            });
-            if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
-                setError('Invalid email or password. Please try again.');
-            } else if (err.code === 'auth/too-many-requests') {
-                setError('Too many failed login attempts. Please try again later.');
-            } else {
-                setError('An error occurred during login. Please try again.');
-            }
-        } finally {
-            setIsSubmitting(false);
-        }
+    const { user, loading } = useAuth();
+    if (!loading && user) return <Navigate to="/admin/dashboard" replace />;
+    const handleLogin = async (event: React.FormEvent) => {
+        event.preventDefault(); setError(''); setIsSubmitting(true);
+        try { await signInWithEmailAndPassword(auth, email.trim(), password); navigate('/admin/dashboard', { replace: true }); }
+        catch (err: any) {
+            if (['auth/user-not-found', 'auth/wrong-password', 'auth/invalid-credential'].includes(err.code)) setError('The email or password is incorrect. Please try again.');
+            else if (err.code === 'auth/too-many-requests') setError('Too many attempts. Please wait a moment before trying again.');
+            else if (err.code === 'auth/network-request-failed') setError('Unable to connect. Check your internet connection and try again.');
+            else setError('We could not sign you in. Please try again.');
+        } finally { setIsSubmitting(false); }
     };
-
-    return (
-        <div className="min-h-screen bg-slate-900 flex items-center justify-center px-4">
-            <div className="max-w-md w-full bg-white rounded-2xl shadow-2xl overflow-hidden">
-                <div className="p-8">
-                    <div className="text-center mb-8">
-                        <h1 className="text-3xl font-bold text-slate-900">Admin Login</h1>
-                        <p className="text-gray-500 mt-2">Sign in to manage your website</p>
-                    </div>
-
-                    <form onSubmit={handleLogin} className="space-y-6">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                            <div className="relative">
-                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                                <input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all"
-                                    placeholder="Enter your email"
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                            <div className="relative">
-                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                                <input
-                                    type="password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all"
-                                    placeholder="••••••••"
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        {error && (
-                            <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg">
-                                {error}
-                            </div>
-                        )}
-
-                        <button
-                            type="submit"
-                            disabled={isSubmitting}
-                            className="w-full bg-slate-900 text-white py-3 rounded-lg font-bold hover:bg-slate-800 transition-colors flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
-                        >
-                            {isSubmitting ? (
-                                <>
-                                    <Loader2 className="animate-spin" size={20} />
-                                    Signing In...
-                                </>
-                            ) : (
-                                'Sign In'
-                            )}
-                        </button>
-                    </form>
-                </div>
-                <div className="bg-gray-50 p-4 text-center text-sm text-gray-500">
-                    Protected System • Authorized Personnel Only
-                </div>
-            </div>
-        </div>
-    );
-};
-
-export default AdminLogin;
+    return <main className="admin-login">
+        <section className="admin-login-story"><Link to="/" className="admin-brand"><span className="admin-brand-mark">v<span>.</span></span><span>Vance Graphix<small>STUDIO WORKSPACE</small></span></Link><div className="admin-login-message"><span className="admin-welcome-tag"><span />A SPACE FOR YOUR NEXT CHAPTER</span><h1>Good work starts<br />with a clear view<span>.</span></h1><p>Your clients, your projects, your creative business.<br />One thoughtfully organised workspace.</p><div className="admin-login-features"><span><Check size={14} />Build better relationships</span><span><Check size={14} />Keep every project moving</span><span><Check size={14} />Make room for great work</span></div></div><p className="admin-login-story-foot">Vance Graphix & Print<span>Designed to move you forward.</span></p><div className="admin-login-orbit" aria-hidden="true"/></section>
+        <section className="admin-login-form-area"><Link to="/" className="admin-login-back"><ArrowLeft size={15} />Back to website</Link><div className="admin-login-form-wrap"><div className="admin-login-lock"><LockKeyhole size={23} strokeWidth={1.5}/></div><p className="admin-eyebrow">WELCOME TO YOUR WORKSPACE</p><h2>Pick up where you left off.</h2><p className="admin-login-subtitle">Sign in to manage your studio.</p><form onSubmit={handleLogin}>
+            <label htmlFor="admin-email">Email address</label><div className="admin-login-field"><Mail size={17}/><input id="admin-email" autoComplete="username" type="email" required placeholder="you@yourstudio.com" value={email} onChange={e=>setEmail(e.target.value)} disabled={isSubmitting}/></div>
+            <label htmlFor="admin-password">Password</label><div className="admin-login-field"><LockKeyhole size={17}/><input id="admin-password" autoComplete="current-password" type={visible ? 'text':'password'} required placeholder="Enter your password" value={password} onChange={e=>setPassword(e.target.value)} disabled={isSubmitting}/><button type="button" aria-label={visible ? 'Hide password':'Show password'} aria-pressed={visible} onClick={()=>setVisible(!visible)}>{visible ? <EyeOff size={17}/>:<Eye size={17}/>}</button></div>
+            {error && <p className="admin-login-error" role="alert">{error}</p>}
+            <button type="submit" className="admin-login-submit" disabled={isSubmitting || loading}>{isSubmitting ? <><Loader2 size={17} className="animate-spin"/>Signing in...</>:<>Sign in to workspace<ArrowUpRight size={17}/></>}</button>
+            <div className="admin-login-security"><ShieldCheck size={14}/>Secure access for authorised team members</div>
+        </form></div><footer>Vance Graphix & Print <span>Studio administration</span></footer></section>
+    </main>;
+}
